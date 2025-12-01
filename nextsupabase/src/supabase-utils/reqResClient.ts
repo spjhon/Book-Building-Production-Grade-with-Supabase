@@ -34,7 +34,7 @@ export async function updateSession(request: NextRequest) {
   const { data } = await supabase.auth.getClaims()
 
   const user = data?.claims
-/** */
+/** 
   if (
     request.nextUrl.pathname !== "/" &&
     !user &&
@@ -46,7 +46,7 @@ export async function updateSession(request: NextRequest) {
     url.pathname = '/login'
     return NextResponse.redirect(url)
   }
-
+*/
   // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're
   // creating a new response object with NextResponse.next() make sure to:
   // 1. Pass the request in it, like so:
