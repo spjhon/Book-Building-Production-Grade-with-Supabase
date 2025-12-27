@@ -1,14 +1,14 @@
 "use client"
 
 import { Login } from "@/components/Login";
-import { getSupabaseBrowserClient } from "@/supabase-utils/browserClient";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 
 export default function Home() {
 
 useEffect(() => {
-const supabase = getSupabaseBrowserClient();
+const supabase = createSupabaseBrowserClient();
 supabase.storage.listBuckets().then((result) =>{console.log("Bucket List", result)});
 }, []);
 

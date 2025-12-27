@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 type LoginProps = React.ComponentPropsWithoutRef<"div"> & {
   isPasswordLogin?: boolean;
@@ -22,6 +23,11 @@ export const Login = ({ className, isPasswordLogin, ...props }: LoginProps) => {
   
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+
+
 
   const passwordField = (
     <div className="grid gap-2">
@@ -44,10 +50,29 @@ export const Login = ({ className, isPasswordLogin, ...props }: LoginProps) => {
     </div>
   );
 
+
+
+
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("hola");
+    console.log("Esto viene primero");
+    const supabase = createSupabaseBrowserClient();
+    setIsLoading(true);
+    setError(null);
+
+    const valorPromesa = await new Promise(resolve => setTimeout(() => resolve("esto viene de la promesa"), 1000))
+
+    console.log(valorPromesa)
+    setIsLoading(false)
   };
+
+
+
+
+
+
+
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -74,12 +99,13 @@ export const Login = ({ className, isPasswordLogin, ...props }: LoginProps) => {
               </div>
 
               {isPasswordLogin && passwordField}
+              {error && <p className="text-sm text-red-500">{error}</p>}
 
               <Button type="submit" className="w-full">
-                {isPasswordLogin
-                  ? "Login with Password"
-                  : "Login with Magic Link"}
+                {!isLoading ? ( isPasswordLogin? "Login with Password": "Login with Magic Link"): ""}
+                {isLoading? "Entrando": ""}
               </Button>
+
               {/* Toggle */}
               <p className="mt-4 text-center text-sm">
                 {isPasswordLogin ? (
