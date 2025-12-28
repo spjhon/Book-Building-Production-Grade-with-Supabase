@@ -1,14 +1,13 @@
 
-
+import { LoginForm } from "@/app/auth/_componets/LoginForm";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import Link from "next/link";
 import { permanentRedirect } from "next/navigation";
 
 //import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 //import { useEffect } from "react";
 //import { useSearchParams } from "next/navigation";
 
-export default async function Home({searchParams}: {searchParams: Promise<{[key: string]: string | string[] | undefined}>}) {
+export default async function Login({searchParams}: {searchParams: Promise<{[key: string]: string | string[] | undefined}>}) {
 
   /**
 useEffect(() => {
@@ -38,9 +37,7 @@ const supabase = await createSupabaseServerClient();
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
       <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black">
         
-        Este es el landing page
-        ve a login para entrar 
-        <Link href={"/auth/login"}>Login</Link>
+        <LoginForm isPasswordLogin={!wantsMagicLink}></LoginForm>
       </main>
     </div>
   );

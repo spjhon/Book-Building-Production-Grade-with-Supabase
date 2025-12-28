@@ -11,7 +11,7 @@ import Link from "next/link";
 import { buttonVariants } from "./ui/button";
 
 import { usePathname } from "next/navigation";
-import { LogoutButton } from "./LogoutButton";
+import { LogoutButton } from "../app/auth/_componets/LogoutButton";
 
 //Props para la barra de navegacion
 export interface RouteProps {

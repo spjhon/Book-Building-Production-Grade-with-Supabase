@@ -20,7 +20,7 @@ type LoginProps = React.ComponentPropsWithoutRef<"div"> & {
   isPasswordLogin?: boolean;
 };
 
-export const Login = ({ className, isPasswordLogin, ...props }: LoginProps) => {
+export const LoginForm = ({ className, isPasswordLogin, ...props }: LoginProps) => {
   
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

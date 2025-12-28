@@ -1,8 +1,9 @@
 "use client";
 
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-import { Button } from "@/components/ui/button";
+
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export function LogoutButton() {
   const router = useRouter();
@@ -13,5 +14,18 @@ export function LogoutButton() {
     router.push("/");
   };
 
-  return <Button onClick={logout}>Logout</Button>;
+  return (
+    <Link
+      role="button"
+      href="/logout"
+      prefetch={false}
+      className="secondary"
+      onClick={(event) => {
+        event.preventDefault();
+        logout();
+      }}
+    >
+      Logout
+    </Link>
+  );
 }
