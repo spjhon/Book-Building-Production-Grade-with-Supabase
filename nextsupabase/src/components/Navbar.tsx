@@ -11,6 +11,7 @@ import Link from "next/link";
 import { buttonVariants } from "./ui/button";
 
 import { usePathname } from "next/navigation";
+import { LogoutButton } from "./LogoutButton";
 
 //Props para la barra de navegacion
 export interface RouteProps {
@@ -72,20 +73,12 @@ export const Navbar = () => {
         </NavigationMenu>
 
         <div className="hidden xl:flex gap-2">
-          <a
-            rel="noreferrer noopener"
-            href="/logout"
-            target="_blank"
-            className={`border ${buttonVariants({
-              variant: "secondary",
-            })} flex items-center justify-center h-5 gap-2`}
-            aria-label="Logout"
-          >
-            <Megaphone></Megaphone>
-            <span className="text-sm font-bold">Logout</span>
-          </a>
+          <Megaphone></Megaphone>
+          <LogoutButton></LogoutButton>
         </div>
       </div>
     </header>
   );
 };
+
+

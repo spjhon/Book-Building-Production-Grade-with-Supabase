@@ -14,6 +14,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
 
 type LoginProps = React.ComponentPropsWithoutRef<"div"> & {
   isPasswordLogin?: boolean;
@@ -25,9 +26,20 @@ export const Login = ({ className, isPasswordLogin, ...props }: LoginProps) => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+
+console.log("se ha renderizado")
 
 
 
+ const supabase = createSupabaseBrowserClient();
+
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) {
+        router.refresh();
+      }
+    });
+  
 
   const passwordField = (
     <div className="grid gap-2">
@@ -64,7 +76,19 @@ export const Login = ({ className, isPasswordLogin, ...props }: LoginProps) => {
     const valorPromesa = await new Promise(resolve => setTimeout(() => resolve("esto viene de la promesa"), 1000))
 
     console.log(valorPromesa)
-    setIsLoading(false)
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) throw error;
+      // Update this route to redirect to an authenticated route. The user already has an active session.
+      router.push("/tickets");
+    } catch (error: unknown) {
+      setError(error instanceof Error ? error.message : "An error occurred");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
 

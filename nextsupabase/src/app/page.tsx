@@ -1,23 +1,38 @@
-"use client"
 
 import { Login } from "@/components/Login";
-import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-import { useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { permanentRedirect } from "next/navigation";
 
-export default function Home() {
+//import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+//import { useEffect } from "react";
+//import { useSearchParams } from "next/navigation";
 
+export default async function Home({searchParams}: {searchParams: Promise<{[key: string]: string | string[] | undefined}>}) {
+
+  /**
 useEffect(() => {
 const supabase = createSupabaseBrowserClient();
 supabase.storage.listBuckets().then((result) =>{console.log("Bucket List", result)});
 }, []);
+ */
 
-const searchParams = useSearchParams()
 
-const wantsMagicLink = searchParams.get("magicLink") === "yes";
+const {magicLink} = await searchParams
+
+console.log(magicLink)
+
+const wantsMagicLink = false //searchParams.get("magicLink") === "yes";
 
 console.log("quiere magic link?: "+wantsMagicLink)
-  
+
+const supabase = await createSupabaseServerClient();
+  const { data } = await supabase.auth.getClaims();
+
+  if (data?.claims) {
+    permanentRedirect('/tickets')
+  }  
+
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
       <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black">
