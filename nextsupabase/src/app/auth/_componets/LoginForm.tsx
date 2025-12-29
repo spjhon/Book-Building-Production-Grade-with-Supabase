@@ -55,6 +55,7 @@ console.log("se ha renderizado")
       <Input
         id="password"
         type="password"
+        name="password"
         required
         value={password}
         onChange={(e) => setPassword(e.target.value)}
@@ -108,13 +109,14 @@ console.log("se ha renderizado")
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleLogin}>
+          <form onSubmit={handleLogin} action="/auth/login-magic-link/api" method="POST">
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
                   type="email"
+                  name="email"
                   placeholder="m@example.com"
                   required
                   value={email}
@@ -133,11 +135,11 @@ console.log("se ha renderizado")
               {/* Toggle */}
               <p className="mt-4 text-center text-sm">
                 {isPasswordLogin ? (
-                  <Link href={{ pathname: "/", query: { magicLink: "yes" } }}>
+                  <Link href={{ pathname: "/auth/login", query: { magicLink: "yes" } }}>
                     Use Magic Link Instead
                   </Link>
                 ) : (
-                  <Link href={{ pathname: "/", query: { magicLink: "no" } }}>
+                  <Link href={{ pathname: "/auth/login", query: { magicLink: "no" } }}>
                     Use Password Instead
                   </Link>
                 )}

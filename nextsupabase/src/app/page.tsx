@@ -8,7 +8,7 @@ import { permanentRedirect } from "next/navigation";
 //import { useEffect } from "react";
 //import { useSearchParams } from "next/navigation";
 
-export default async function Home({searchParams}: {searchParams: Promise<{[key: string]: string | string[] | undefined}>}) {
+export default async function Home() {
 
   /**
 useEffect(() => {
@@ -17,14 +17,6 @@ supabase.storage.listBuckets().then((result) =>{console.log("Bucket List", resul
 }, []);
  */
 
-
-const {magicLink} = await searchParams
-
-console.log(magicLink)
-
-const wantsMagicLink = false //searchParams.get("magicLink") === "yes";
-
-console.log("quiere magic link?: "+wantsMagicLink)
 
 const supabase = await createSupabaseServerClient();
   const { data } = await supabase.auth.getClaims();

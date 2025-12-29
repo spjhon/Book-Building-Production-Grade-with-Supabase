@@ -21,7 +21,7 @@ const {magicLink} = await searchParams
 
 console.log(magicLink)
 
-const wantsMagicLink = false //searchParams.get("magicLink") === "yes";
+const wantsMagicLink = magicLink === "yes";
 
 console.log("quiere magic link?: "+wantsMagicLink)
 
