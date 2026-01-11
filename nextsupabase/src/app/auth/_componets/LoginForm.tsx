@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { cn } from "@/lib/utils";
 import {
@@ -20,26 +20,24 @@ type LoginProps = React.ComponentPropsWithoutRef<"div"> & {
   isPasswordLogin?: boolean;
 };
 
-export const LoginForm = ({ className, isPasswordLogin, ...props }: LoginProps) => {
-  
+export const LoginForm = ({
+  className,
+  isPasswordLogin,
+  ...props
+}: LoginProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-console.log("se ha renderizado")
+  const supabase = createSupabaseBrowserClient();
 
-
-
- const supabase = createSupabaseBrowserClient();
-
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) {
-        router.refresh();
-      }
-    });
-  
+  supabase.auth.getSession().then(({ data }) => {
+    if (data.session) {
+      router.refresh();
+    }
+  });
 
   const passwordField = (
     <div className="grid gap-2">
@@ -63,40 +61,68 @@ console.log("se ha renderizado")
     </div>
   );
 
-
-
-
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Esto viene primero");
-    const supabase = createSupabaseBrowserClient();
-    setIsLoading(true);
-    setError(null);
 
-    const valorPromesa = await new Promise(resolve => setTimeout(() => resolve("esto viene de la promesa"), 1000))
+    if (isPasswordLogin) {
+      const supabase = createSupabaseBrowserClient();
+      setIsLoading(true);
+      setError(null);
 
-    console.log(valorPromesa)
-    try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-      if (error) throw error;
-      // Update this route to redirect to an authenticated route. The user already has an active session.
-      router.push("/tickets");
-    } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "An error occurred");
-    } finally {
-      setIsLoading(false);
+      const valorPromesa = await new Promise((resolve) =>
+        setTimeout(() => resolve("esto viene de la promesa"), 1000)
+      );
+
+      console.log("valor promesa" + valorPromesa);
+      try {
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        if (error) throw error;
+        // Update this route to redirect to an authenticated route. The user already has an active session.
+        router.push("/tickets");
+      } catch (error: unknown) {
+        setError(error instanceof Error ? error.message : "An error occurred");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    if (!isPasswordLogin) {
+      
+      // Validación real
+      if (typeof email !== "string") {
+        setError("Lo siento, el email no es un string.");
+      }
+
+      if (!email) {
+        setError("Lo siento, el email no existe");
+      }
+
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        setError("Lo siento, el email no cumple las condiciones");
+      }
+
+      email.trim();
+
+      try {
+        const supabase = createSupabaseBrowserClient();
+
+        const { error } = await supabase.auth.signInWithOtp({email, options: { shouldCreateUser: false, emailRedirectTo: 'http://127.0.0.1:3000/tickets', },});
+
+        if (error) throw error;
+
+       router.push("/auth/magic-thanks")
+
+
+      } catch (error: unknown) {
+        setError(error instanceof Error ? error.message : "An error occurred");
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
-
-
-
-
-
-
 
 
   return (
@@ -109,7 +135,13 @@ console.log("se ha renderizado")
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleLogin} action="/auth/login-magic-link/api" method="POST">
+          <form
+            onSubmit={handleLogin}
+            action={
+              isPasswordLogin ? `/auth/login/api` : `/auth/login-magic-link/api`
+            }
+            method="POST"
+          >
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
@@ -128,18 +160,32 @@ console.log("se ha renderizado")
               {error && <p className="text-sm text-red-500">{error}</p>}
 
               <Button type="submit" className="w-full">
-                {!isLoading ? ( isPasswordLogin? "Login with Password": "Login with Magic Link"): ""}
-                {isLoading? "Entrando": ""}
+                {!isLoading
+                  ? isPasswordLogin
+                    ? "Login with Password"
+                    : "Login with Magic Link"
+                  : ""}
+                {isLoading ? "Entrando" : ""}
               </Button>
 
               {/* Toggle */}
               <p className="mt-4 text-center text-sm">
                 {isPasswordLogin ? (
-                  <Link href={{ pathname: "/auth/login", query: { magicLink: "yes" } }}>
+                  <Link
+                    href={{
+                      pathname: "/auth/login",
+                      query: { magicLink: "yes" },
+                    }}
+                  >
                     Use Magic Link Instead
                   </Link>
                 ) : (
-                  <Link href={{ pathname: "/auth/login", query: { magicLink: "no" } }}>
+                  <Link
+                    href={{
+                      pathname: "/auth/login",
+                      query: { magicLink: "no" },
+                    }}
+                  >
                     Use Password Instead
                   </Link>
                 )}

@@ -7,6 +7,8 @@ export async function POST(request: Request) {
   const password = formData.get("password");
   // Step 2:
 
+console.log("Se ha ejecutado la ruta API login con la constraseña:" + password)
+
 if (typeof email !== "string" || typeof password !== "string") {
     return NextResponse.redirect(
       new URL("/error?type=invalid-form", request.url),
@@ -14,16 +16,13 @@ if (typeof email !== "string" || typeof password !== "string") {
     );
   }
 
+ 
+  
 
 
   const supabase = createSupabaseServerClient();
   // Step 3:
-  const { data, error } = await (
-    await supabase
-  ).auth.signInWithPassword({
-    email,
-    password,
-  });
+  const { data, error } = await (await supabase).auth.signInWithPassword({email, password,});
   // Step 4:
   const userData = data?.user;
   if (error || !userData) {

@@ -19,8 +19,6 @@ supabase.storage.listBuckets().then((result) =>{console.log("Bucket List", resul
 
 const {magicLink} = await searchParams
 
-console.log(magicLink)
-
 const wantsMagicLink = magicLink === "yes";
 
 console.log("quiere magic link?: "+wantsMagicLink)

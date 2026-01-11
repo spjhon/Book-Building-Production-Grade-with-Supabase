@@ -1,8 +1,8 @@
 
 
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+
 import Link from "next/link";
-import { permanentRedirect } from "next/navigation";
+;
 
 //import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 //import { useEffect } from "react";
@@ -16,15 +16,6 @@ const supabase = createSupabaseBrowserClient();
 supabase.storage.listBuckets().then((result) =>{console.log("Bucket List", result)});
 }, []);
  */
-
-
-const supabase = await createSupabaseServerClient();
-  const { data } = await supabase.auth.getClaims();
-
-  if (data?.claims) {
-    permanentRedirect('/tickets')
-  }  
-
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
