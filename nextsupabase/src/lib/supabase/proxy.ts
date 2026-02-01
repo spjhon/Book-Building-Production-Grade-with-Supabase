@@ -41,12 +41,53 @@ export async function updateSession(request: NextRequest) {
 
   const user = data?.claims;
   
+
+
+const pathname = request.nextUrl.pathname;
+
+
+
+  // --------
+  // EXTRAER TENANT
+  // --------
+  const [tenant, ...rest] = pathname.slice(1).split("/");
+  const applicationPath = "/" + rest.join("/");
+
+  const isTenantRoute = rest.length > 0;
+
+  if (isTenantRoute && !/^[a-z0-9-_]+$/.test(tenant)) {
+    return NextResponse.rewrite(new URL("/not-found", request.url));
+  }
+
+// --------
+// RUTAS PÚBLICAS (dentro del tenant), si la ruta de la aplicacion (la que no tiene tenant) empieza por auth, dejelo pasar.
+// --------
+if (
+  applicationPath.startsWith("/auth")
+) {
+  return supabaseResponse;
+}
+
+ // --------
+  // PROTECCIÓN DE RUTAS PRIVADAS, si no hay usuario y a parte la ruta de la aplicacion empieza por tickets, yuka, es ruta privada y hay que hacer redireccion
+  // --------
+  if (applicationPath.startsWith("/tickets") && !user) {
+    const url = request.nextUrl.clone();
+    url.pathname = `/${tenant}/auth/login`;
+    return NextResponse.redirect(url);
+  }
+
+
+
+
+
+  
 /**
  * “Si NO hay usuario
 y NO estoy en /login
 y NO estoy en /auth
 → redirige a /login”
- */
+
   if (
     request.nextUrl.pathname !== "/" &&
     !user &&
@@ -58,6 +99,11 @@ y NO estoy en /auth
     url.pathname = "/auth/login";
     return NextResponse.redirect(url);
   }
+
+  */
+
+
+
 
   
 

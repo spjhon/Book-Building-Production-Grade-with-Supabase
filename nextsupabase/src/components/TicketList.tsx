@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { DummyTicket } from "@/app/tickets/page";
+import { DummyTicket } from "@/app/[tenant]/tickets/page";
 
 interface TicketListProps {
   tickets: DummyTicket[];
