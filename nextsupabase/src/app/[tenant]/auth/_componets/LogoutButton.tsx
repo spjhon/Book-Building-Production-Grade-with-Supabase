@@ -11,13 +11,13 @@ export function LogoutButton() {
   const logout = async () => {
     const supabase = createSupabaseBrowserClient();
     await supabase.auth.signOut();
-    router.push("/");
+    router.push("/abc");
   };
 
   return (
     <Link
       role="button"
-      href="/logout"
+      href="/123"
       prefetch={false}
       className="secondary"
       onClick={(event) => {

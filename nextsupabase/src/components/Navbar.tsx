@@ -19,31 +19,38 @@ export interface RouteProps {
   label: string;
 }
 
-export const Navbar = () => {
+interface NavbarProps {
+  tenant: string;
+}
+
+export const Navbar = ({tenant}: NavbarProps) => {
+
   const pathname = usePathname();
+  
   
 
   const routeList: RouteProps[] = [
     {
-      href: "/tickets",
+      href: `/${tenant}/tickets`,
       label: "Ticket List",
     },
     {
-      href: "/tickets/new",
+      href: `/${tenant}/tickets/new`,
       label: "New Ticket",
     },
     {
-      href: "/tickets/users",
+      href: `/${tenant}/tickets/users`,
       label: "Users",
     },
   ];
+
 
   return (
     <header className="bg-clip-padding backdrop-filter backdrop-blur-md bg-opacity-0 sticky border-b top-0 z-40 dark:border-b-slate-700 dark:bg-background">
       <div className="container flex flex-row justify-between items-center mx-auto relative">
         <Link
           rel="noreferrer noopener"
-          href="/"
+          href={`/${tenant}`}
           className="ml-2 font-bold text-xl"
         >
           {"Tenant de acuerdo al libro"}

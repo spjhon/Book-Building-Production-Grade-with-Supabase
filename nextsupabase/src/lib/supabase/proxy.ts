@@ -54,6 +54,7 @@ const pathname = request.nextUrl.pathname;
   const applicationPath = "/" + rest.join("/");
 
   const isTenantRoute = rest.length > 0;
+  
 
   if (isTenantRoute && !/^[a-z0-9-_]+$/.test(tenant)) {
     return NextResponse.rewrite(new URL("/not-found", request.url));
@@ -72,13 +73,18 @@ if (
   // PROTECCIÓN DE RUTAS PRIVADAS, si no hay usuario y a parte la ruta de la aplicacion empieza por tickets, yuka, es ruta privada y hay que hacer redireccion
   // --------
   if (applicationPath.startsWith("/tickets") && !user) {
+    console.log("se activo este codigo")
     const url = request.nextUrl.clone();
     url.pathname = `/${tenant}/auth/login`;
     return NextResponse.redirect(url);
   }
 
 
-
+if (pathname==="/"){
+  const url = request.nextUrl.clone();
+    url.pathname = `/tenant-default`;
+    return NextResponse.redirect(url);
+}
 
 
   

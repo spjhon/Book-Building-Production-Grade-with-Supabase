@@ -7,7 +7,9 @@ import { permanentRedirect } from "next/navigation";
 //import { useEffect } from "react";
 //import { useSearchParams } from "next/navigation";
 
-export default async function Login({searchParams}: {searchParams: Promise<{[key: string]: string | string[] | undefined}>}) {
+export default async function Login({searchParams, params}: {searchParams: Promise<{[key: string]: string | string[] | undefined}>, params: Promise<{ tenant: string }>}) {
+
+const { tenant } = await params;
 
   /**
 useEffect(() => {
@@ -27,7 +29,7 @@ const supabase = await createSupabaseServerClient();
   const { data } = await supabase.auth.getClaims();
 
   if (data?.claims) {
-    permanentRedirect('/tickets')
+    permanentRedirect(`/${tenant}/tickets`)
   }  
 
 
@@ -35,7 +37,7 @@ const supabase = await createSupabaseServerClient();
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
       <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black">
         
-        <LoginForm isPasswordLogin={!wantsMagicLink}></LoginForm>
+        <LoginForm isPasswordLogin={!wantsMagicLink} tenant={tenant}></LoginForm>
       </main>
     </div>
   );

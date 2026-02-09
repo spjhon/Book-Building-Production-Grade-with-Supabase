@@ -15,10 +15,20 @@ import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+
+interface UpdatePasswordFormProps
+  extends React.ComponentPropsWithoutRef<"div"> {
+  tenant: string;
+}
+
+
+
+
 export function UpdatePasswordForm({
   className,
+  tenant,
   ...props
-}: React.ComponentPropsWithoutRef<"div">) {
+}: UpdatePasswordFormProps) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -34,7 +44,7 @@ export function UpdatePasswordForm({
       const { error } = await supabase.auth.updateUser({ password });
       if (error) throw error;
       // Update this route to redirect to an authenticated route. The user already has an active session.
-      router.push("/tickets");
+      router.push(`/${tenant}/tickets`);
     } catch (error: unknown) {
       setError(error instanceof Error ? mapSupabaseAuthError(error.name) : "Ha ocurrido un error, yuka");
     } finally {

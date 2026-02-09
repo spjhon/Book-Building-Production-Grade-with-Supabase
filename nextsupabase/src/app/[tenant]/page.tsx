@@ -8,7 +8,9 @@ import Link from "next/link";
 //import { useEffect } from "react";
 //import { useSearchParams } from "next/navigation";
 
-export default async function Home() {
+export default async function Home({params}: {params: Promise<{ tenant: string }>}) {
+
+const {tenant} = await params
 
   /**
 useEffect(() => {
@@ -21,9 +23,8 @@ supabase.storage.listBuckets().then((result) =>{console.log("Bucket List", resul
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
       <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black">
         
-        Este es el landing page
-        ve a login para entrar 
-        <Link href={"/auth/login"}>Login</Link>
+        Este es el landing page de {tenant} ve a login para entrar 
+        <Link href={`${tenant}/tickets`}>Login</Link>
       </main>
     </div>
   );

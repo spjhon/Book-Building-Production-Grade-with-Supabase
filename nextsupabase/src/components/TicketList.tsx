@@ -3,6 +3,7 @@ import { DummyTicket } from "@/app/[tenant]/tickets/page";
 
 interface TicketListProps {
   tickets: DummyTicket[];
+  tenant: string
 }
 
 const statusStyles: Record<string, string> = {
@@ -11,7 +12,7 @@ const statusStyles: Record<string, string> = {
   "Done": "bg-green-100 text-green-700",
 };
 
-export function TicketList({ tickets }: TicketListProps) {
+export function TicketList({ tickets, tenant }: TicketListProps) {
   return (
     <div className="overflow-x-auto">
       <table className="w-full border-collapse text-left">
@@ -37,7 +38,7 @@ export function TicketList({ tickets }: TicketListProps) {
               {/* Title */}
               <td className="py-3 px-2">
                 <Link
-                  href={`/tickets/details/${ticket.id}`}
+                  href={`/${tenant}/tickets/details/${ticket.id}`}
                   className="text-blue-600 hover:underline font-semibold"
                 >
                   {ticket.title}

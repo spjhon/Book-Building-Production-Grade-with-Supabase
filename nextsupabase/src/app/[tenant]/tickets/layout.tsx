@@ -1,22 +1,25 @@
 import { Navbar } from "@/components/Navbar";
+import { ReactNode } from "react";
 
 interface TicketsLayoutProps {
-  children: React.ReactNode;
+  children: ReactNode;
+  params: Promise<{ tenant: string }>;
 }
 
-const TicketsLayout = ({ children }: TicketsLayoutProps) => {
+export default async function TicketsLayout({children, params}: TicketsLayoutProps) {
+  const { tenant } = await params;
+  
+
   return (
     <>
       <section>
-        <Navbar></Navbar>
+        <Navbar tenant = {tenant} />
       </section>
 
       <section>
-        Layout de tickets
+        Layout de tickets para tenant: {tenant}
         {children}
       </section>
     </>
   );
-};
-
-export default TicketsLayout;
+}

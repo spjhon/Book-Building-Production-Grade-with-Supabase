@@ -1,7 +1,9 @@
+import { urlPath } from "@/utils/url-helpers";
 import Link from "next/link";
 
-export default async function ErrorPage({searchParams}: {searchParams: Promise<{ type: string }>}) {
+export default async function ErrorPage({searchParams, params}: {searchParams: Promise<{ type: string }>, params: Promise<{ tenant: string }>}) {
   const { type } = await searchParams;
+  const {tenant} = await params
   const knownErrors = [
     "login-failed",
     "invalid_magiclink",
@@ -45,7 +47,7 @@ export default async function ErrorPage({searchParams}: {searchParams: Promise<{
       <br />
       <br />
 
-      <Link role="button" href="/">
+      <Link role="button" href={urlPath('/', tenant)}>
         Go back.
       </Link>
     </div>

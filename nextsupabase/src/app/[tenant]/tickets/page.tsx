@@ -7,6 +7,12 @@ export interface DummyTicket {
   author: string;
 }
 
+
+interface TicketsPageProps {
+  params: Promise<{ tenant: string }>;
+}
+
+
 export const dummyTickets: DummyTicket[] = [
   {
     id: 1,
@@ -28,7 +34,12 @@ export const dummyTickets: DummyTicket[] = [
   },
 ];
 
-const TicketsPage = () => {
+export default async function TicketsPage ({params}: TicketsPageProps) {
+
+
+const { tenant } = await params;
+
+
   return (
     <div className="max-w-5xl mx-auto py-10 space-y-8">
       
@@ -49,13 +60,11 @@ const TicketsPage = () => {
 
       {/* Ticket List */}
       <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-6">
-        <TicketList tickets={dummyTickets} />
+        <TicketList tickets={dummyTickets} tenant ={tenant}/>
       </div>
     </div>
   );
 };
-
-export default TicketsPage;
 
 
 

@@ -18,11 +18,13 @@ import { useRouter } from "next/navigation";
 
 type LoginProps = React.ComponentPropsWithoutRef<"div"> & {
   isPasswordLogin?: boolean;
+  tenant: string;
 };
 
 export const LoginForm = ({
   className,
   isPasswordLogin,
+  tenant,
   ...props
 }: LoginProps) => {
   const [email, setEmail] = useState("");
@@ -44,7 +46,7 @@ export const LoginForm = ({
       <div className="flex items-center">
         <Label htmlFor="password">Password</Label>
         <Link
-          href="/auth/forgot-password"
+          href= {`/${tenant}/auth/forgot-password`}
           className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
         >
           Forgot your password?
@@ -81,7 +83,7 @@ export const LoginForm = ({
         });
         if (error) throw error;
         // Update this route to redirect to an authenticated route. The user already has an active session.
-        router.push("/tickets");
+        router.push(`/${tenant}/tickets`);
       } catch (error: unknown) {
         setError(error instanceof Error ? error.message : "An error occurred");
       } finally {
@@ -109,11 +111,11 @@ export const LoginForm = ({
       try {
         const supabase = createSupabaseBrowserClient();
 
-        const { error } = await supabase.auth.signInWithOtp({email, options: { shouldCreateUser: false, emailRedirectTo: 'http://127.0.0.1:3000/tickets', },});
+        const { error } = await supabase.auth.signInWithOtp({email, options: { shouldCreateUser: false, emailRedirectTo: `http://127.0.0.1:3000/${tenant}/auth/confirm?tenant=${tenant}`, },});
 
         if (error) throw error;
 
-       router.push("/auth/magic-thanks")
+       router.push(`/${tenant}/auth/magic-thanks`)
 
 
       } catch (error: unknown) {
@@ -138,7 +140,7 @@ export const LoginForm = ({
           <form
             onSubmit={handleLogin}
             action={
-              isPasswordLogin ? `/auth/login/api` : `/auth/login-magic-link/api`
+              isPasswordLogin ? `/${tenant}/auth/login/api` : `/${tenant}/auth/login-magic-link/api`
             }
             method="POST"
           >
@@ -173,7 +175,7 @@ export const LoginForm = ({
                 {isPasswordLogin ? (
                   <Link
                     href={{
-                      pathname: "/auth/login",
+                      pathname: `/${tenant}/auth/login`,
                       query: { magicLink: "yes" },
                     }}
                   >
@@ -182,7 +184,7 @@ export const LoginForm = ({
                 ) : (
                   <Link
                     href={{
-                      pathname: "/auth/login",
+                      pathname: `/${tenant}/auth/login`,
                       query: { magicLink: "no" },
                     }}
                   >
@@ -195,7 +197,7 @@ export const LoginForm = ({
             <div className="mt-4 text-center text-sm">
               Don&apos;t have an account?{" "}
               <Link
-                href="/auth/sign-up"
+                href={`/${tenant}/auth/sign-up`}
                 className="underline underline-offset-4"
               >
                 Sign up
