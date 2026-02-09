@@ -8,10 +8,10 @@ import {
 
 import { Megaphone } from "lucide-react";
 import Link from "next/link";
-import { buttonVariants } from "./ui/button";
+import { buttonVariants } from "@/components/ui/button";
 
 import { usePathname } from "next/navigation";
-import { LogoutButton } from "../app/[tenant]/auth/_componets/LogoutButton";
+import { LogoutButton } from "@/app/[tenant]/tickets/_components/LogoutButton";
 
 //Props para la barra de navegacion
 export interface RouteProps {

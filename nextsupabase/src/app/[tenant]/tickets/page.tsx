@@ -1,4 +1,4 @@
-import { TicketList } from "@/components/TicketList";
+import { TicketList } from "@/app/[tenant]/tickets/_components/TicketList";
 
 export interface DummyTicket {
   id: number;

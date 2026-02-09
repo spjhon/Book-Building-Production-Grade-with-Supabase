@@ -1,4 +1,4 @@
-import { Navbar } from "@/components/Navbar";
+import { Navbar } from "@/app/[tenant]/tickets/_components/Navbar";
 import { ReactNode } from "react";
 
 interface TicketsLayoutProps {
