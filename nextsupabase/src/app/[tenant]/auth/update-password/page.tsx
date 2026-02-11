@@ -1,4 +1,4 @@
-import { UpdatePasswordForm } from "./_components/update-password-form";
+import { UpdatePasswordForm } from "../../../../features/auth/components/update-password-form";
 
 interface UpdatePasswordFormPageProps {
   params: Promise<{ tenant: string }>;

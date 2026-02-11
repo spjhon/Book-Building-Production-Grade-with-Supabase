@@ -1,4 +1,4 @@
-import TicketComments from "./ticketComment";
+import TicketComments from "../../../../../features/tickets/components/ticketComment";
 
 export default async function TicketDetailPage({
   params,

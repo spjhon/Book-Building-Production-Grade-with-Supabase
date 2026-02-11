@@ -4,7 +4,7 @@ type tenantProp = {
 }
 export default function TenantName({ tenant }: tenantProp) {
 
-const tenantName = "Unknown";
+const tenantName = tenant;
 
 return <strong>{tenantName}</strong>
 

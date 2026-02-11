@@ -1,5 +1,5 @@
 
-import { LoginForm } from "@/app/[tenant]/auth/login/_components/LoginForm";
+import { LoginForm } from "@/features/auth/components/LoginForm";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { permanentRedirect } from "next/navigation";
 

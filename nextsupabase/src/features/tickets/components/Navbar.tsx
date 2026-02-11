@@ -11,7 +11,7 @@ import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 
 import { usePathname } from "next/navigation";
-import { LogoutButton } from "@/app/[tenant]/tickets/_components/LogoutButton";
+import { LogoutButton } from "@/features/tickets/components/LogoutButton";
 
 //Props para la barra de navegacion
 export interface RouteProps {

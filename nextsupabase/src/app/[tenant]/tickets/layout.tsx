@@ -1,4 +1,5 @@
-import { Navbar } from "@/app/[tenant]/tickets/_components/Navbar";
+import { Navbar } from "@/features/tickets/components/Navbar";
+import TenantName from "@/features/tickets/components/TenantName";
 import { ReactNode } from "react";
 
 interface TicketsLayoutProps {
@@ -17,7 +18,7 @@ export default async function TicketsLayout({children, params}: TicketsLayoutPro
       </section>
 
       <section>
-        Layout de tickets para tenant: {tenant}
+        Layout de tickets para tenant: <TenantName tenant = {tenant} />
         {children}
       </section>
     </>
