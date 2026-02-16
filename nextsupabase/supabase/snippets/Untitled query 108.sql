@@ -1,1 +1,1 @@
-SELECT rolname FROM pg_roles;
+SELECT * FROM public.tenants;
