@@ -1,1 +1,1 @@
-SELECT * FROM public.tenants;
+select now()

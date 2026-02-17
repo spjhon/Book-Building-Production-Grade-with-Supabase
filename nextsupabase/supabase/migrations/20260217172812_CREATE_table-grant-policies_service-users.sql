@@ -2,7 +2,7 @@
 -- Tabla: service_users
 -- ===============================
 
-COMMENT ON TABLE public.service_users IS 'Version del schema v1';
+
 
 CREATE table public.service_users (
   id uuid primary key default gen_random_uuid(),
@@ -19,7 +19,7 @@ CREATE table public.service_users (
   constraint service_users_auth_user_id_key unique (auth_user_id)
 );
 
-
+COMMENT ON TABLE public.service_users IS 'Version del schema v1';
 
 -- ==========================================
 -- Indexes
