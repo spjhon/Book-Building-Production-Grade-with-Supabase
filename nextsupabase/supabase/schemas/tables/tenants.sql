@@ -2,7 +2,7 @@
 -- Tabla: tenants
 -- ==========================================
 
-COMMENT ON TABLE public.tenants IS 'Version del schema v1';
+
 
 create table public.tenants (
   id uuid primary key default gen_random_uuid(),
@@ -19,9 +19,13 @@ create table public.tenants (
   constraint tenants_slug_format_check check (slug ~ '^[a-z0-9-]+$')
 );
 
+
+
 -- ==========================================
 -- Comentarios (documentación viva)
 -- ==========================================
+
+COMMENT ON TABLE public.tenants IS 'Version del schema v1';
 
 comment on table public.tenants is 'Tenant root entity for multi-tenant isolation. Represents an organization/customer.';
 

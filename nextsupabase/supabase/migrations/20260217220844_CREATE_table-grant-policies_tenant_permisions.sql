@@ -26,7 +26,7 @@ create table public.tenant_permissions (
 -- Comentarios
 -- ==========================================
 
-COMMENT ON TABLE public.tenants_permissions IS 'Version del schema v1';
+COMMENT ON TABLE public.tenant_permissions IS 'Version del schema v1';
 
 comment on table public.tenant_permissions is 'Maps service_users to tenants with role-based permissions.';
 comment on column public.tenant_permissions.role is 'Role of the user inside the tenant context.';
