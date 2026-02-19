@@ -5,21 +5,15 @@
 create table public.tenant_permissions (
   id uuid primary key default gen_random_uuid(),
 
-  tenant_id uuid not null
-    references public.tenants(id)
-    on delete cascade,
-
-  service_user_id uuid not null
-    references public.service_users(id)
-    on delete cascade,
+  tenant_id uuid not null references public.tenants(id) on delete cascade,
+  service_user_id uuid not null references public.service_users(id) on delete cascade,
 
   role text not null default 'member' check (role in ('owner','admin','member')),
 
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
 
-  -- Evita duplicar membresías
-  constraint tenant_permissions_unique_pair unique (tenant_id, service_user_id)
+constraint tenant_permissions_unique_pair unique (tenant_id, service_user_id)
 );
 
 -- ==========================================
@@ -42,31 +36,5 @@ create index tenant_permissions_service_user_id_idx on public.tenant_permissions
 -- GRANTS
 -- ==========================================
 
-grant select
-on table public.tenant_permissions
-to authenticated;
-
-grant all
-on table public.tenant_permissions
-to service_role;
-
--- ==========================================
--- RLS
--- ==========================================
-
-alter table public.tenant_permissions enable row level security;
-
--- Usuarios pueden ver sus propias membresías
-create policy "Users can read their tenant memberships"
-on public.tenant_permissions
-for select
-to authenticated
-using (
-  service_user_id in (
-    select id
-    from public.service_users
-    where auth_user_id = auth.uid()
-  )
-);
-
--- Solo el backend (service_role) debería crear/editar permisos
+grant select on table public.tenant_permissions to authenticated;
+grant all on table public.tenant_permissions to service_role;

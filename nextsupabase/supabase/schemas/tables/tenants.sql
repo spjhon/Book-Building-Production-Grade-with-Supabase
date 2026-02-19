@@ -25,7 +25,10 @@ create table public.tenants (
 -- Comentarios (documentación viva)
 -- ==========================================
 
+-- ==========================================
+-- VERSION DE LA TABLA CON SUS INDEX, GRANTS Y POLICIES
 COMMENT ON TABLE public.tenants IS 'Version del schema v1';
+-- ==========================================
 
 comment on table public.tenants is 'Tenant root entity for multi-tenant isolation. Represents an organization/customer.';
 
@@ -44,13 +47,9 @@ create index tenants_created_at_idx on public.tenants (created_at);
 -- Seguridad estructural (GRANTS)
 -- ==========================================
 
-grant select
-on table public.tenants
-to authenticated;
+grant select on table public.tenants to authenticated;
 
-grant all
-on table public.tenants
-to service_role;
+grant all on table public.tenants to service_role;
 
 -- ==========================================
 -- RLS
@@ -63,11 +62,30 @@ alter table public.tenants enable row level security;
 -- Normalmente esto lo hace el backend con service_role.
 -- Aquí asumimos que solo lectura pública es permitida.
 
-create policy "Public can read tenants"
+
+--Entonces ¿qué está comprobando exactamente el EXISTS? El EXISTS pregunta:
+--¿Hay al menos una fila en tenant_permissions
+--que:
+--pertenezca a este tenant
+--y cuyo service_user esté asociado al usuario autenticado?
+
+
+create policy "Solo usuarios autenticados pueden leer sus propios tenants"
 on public.tenants
 for select
 to authenticated
-using (true);
+using (
+  exists (
+    select 1 
+    from public.tenant_permissions tp inner join public.service_users su on tp.service_user_id = su.id
+    /*
+    Significa:
+      Combina filas donde tenant_permissions.service_user_id sea igual a service_users.id
+    */
+    where tp.tenant_id = public.tenants.id
+    and su.auth_user_id = auth.uid()
+)
+);
 
 
 

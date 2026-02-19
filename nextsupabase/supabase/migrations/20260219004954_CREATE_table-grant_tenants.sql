@@ -19,11 +19,16 @@ create table public.tenants (
   constraint tenants_slug_format_check check (slug ~ '^[a-z0-9-]+$')
 );
 
+
+
 -- ==========================================
 -- Comentarios (documentación viva)
 -- ==========================================
 
+-- ==========================================
+-- VERSION DE LA TABLA CON SUS INDEX, GRANTS Y POLICIES
 COMMENT ON TABLE public.tenants IS 'Version del schema v1';
+-- ==========================================
 
 comment on table public.tenants is 'Tenant root entity for multi-tenant isolation. Represents an organization/customer.';
 
@@ -42,33 +47,6 @@ create index tenants_created_at_idx on public.tenants (created_at);
 -- Seguridad estructural (GRANTS)
 -- ==========================================
 
-grant select
-on table public.tenants
-to authenticated;
+grant select on table public.tenants to authenticated;
 
-grant all
-on table public.tenants
-to service_role;
-
--- ==========================================
--- RLS
--- ==========================================
-
-alter table public.tenants enable row level security;
-
--- Nota:
--- Esta tabla normalmente NO debería permitir a usuarios crear tenants libremente.
--- Normalmente esto lo hace el backend con service_role.
--- Aquí asumimos que solo lectura pública es permitida.
-
-create policy "Public can read tenants"
-on public.tenants
-for select
-to authenticated
-using (true);
-
-
-
-
-
-
+grant all on table public.tenants to service_role;
