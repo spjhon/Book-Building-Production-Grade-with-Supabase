@@ -1,4 +1,3 @@
-import { AuthError } from "@supabase/supabase-js"
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
