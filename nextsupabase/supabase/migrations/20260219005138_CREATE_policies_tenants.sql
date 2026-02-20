@@ -24,7 +24,7 @@ for select
 to authenticated
 using (
   -- 1. Verificación rápida por JWT (Filtro de primera línea)
-  ((auth.jwt() -> 'app_metadata' -> 'tenants') ? id::text)
+  ((auth.jwt() -> 'app_metadata' -> 'tenants') ? slug::text)
   
   AND -- AMBAS deben cumplirse
   
