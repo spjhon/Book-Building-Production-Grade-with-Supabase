@@ -1,4 +1,5 @@
 import { createBrowserClient } from "@supabase/ssr";
+import { Database } from "../../../supabase/types/database.types";
 
 export const createSupabaseBrowserClient = () => {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -8,7 +9,7 @@ export const createSupabaseBrowserClient = () => {
     throw new Error("Missing Supabase environment variables");
   }
 
-  return createBrowserClient(url, anonKey);
+  return createBrowserClient<Database>(url, anonKey);
 };
 
 

@@ -6,7 +6,7 @@
 
 insert into public.service_users (id, auth_user_id, full_name)
 values
-  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '73c7862b-07e7-45f2-9e00-5ed0c2ac863d', 'Ana Torres');
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '22f1b34b-c612-40eb-b2b6-2242d1683a9c', 'Ana Torres');
 
 
 -- ==========================================
@@ -44,3 +44,9 @@ values
     'owner'
   );
   
+
+
+UPDATE auth.users
+SET raw_app_meta_data = '{"provider": "email","providers":
+["email"],"tenants": ["acme", "globex"]}'
+WHERE id='22f1b34b-c612-40eb-b2b6-2242d1683a9c';

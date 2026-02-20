@@ -10,7 +10,7 @@ const tenantName = tenant;
 
 const supabase = await createSupabaseServerClient();
 
-const {data, error} = await supabase.rpc("get_tenant_name", {p_tenant_id: "11111111-1111-1111-1111-111111111111"})
+const {data, error} = await supabase.rpc("get_tenant_name", {p_tenant_slug: "acme"})
 
 console.log (data)
 
