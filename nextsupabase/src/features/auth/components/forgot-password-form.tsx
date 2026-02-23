@@ -21,7 +21,24 @@ interface ForgotPasswordFormProps
   tenant: string;
 }
 
-
+/**
+ * ForgotPasswordForm (Client Component)
+ * ------------------------------------
+ * Este componente gestiona la solicitud de recuperación de contraseña. Permite a los usuarios 
+ * ingresar su correo electrónico para recibir un enlace de restablecimiento vinculado al tenant.
+ * * @param {string} tenant - El identificador del tenant para construir la URL de redirección.
+ * * Datos:
+ * - Estados locales para manejar el 'email', mensajes de 'error', estado de 'success' y carga ('isLoading').
+ * - Utiliza el método 'resetPasswordForEmail' de Supabase Auth.
+ * * Flujo:
+ * 1. Captura el envío del formulario y previene el comportamiento por defecto.
+ * 2. Inicializa el cliente de Supabase y gestiona los estados de carga y error previos.
+ * 3. Ejecuta la petición de recuperación definiendo una 'redirectTo' dinámica basada en el tenant actual.
+ * 4. Maneja el éxito de la operación activando la vista de confirmación (estado success).
+ * 5. Captura y despliega errores en caso de fallos en la comunicación con el backend.
+ * 6. Renderiza condicionalmente el formulario o el mensaje de éxito basado en el estado del proceso.
+ * * @return JSX.Element - Un formulario de recuperación o un mensaje de instrucciones enviado.
+ */
 
 
 export function ForgotPasswordForm({
@@ -39,21 +56,25 @@ export function ForgotPasswordForm({
   const [isLoading, setIsLoading] = useState(false);
 
   const handleForgotPassword = async (e: React.FormEvent) => {
+    //1.
     e.preventDefault();
+
+    //2.
     const supabase = createSupabaseBrowserClient();
     setIsLoading(true);
     setError(null);
 
     try {
-      // The url which will be included in the email. This URL needs to be configured in your redirect URLs in the Supabase dashboard at https://supabase.com/dashboard/project/_/auth/url-configuration
+      // 3. The url which will be included in the email. This URL needs to be configured in your redirect URLs in the Supabase dashboard at https://supabase.com/dashboard/project/_/auth/url-configuration
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/${tenant}/auth/update-password`,
       });
 
       if (error) throw error;
-
+      //4.
       setSuccess(true);
 
+      //5.
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {
@@ -63,6 +84,8 @@ export function ForgotPasswordForm({
   };
 
   return (
+
+    //6.
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       {success ? (
         <Card>

@@ -23,6 +23,31 @@ interface NavbarProps {
   tenant: string;
 }
 
+
+/**
+ * Navbar Component (Client Component)
+ * ----------------------------------
+ * Proporciona la interfaz de navegación principal de la aplicación, adaptando los enlaces 
+ * dinámicamente según el tenant activo y resaltando la ruta actual.
+ *
+ * * * @param {string} tenant - Identificador de la organización para construir las rutas de navegación.
+ * * * Datos:
+ * - 'routeList': Matriz de objetos que define las rutas disponibles (Tickets, New Ticket, Users).
+ * - 'isActive': Lógica booleana que compara el 'pathname' actual con la ruta del enlace.
+ * - Utiliza componentes de 'shadcn/ui' (NavigationMenu) y 'lucide-react' (Megaphone).
+ * * * Flujo:
+ * 1. Obtiene la ruta actual del navegador mediante el hook 'usePathname'.
+ * 2. Construye dinámicamente la lista de rutas inyectando el ID del tenant en cada URL.
+ * 3. Renderiza un encabezado con efecto de desenfoque (backdrop-blur) y posicionamiento fijo (sticky).
+ * 4. Itera sobre la lista de rutas para generar enlaces, aplicando variantes de botón 
+ * (default vs outline) según el estado de activación.
+ * 5. Posiciona el menú de navegación de forma absoluta y centrada en pantallas de escritorio.
+ * 6. Integra el 'LogoutButton' y elementos de utilidad en el extremo derecho de la barra.
+ * * * @return JSX.Element - Una barra de navegación persistente, responsiva y contextualizada.
+ */
+
+
+
 export const Navbar = ({tenant}: NavbarProps) => {
 
   const pathname = usePathname();
@@ -81,7 +106,7 @@ export const Navbar = ({tenant}: NavbarProps) => {
 
         <div className="hidden xl:flex gap-2">
           <Megaphone></Megaphone>
-          <LogoutButton></LogoutButton>
+          <LogoutButton tenant = {tenant}></LogoutButton>
         </div>
       </div>
     </header>

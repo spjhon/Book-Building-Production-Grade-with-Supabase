@@ -12,6 +12,28 @@ const statusStyles: Record<string, string> = {
   "Done": "bg-green-100 text-green-700",
 };
 
+
+
+/**
+ * TicketList (Presentational Component)
+ * ------------------------------------
+ * Componente encargado de renderizar una tabla detallada con la colección de tickets.
+ * Organiza la información técnica de manera tabular para facilitar la lectura del usuario.
+ *
+ * * * @param {DummyTicket[]} tickets - Arreglo de objetos que contienen los datos de cada ticket.
+ * * * @param {string} tenant - Identificador del tenant para construir las rutas de navegación.
+ * * * * Datos:
+ * - 'statusStyles': Diccionario de mapeo para aplicar clases de Tailwind según el estado (Not started, In progress, Done).
+ * - Utiliza interfaces tipadas para garantizar la integridad de los datos de entrada.
+ * * * * Flujo:
+ * 1. Define una estructura de tabla responsiva con cabeceras fijas (ID, Title, Status).
+ * 2. Mapea la colección de tickets para generar filas dinámicas con efectos de hover.
+ * 3. Construye enlaces dinámicos para cada título, dirigiendo a la vista de detalles específica del ticket.
+ * 4. Implementa etiquetas visuales (badges) mediante clases condicionales basadas en el estado del ticket.
+ * 5. Muestra metadatos secundarios como el autor debajo del título principal.
+ * * * * @return JSX.Element - Una tabla organizada con navegación integrada y estilos de estado.
+ */
+
 export function TicketList({ tickets, tenant }: TicketListProps) {
   return (
     <div className="overflow-x-auto">

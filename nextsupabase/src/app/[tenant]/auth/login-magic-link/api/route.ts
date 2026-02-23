@@ -41,9 +41,9 @@ export async function POST(request: Request) {
 
 */
 
-
+/**Este codigo de route handler esta incompleto, solo muestra un mensaje al entrar a esta api desde un login sin javascript el cual redirigio al route handler */
 import { NextResponse } from "next/server";
-export async function POST(request: Request) {
+export async function GET(request: Request) {
 return NextResponse.json({ message: "Hello from Route Handler with Magic Link" });
 }
 

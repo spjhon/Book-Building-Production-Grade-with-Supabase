@@ -74,7 +74,6 @@ if (
   // PROTECCIÓN DE RUTAS PRIVADAS, si no hay usuario y a parte la ruta de la aplicacion empieza por tickets, yuka, es ruta privada y hay que hacer redireccion
   // --------
   if (applicationPath.startsWith("/tickets") && !user) {
-    console.log("se activo este codigo")
     const url = request.nextUrl.clone();
     url.pathname = `/${tenant}/auth/login`;
     return NextResponse.redirect(url);
@@ -83,7 +82,7 @@ if (
 
 if (pathname==="/"){
   const url = request.nextUrl.clone();
-    url.pathname = `/tenant-default`;
+    url.pathname = `/acme`;
     return NextResponse.redirect(url);
 }
 

@@ -21,25 +21,48 @@ type LoginProps = React.ComponentPropsWithoutRef<"div"> & {
   tenant: string;
 };
 
+
+
+
+/**
+ * Login Form Component (Client Component)
+ * --------------------------------------
+ * Componente versátil que gestiona el acceso de usuarios mediante dos modalidades:
+ * contraseña tradicional y Magic Link (OTP), adaptándose al contexto del tenant.
+ *
+ * * @param {boolean} isPasswordLogin - Define si se muestra el flujo de contraseña o OTP.
+ * * @param {string} tenant - Identificador de la organización para redirecciones y contexto.
+ * * * Datos:
+ * - Maneja estados locales para 'email', 'password', 'error' e 'isLoading'.
+ * - Utiliza el hook 'useRouter' para la navegación post-autenticación.
+ * - 'passwordField': Sub-componente que agrupa el input de clave y el link de recuperación.
+ * * * Flujo:
+ * 1. Inicializa el router de Next.js para gestionar el redireccionamiento tras el éxito.
+ * 2. Previene el comportamiento por defecto del formulario e inicia el estado de carga.
+ * 3. Ejecuta la lógica de Login con Password: Realiza una pausa artificial (promesa), 
+ * autentica en Supabase y redirige a la ruta de tickets del tenant.
+ * 4. Ejecuta la lógica de Magic Link: Valida el formato del email, solicita el OTP a Supabase 
+ * con una URL de redirección específica y envía al usuario a la página de espera.
+ * 5. Gestiona excepciones capturando errores de autenticación y actualizando el estado visual.
+ * 6. Renderiza la interfaz de tarjeta (Card) con alternancia dinámica entre modos de login y links de registro.
+ * * * @return JSX.Element - Un formulario de autenticación robusto y condicional.
+ */
+
 export const LoginForm = ({
   className,
   isPasswordLogin,
   tenant,
   ...props
 }: LoginProps) => {
+
+  
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const supabase = createSupabaseBrowserClient();
-
-  supabase.auth.getSession().then(({ data }) => {
-    if (data.session) {
-      router.refresh();
-    }
-  });
+  
 
   const passwordField = (
     <div className="grid gap-2">
@@ -82,8 +105,13 @@ export const LoginForm = ({
           password,
         });
         if (error) throw error;
+        
+        
         // Update this route to redirect to an authenticated route. The user already has an active session.
         router.push(`/${tenant}/tickets`);
+        
+
+
       } catch (error: unknown) {
         setError(error instanceof Error ? error.message : "An error occurred");
       } finally {
