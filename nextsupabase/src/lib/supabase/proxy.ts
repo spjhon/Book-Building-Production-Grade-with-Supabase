@@ -1,176 +1,123 @@
 import { createServerClient } from "@supabase/ssr";
-import { NextResponse, type NextRequest } from "next/server";
+import { NextResponse, type NextRequest } from 'next/server';
 import { Database } from "../../../supabase/types/database.types";
+import { buildUrl, getHostnameAndPort } from "@/utils/url-helpers";
+import { createSupabaseAdminClient } from "./admin";
 
-export async function updateSession(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({
-    request,
-  });
+export async function updateSession(request: NextRequest) { //funcion proxy especial de supabase, no es el proxy de next js
+  let supabaseResponse = NextResponse.next({ request });
 
-  // With Fluid compute, don't put this client in a global environment
-  // variable. Always create a new one on each request.
-
+  // 1. CLIENTE SUPABASE
   const supabase = createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
     {
       cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
+        getAll() { return request.cookies.getAll(); },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value)
-          );
-
-          supabaseResponse = NextResponse.next({
-            request,
-          });
-          cookiesToSet.forEach(({ name, value, options }) => supabaseResponse.cookies.set(name, value, options)
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
+          // Actualizamos la respuesta base con las nuevas cookies
+          supabaseResponse = NextResponse.next({ request });
+          cookiesToSet.forEach(({ name, value, options }) =>
+            supabaseResponse.cookies.set(name, value, options)
           );
         },
       },
     }
   );
 
-  // IMPORTANT: Avoid writing any logic between createServerClient and
-  // supabase.auth.getClaims(). A simple mistake could make it very hard to debug
-  // issues with users being randomly logged out.
-
-  // IMPORTANT: Don't remove getClaims()
-  const { data } = await supabase.auth.getClaims();
-
-  const user = data?.claims;
+  
+  const { data } = await supabase.auth.getClaims(); //se obtiene el claims osea el usuario
+  const sessionUser = data?.claims; //se obtiene el usuario si es que existe y esta autenticado
+  
+  // 1. EXTRAER INFORMACIÓN BÁSICA
+  const [hostname, port] = getHostnameAndPort(request); //Se obtiene el hostname desde una funcion en utils, "acme.miapp" o "globex.miapp"
+  const applicationPath = request.nextUrl.pathname; // puede ser "/" o "/auth" o "/auth/login"
+  const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN?.split(":")[0]; // "miapp" o "127.0.0.1" o "localhost"
   
 
+ //RUTAS PUBLICAS PERMITIDAS
 
-const pathname = request.nextUrl.pathname;
+//si alguno de estos host o alguno de estos path se cumple, entonces retornar supabaseResponse sin hacer mas preguntas
+  if (
+    hostname === rootDomain ||
+    hostname === "127.0.0.1" ||
+    hostname === "miapp" ||
+    applicationPath.startsWith("/_next") || 
+    applicationPath.startsWith("/api") ||
+    applicationPath.includes(".") 
+  ) {
+    return supabaseResponse;
+  }
 
+ //OBTENCION Y VERIFICACION DEL TENANT
+  //creacion del admin de supabase para saltarse el rls de la base de datos y extraer todos los tenants registrados
+  const supabaseAdmin = createSupabaseAdminClient();
 
+  const { data: tenantData, error: tenantError } = await supabaseAdmin //se consutla el tenant que sea igual al tenant extraido del host con el split
+  .from("tenants")
+  .select("*")
+  .eq("domain", hostname.split(".")[0])
+  .single();
 
-  // --------
-  // EXTRAER TENANT
-  // --------
-  const [tenant, ...rest] = pathname.slice(1).split("/");
-  const applicationPath = "/" + rest.join("/");
-
-  const isTenantRoute = rest.length > 0;
-  
-
-  if (isTenantRoute && !/^[a-z0-9-_]+$/.test(tenant)) {
+  if (tenantError || !tenantData) { //si se detecta un error en la base de datos entonces ir a la ruta not-found
     return NextResponse.rewrite(new URL("/not-found", request.url));
   }
 
-// --------
-// RUTAS PÚBLICAS (dentro del tenant), si la ruta de la aplicacion (la que no tiene tenant) empieza por auth, dejelo pasar.
-// --------
-if (
-  applicationPath.startsWith("/auth")
-) {
-  return supabaseResponse;
-}
+  //Aqui asignamos el domain que viene de la base de datos "acme" o "globex" y se asigna al slug que se va a utilizar en las rutas
+  const tenantslug = tenantData.domain; 
 
- // --------
-  // PROTECCIÓN DE RUTAS PRIVADAS, si no hay usuario y a parte la ruta de la aplicacion empieza por tickets, yuka, es ruta privada y hay que hacer redireccion
-  // --------
-  if (applicationPath.startsWith("/tickets") && !user) {
-    const url = request.nextUrl.clone();
-    url.pathname = `/${tenant}/auth/login`;
-    return NextResponse.redirect(url);
-  }
+  //return NextResponse.json({ tenantMatch: true });
 
 
-if (pathname==="/"){
-  const url = request.nextUrl.clone();
-    url.pathname = `/acme`;
-    return NextResponse.redirect(url);
-}
+ //PROTECCION DE RUTAS
 
+  if (applicationPath.startsWith("/tickets")) {
+    
+    if (!sessionUser) {
+      // 1. Mandamos explícitamente a la ruta de LOGIN, no a la raíz
+      const loginUrl = buildUrl('/auth/login', tenantslug, request);
+      return NextResponse.redirect(loginUrl);
+    }
 
-  
-/**
- * “Si NO hay usuario
-y NO estoy en /login
-y NO estoy en /auth
-→ redirige a /login”
-
-  if (
-    request.nextUrl.pathname !== "/" &&
-    !user &&
-    !request.nextUrl.pathname.startsWith("/login") &&
-    !request.nextUrl.pathname.startsWith("/auth") 
-  ) {
-    // no user, potentially respond by redirecting the user to the login page
-    const url = request.nextUrl.clone();
-    url.pathname = "/auth/login";
-    return NextResponse.redirect(url);
-  }
-
-  */
-
-
-
-
-  
-
-
-  // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're
-  // creating a new response object with NextResponse.next() make sure to:
-  // 1. Pass the request in it, like so:
-  //    const myNewResponse = NextResponse.next({ request })
-  // 2. Copy over the cookies, like so:
-  //    myNewResponse.cookies.setAll(supabaseResponse.cookies.getAll())
-  // 3. Change the myNewResponse object to fit your needs, but avoid changing
-  //    the cookies!
-  // 4. Finally:
-  //    return myNewResponse
-  // If this is not done, you may be causing the browser and server to go out
-  // of sync and terminate the user's session prematurely!
-
-  return supabaseResponse;
-}
-
-/**Este es codigo viejo del libro 
-import { createServerClient } from "@supabase/ssr";
-import { NextResponse, type NextRequest } from "next/server";
+    // Si hay usuario, pero el tenant no está en su lista de acceso (app_metadata)
+    // Nota: Esto asume que en Supabase guardas un array de 'tenants' en el metadata del usuario
+    else if (!sessionUser.app_metadata?.tenants?.includes(tenantslug)) {
+      // Si no tiene acceso a este cliente, lo mandamos a Not Found o a una página de "Acceso Denegado"
+      return NextResponse.rewrite(new URL("/not-found", request.url));
+    }
+  } 
 
  
-interface GetSupabaseReqResClientArgs {
-  request: NextRequest;
-}
+  //REESCRITURA FINAL DE LA RUTA QUE VA PARA EL INTERIOR DE LA APP Y LA QUE VA DEVUELTA AL NAVEGADOR
+  // Obtenemos los query params originales (ej: ?magicLink=yes)
+  const searchParams = request.nextUrl.search;
 
+  // Inyectamos el slug en los headers por si lo necesitamos luego
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-tenant", tenantslug);
 
-export const getSupabaseReqResClient = ({ request }: GetSupabaseReqResClientArgs) => {
-  const response = {
-    value: NextResponse.next({ request: request }),
-  };
-
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  // Aquí es donde sucede la magia:
+  // El navegador sigue viendo /auth/login
+  // Pero Next.js lee de /app/[tenant]/auth/login
+  const rewrittenResponse = NextResponse.rewrite(
+    //Cuando haces el rewrite, Next.js ignora el dominio para la búsqueda del archivo. Solo le importa el Path que es lo que manda al interior
+    //al exterior manda la base que seria en este caso el request.url
+    new URL(`/${tenantslug}${applicationPath}${searchParams}`, request.url),
     {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            request.cookies.set(name, value);
-          });
-
-          response.value = NextResponse.next({
-            request,
-          });
-
-          cookiesToSet.forEach(({ name, value, options }) => {
-            response.value.cookies.set(name, value, options);
-          });
-        },
+      request: {
+        headers: requestHeaders, // Pasamos los nuevos headers
       },
     }
   );
 
-  return { supabase, response };
-};
-*/
+  // Sincronización de cookies (Para que el login de Supabase funcione) el rewrite es una "operación silenciosa" 
+  // que ocurre solo dentro del servidor, y eso crea un riesgo de desincronización.
+  supabaseResponse.cookies.getAll().forEach((cookie) => {
+    const { name, value, ...options } = cookie;
+    rewrittenResponse.cookies.set(name, value, options);
+  });
+
+  return rewrittenResponse;
+  
+}

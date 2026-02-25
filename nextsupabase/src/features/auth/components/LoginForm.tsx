@@ -22,32 +22,6 @@ type LoginProps = React.ComponentPropsWithoutRef<"div"> & {
 };
 
 
-
-
-/**
- * Login Form Component (Client Component)
- * --------------------------------------
- * Componente versátil que gestiona el acceso de usuarios mediante dos modalidades:
- * contraseña tradicional y Magic Link (OTP), adaptándose al contexto del tenant.
- *
- * * @param {boolean} isPasswordLogin - Define si se muestra el flujo de contraseña o OTP.
- * * @param {string} tenant - Identificador de la organización para redirecciones y contexto.
- * * * Datos:
- * - Maneja estados locales para 'email', 'password', 'error' e 'isLoading'.
- * - Utiliza el hook 'useRouter' para la navegación post-autenticación.
- * - 'passwordField': Sub-componente que agrupa el input de clave y el link de recuperación.
- * * * Flujo:
- * 1. Inicializa el router de Next.js para gestionar el redireccionamiento tras el éxito.
- * 2. Previene el comportamiento por defecto del formulario e inicia el estado de carga.
- * 3. Ejecuta la lógica de Login con Password: Realiza una pausa artificial (promesa), 
- * autentica en Supabase y redirige a la ruta de tickets del tenant.
- * 4. Ejecuta la lógica de Magic Link: Valida el formato del email, solicita el OTP a Supabase 
- * con una URL de redirección específica y envía al usuario a la página de espera.
- * 5. Gestiona excepciones capturando errores de autenticación y actualizando el estado visual.
- * 6. Renderiza la interfaz de tarjeta (Card) con alternancia dinámica entre modos de login y links de registro.
- * * * @return JSX.Element - Un formulario de autenticación robusto y condicional.
- */
-
 export const LoginForm = ({
   className,
   isPasswordLogin,
@@ -69,7 +43,7 @@ export const LoginForm = ({
       <div className="flex items-center">
         <Label htmlFor="password">Password</Label>
         <Link
-          href= {`/${tenant}/auth/forgot-password`}
+          href= {`/auth/forgot-password`}
           className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
         >
           Forgot your password?
@@ -98,7 +72,7 @@ export const LoginForm = ({
         setTimeout(() => resolve("esto viene de la promesa"), 1000)
       );
 
-      console.log("valor promesa" + valorPromesa);
+      console.log("Tiempo de espera 1s, la promesa se resolvio con este" + valorPromesa);
       try {
         const { error } = await supabase.auth.signInWithPassword({
           email,
@@ -108,7 +82,7 @@ export const LoginForm = ({
         
         
         // Update this route to redirect to an authenticated route. The user already has an active session.
-        router.push(`/${tenant}/tickets`);
+        router.push(`/tickets`);
         
 
 
@@ -136,14 +110,16 @@ export const LoginForm = ({
 
       email.trim();
 
+      
+
       try {
         const supabase = createSupabaseBrowserClient();
-
-        const { error } = await supabase.auth.signInWithOtp({email, options: { shouldCreateUser: false, emailRedirectTo: `http://127.0.0.1:3000/${tenant}/auth/confirm?tenant=${tenant}`, },});
+        
+        const { error } = await supabase.auth.signInWithOtp({email, options: { shouldCreateUser: false, emailRedirectTo: `${tenant}.miapp:3000/auth/confirm?tenant=${tenant}`}});
 
         if (error) throw error;
 
-       router.push(`/${tenant}/auth/magic-thanks`)
+       router.push(`/auth/magic-thanks`)
 
 
       } catch (error: unknown) {
@@ -168,7 +144,7 @@ export const LoginForm = ({
           <form
             onSubmit={handleLogin}
             action={
-              isPasswordLogin ? `/${tenant}/auth/login/api` : `/${tenant}/auth/login-magic-link/api`
+              isPasswordLogin ? `/auth/login/api` : `/auth/login-magic-link/api`
             }
             method="POST"
           >
@@ -203,7 +179,7 @@ export const LoginForm = ({
                 {isPasswordLogin ? (
                   <Link
                     href={{
-                      pathname: `/${tenant}/auth/login`,
+                      pathname: `/auth/login`,
                       query: { magicLink: "yes" },
                     }}
                   >
@@ -212,7 +188,7 @@ export const LoginForm = ({
                 ) : (
                   <Link
                     href={{
-                      pathname: `/${tenant}/auth/login`,
+                      pathname: `/auth/login`,
                       query: { magicLink: "no" },
                     }}
                   >
@@ -225,7 +201,7 @@ export const LoginForm = ({
             <div className="mt-4 text-center text-sm">
               Don&apos;t have an account?{" "}
               <Link
-                href={`/${tenant}/auth/sign-up`}
+                href={`/auth/sign-up`}
                 className="underline underline-offset-4"
               >
                 Sign up

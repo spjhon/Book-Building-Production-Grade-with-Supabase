@@ -41,6 +41,7 @@ export default function AuthListener({tenant}: AuthListenerProps) {
       // 4. Lógica para el evento SIGNED_IN:
       // Verifica si el usuario tiene acceso al tenant actual.
       if (event === "SIGNED_IN") {
+        console.log("el useeffect dice que el usuario esta signed INNNN")
         if (!session?.user.app_metadata.tenants?.includes(tenant)) {
           supabase.auth.signOut();
           alert("Could not sign in, tenant does not match.");
@@ -50,7 +51,8 @@ export default function AuthListener({tenant}: AuthListenerProps) {
       // 5. Lógica para el evento SIGNED_OUT:
       // Redirige a la página de login del tenant.
       if (event === "SIGNED_OUT") {
-        window.location.href = `/${tenant}/auth/login`;
+        console.log("el useeffect dice que el usuario esta signed uot")
+        window.location.href = `/auth/login`;
       }
       
     });
@@ -63,3 +65,6 @@ export default function AuthListener({tenant}: AuthListenerProps) {
   // Este componente no renderiza nada, solo maneja efectos secundarios.
   return null;
 }
+
+
+

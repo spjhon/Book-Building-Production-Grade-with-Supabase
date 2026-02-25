@@ -29,20 +29,19 @@ type LogoutButtonProps = {
 
 export function LogoutButton({ tenant }: LogoutButtonProps) {
   const router = useRouter();
-  console.log(tenant);
   const handleLogout = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const supabase = createSupabaseBrowserClient();
     await supabase.auth.signOut();
 
-    router.push(`/${tenant}/auth/login`);
+    router.push(`/tickets`);
   };
 
   return (
     <form
       method="POST"
-      action={`/${tenant}/auth/logout/api`}
+      action={`/auth/logout/api`}
       onSubmit={handleLogout}
     >
       <button type="submit" className="secondary">

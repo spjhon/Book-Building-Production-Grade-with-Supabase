@@ -29,6 +29,7 @@ export default async function Login({searchParams, params}: {searchParams: Promi
   const { tenant } = await params;
   const {magicLink} = await searchParams
 
+  
     /**
   useEffect(() => {
   const supabase = createSupabaseBrowserClient();
@@ -43,9 +44,11 @@ export default async function Login({searchParams, params}: {searchParams: Promi
   const supabase = await createSupabaseServerClient();
   const { data } = await supabase.auth.getClaims();
 
+
+
   //4.
   if (data?.claims) {
-    redirect(`/${tenant}/tickets`)
+    redirect(`/tickets`)
   }  
 
   //5.
