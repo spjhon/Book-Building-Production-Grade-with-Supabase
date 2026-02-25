@@ -60,7 +60,7 @@ export function TicketList({ tickets, tenant }: TicketListProps) {
               {/* Title */}
               <td className="py-3 px-2">
                 <Link
-                  href={`/${tenant}/tickets/details/${ticket.id}`}
+                  href={`/tickets/details/${ticket.id}`}
                   className="text-blue-600 hover:underline font-semibold"
                 >
                   {ticket.title}

@@ -26,7 +26,6 @@ interface UpdatePasswordFormProps
 
 export function UpdatePasswordForm({
   className,
-  tenant,
   ...props
 }: UpdatePasswordFormProps) {
   const [password, setPassword] = useState("");

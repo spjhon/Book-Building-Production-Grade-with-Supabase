@@ -19,9 +19,7 @@ export interface RouteProps {
   label: string;
 }
 
-interface NavbarProps {
-  tenant: string;
-}
+
 
 
 /**
@@ -48,7 +46,7 @@ interface NavbarProps {
 
 
 
-export const Navbar = ({tenant}: NavbarProps) => {
+export const Navbar = () => {
 
   const pathname = usePathname();
   
@@ -106,7 +104,7 @@ export const Navbar = ({tenant}: NavbarProps) => {
 
         <div className="hidden xl:flex gap-2">
           <Megaphone></Megaphone>
-          <LogoutButton tenant = {tenant}></LogoutButton>
+          <LogoutButton ></LogoutButton>
         </div>
       </div>
     </header>

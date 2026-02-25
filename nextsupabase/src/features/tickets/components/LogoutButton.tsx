@@ -3,10 +3,6 @@
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 
-type LogoutButtonProps = {
-  tenant: string;
-};
-
 /**
  * Logout Button Component (Client Component)
  * ----------------------------------------
@@ -27,7 +23,7 @@ type LogoutButtonProps = {
  * * * @return JSX.Element - Un formulario compacto con lógica de cierre de sesión integrada.
  */
 
-export function LogoutButton({ tenant }: LogoutButtonProps) {
+export function LogoutButton() {
   const router = useRouter();
   const handleLogout = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

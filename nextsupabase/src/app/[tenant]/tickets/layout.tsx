@@ -32,7 +32,7 @@ export default async function TicketsLayout({ children, params }: TicketsLayoutP
 
       {/* 3. Navegación global */}
       <section>
-        <Navbar tenant={tenant} />
+        <Navbar />
       </section>
 
       {/* 4. Contenedor de contenido dinámico */}
