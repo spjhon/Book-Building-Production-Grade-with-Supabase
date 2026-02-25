@@ -56,15 +56,15 @@ export const Navbar = ({tenant}: NavbarProps) => {
 
   const routeList: RouteProps[] = [
     {
-      href: `/${tenant}/tickets`,
+      href: `/tickets`,
       label: "Ticket List",
     },
     {
-      href: `/${tenant}/tickets/new`,
+      href: `/tickets/new`,
       label: "New Ticket",
     },
     {
-      href: `/${tenant}/tickets/users`,
+      href: `/tickets/users`,
       label: "Users",
     },
   ];
@@ -75,7 +75,7 @@ export const Navbar = ({tenant}: NavbarProps) => {
       <div className="container flex flex-row justify-between items-center mx-auto relative">
         <Link
           rel="noreferrer noopener"
-          href={`/${tenant}`}
+          href={`/`}
           className="ml-2 font-bold text-xl"
         >
           {"Tenant de acuerdo al libro"}

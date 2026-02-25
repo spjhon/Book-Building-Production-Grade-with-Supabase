@@ -74,6 +74,8 @@ export async function updateSession(request: NextRequest) { //funcion proxy espe
 
   if (applicationPath.startsWith("/tickets")) {
     
+    
+
     if (!sessionUser) {
       // 1. Mandamos explícitamente a la ruta de LOGIN, no a la raíz
       const loginUrl = buildUrl('/auth/login', tenantslug, request);
@@ -84,7 +86,8 @@ export async function updateSession(request: NextRequest) { //funcion proxy espe
     // Nota: Esto asume que en Supabase guardas un array de 'tenants' en el metadata del usuario
     else if (!sessionUser.app_metadata?.tenants?.includes(tenantslug)) {
       // Si no tiene acceso a este cliente, lo mandamos a Not Found o a una página de "Acceso Denegado"
-      return NextResponse.rewrite(new URL("/not-found", request.url));
+    await supabase.auth.signOut();
+      return supabaseResponse
     }
   } 
 

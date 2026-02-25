@@ -33,9 +33,9 @@ export default async function MagicLinkSuccessPage({searchParams, params}: {sear
         Magic on its way!
       </h1>
       {type === "recovery" ? (
-        <p>Check your email for a link to reset your password.</p>
+        <p>Reviza tu email para encontrar el link de entrada</p>
       ) : (
-        <p>Check your email for a link to log in.</p>
+        <p>Reviza tu email</p>
       )}
       <br />
       <br />

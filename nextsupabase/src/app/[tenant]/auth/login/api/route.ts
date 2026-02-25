@@ -1,5 +1,6 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { buildUrl } from "@/utils/url-helpers";
 
 
 /**
@@ -20,33 +21,30 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
  * * * @return NextResponse - Redirección dinámica basada en el resultado de la autenticación.
  */
 
-export async function POST(request: Request, {params}: { params: Promise<{ tenant: string }>}) {
 
-  //1.
+export async function POST(request: NextRequest, {params}: { params: Promise<{ tenant: string }>}) {
+
   const { tenant } = await params;
   const supabase = await createSupabaseServerClient();
 
-  //2.
   const formData = await request.formData();
   const email = formData.get("email");
   const password = formData.get("password");
+
   if (typeof email !== "string" || typeof password !== "string") {
-      return NextResponse.redirect(new URL("/error?type=invalid-form", request.url),{ status: 302 });
+      // Ahora buildUrl no protestará porque request ya tiene las propiedades necesarias
+      return NextResponse.redirect(buildUrl("/auth/login?error=invalid-form", tenant, request), { status: 303 });
   }
 
-  //3.
-  const { data, error } = await supabase.auth.signInWithPassword({email, password,});
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
-  //4.
   const userData = data?.user;
-  if (error || !userData || !userData.app_metadata?.tenants.includes(tenant)) {
+  if (error || !userData || !userData.app_metadata?.tenants?.includes(tenant)) {
     await supabase.auth.signOut();
-    return NextResponse.redirect(new URL("/error?type=login-failedd", request.url), { status: 302 });
+    return NextResponse.redirect(buildUrl("/auth/login?error=auth-failed", tenant, request), { status: 303 });
   }
 
-  //5.
-  return NextResponse.redirect(new URL(`/${tenant}/tickets`, request.url), {status: 302,});
-
+  return NextResponse.redirect(buildUrl("/tickets", tenant, request), { status: 303 });
 }
 
 /**

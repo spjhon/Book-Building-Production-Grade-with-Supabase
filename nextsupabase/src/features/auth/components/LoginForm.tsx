@@ -115,7 +115,7 @@ export const LoginForm = ({
       try {
         const supabase = createSupabaseBrowserClient();
         
-        const { error } = await supabase.auth.signInWithOtp({email, options: { shouldCreateUser: false, emailRedirectTo: `${tenant}.miapp:3000/auth/confirm?tenant=${tenant}`}});
+        const { error } = await supabase.auth.signInWithOtp({email, options: { shouldCreateUser: false, emailRedirectTo: `http://${tenant}.miapp:3000/auth/confirm?tenant=${tenant}`}});
 
         if (error) throw error;
 
