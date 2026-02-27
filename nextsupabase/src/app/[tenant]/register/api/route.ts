@@ -120,12 +120,8 @@ if (tpError) {
         
       
 // Nota el .admin y el redirectTo con r minúscula
-const { data, error } = await supabaseAdmin.auth.admin.inviteUserByEmail(
-  emailLowered, 
-  { 
-    redirectTo: `http://${tenant}.miapp:3000/auth/confirm?tenant=${tenant}` 
-  }
-);
+const { error } = await supabaseAdmin.auth.signInWithOtp({email, options: { shouldCreateUser: false, emailRedirectTo: `http://${tenant}.miapp:3000/auth/confirm?tenant=${tenant}`}});
+
 
 if (error) {
   NextResponse.redirect(buildUrl("/error", tenant, request), 302);

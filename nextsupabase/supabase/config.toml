@@ -244,6 +244,10 @@ content_path = "./supabase/templates/magic_link.html"
 
 [auth.email.template.invite]
 subject = "El link magico de invitacion de nuevo user"
+content_path = "./supabase/templates/magic_link_invite.html"
+
+[auth.email.template.confirmation]
+subject = "El link magico de CONFIRMACION de nuevo user"
 content_path = "./supabase/templates/magic_link_confirmation.html"
 
 [auth.sms]
