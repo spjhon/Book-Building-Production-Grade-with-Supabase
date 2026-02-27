@@ -132,6 +132,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_tenant_domain: { Args: { p_tenant_slug: string }; Returns: string }
       get_tenant_name: { Args: { p_tenant_slug: string }; Returns: string }
     }
     Enums: {

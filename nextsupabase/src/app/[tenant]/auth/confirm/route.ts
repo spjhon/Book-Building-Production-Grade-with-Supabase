@@ -6,10 +6,14 @@ import { type NextRequest } from "next/server";
 // Ya no necesitamos importar TENANT_MAP aquí si lo manejamos en el helper o lo pasamos dinámicamente
 
 export async function GET(request: NextRequest) {
+
+  
   const { searchParams } = new URL(request.url);
   const token_hash = searchParams.get("token_hash");
-  const type = searchParams.get("type") as EmailOtpType | null;
+  const type = searchParams.get("type") as EmailOtpType | null ;
   
+  console.log(type + " esto viene desde el route handler confirm")
+
   // Extraemos el hostname para identificar el contexto
   const [hostname] = getHostnameAndPort(request);
   

@@ -16,8 +16,11 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: [
     "http://127.0.0.1:3000",
     'local-origin.dev', 
-    '*.local-origin.dev'
-  ]
+    '*.local-origin.dev',
+    "miapp:3000",      // Tu dominio base
+      "*.miapp:3000"
+  ],
+  
 };
 
 export default nextConfig;

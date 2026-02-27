@@ -2,7 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from 'next/server';
 import { Database } from "../../../supabase/types/database.types";
 import { buildUrl, getHostnameAndPort } from "@/utils/url-helpers";
-import { createSupabaseAdminClient } from "./admin";
+import { fetchTenantDomainCached } from "../dbFunctions/fetch_tenant_domain_cached";
 
 export async function updateSession(request: NextRequest) { //funcion proxy especial de supabase, no es el proxy de next js
   let supabaseResponse = NextResponse.next({ request });
@@ -50,22 +50,14 @@ export async function updateSession(request: NextRequest) { //funcion proxy espe
     return supabaseResponse;
   }
 
- //OBTENCION Y VERIFICACION DEL TENANT
-  //creacion del admin de supabase para saltarse el rls de la base de datos y extraer todos los tenants registrados
-  const supabaseAdmin = createSupabaseAdminClient();
+ //OBTENCION Y VERIFICACION DEL TENANT DESDE LA DB CON UN CACHE DE 1 MINUTO
 
-  const { data: tenantData, error: tenantError } = await supabaseAdmin //se consutla el tenant que sea igual al tenant extraido del host con el split
-  .from("tenants")
-  .select("*")
-  .eq("domain", hostname.split(".")[0])
-  .single();
-
-  if (tenantError || !tenantData) { //si se detecta un error en la base de datos entonces ir a la ruta not-found
+  const tenantSlug = hostname.split(".")[0];
+  const tenantName = await fetchTenantDomainCached(tenantSlug);
+  
+  if (!tenantName) {
     return NextResponse.rewrite(new URL("/not-found", request.url));
-  }
-
-  //Aqui asignamos el domain que viene de la base de datos "acme" o "globex" y se asigna al slug que se va a utilizar en las rutas
-  const tenantslug = tenantData.domain; 
+  } 
 
   //return NextResponse.json({ tenantMatch: true });
 
@@ -78,17 +70,19 @@ export async function updateSession(request: NextRequest) { //funcion proxy espe
 
     if (!sessionUser) {
       // 1. Mandamos explícitamente a la ruta de LOGIN, no a la raíz
-      const loginUrl = buildUrl('/auth/login', tenantslug, request);
+      const loginUrl = buildUrl('/auth/login', tenantName, request);
       return NextResponse.redirect(loginUrl);
     }
 
     // Si hay usuario, pero el tenant no está en su lista de acceso (app_metadata)
     // Nota: Esto asume que en Supabase guardas un array de 'tenants' en el metadata del usuario
-    else if (!sessionUser.app_metadata?.tenants?.includes(tenantslug)) {
+    else if (!sessionUser.app_metadata?.tenants?.includes(tenantName)) {
       // Si no tiene acceso a este cliente, lo mandamos a Not Found o a una página de "Acceso Denegado"
     await supabase.auth.signOut();
       return supabaseResponse
     }
+
+
   } 
 
  
@@ -98,7 +92,7 @@ export async function updateSession(request: NextRequest) { //funcion proxy espe
 
   // Inyectamos el slug en los headers por si lo necesitamos luego
   const requestHeaders = new Headers(request.headers);
-  requestHeaders.set("x-tenant", tenantslug);
+  requestHeaders.set("x-tenant", tenantName);
 
   // Aquí es donde sucede la magia:
   // El navegador sigue viendo /auth/login
@@ -106,7 +100,7 @@ export async function updateSession(request: NextRequest) { //funcion proxy espe
   const rewrittenResponse = NextResponse.rewrite(
     //Cuando haces el rewrite, Next.js ignora el dominio para la búsqueda del archivo. Solo le importa el Path que es lo que manda al interior
     //al exterior manda la base que seria en este caso el request.url
-    new URL(`/${tenantslug}${applicationPath}${searchParams}`, request.url),
+    new URL(`/${tenantName}${applicationPath}${searchParams}`, request.url),
     {
       request: {
         headers: requestHeaders, // Pasamos los nuevos headers
