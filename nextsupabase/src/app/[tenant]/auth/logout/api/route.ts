@@ -12,7 +12,11 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   // 2. Creamos el cliente y cerramos sesión
   // Esto limpiará las cookies en el servidor
   const supabase = await createSupabaseServerClient();
-  await supabase.auth.signOut();
+  const { error } = await supabase.auth.signOut();
+
+  if (error){
+    return NextResponse.redirect(buildUrl(`/auth/error?type=Logout Error`, tenant, request), { status: 303 });
+  }
 
   // 3. Construimos la URL absoluta usando el helper
   // Esto asegura que el usuario se quede en acme.miapp.com/auth/login

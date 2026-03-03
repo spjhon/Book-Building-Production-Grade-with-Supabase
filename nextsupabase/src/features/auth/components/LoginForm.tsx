@@ -14,7 +14,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 
 type LoginProps = React.ComponentPropsWithoutRef<"div"> & {
   isPasswordLogin?: boolean;
@@ -131,6 +131,39 @@ export const LoginForm = ({
   };
 
 
+
+
+  const handleLoginGoogle = async (e: React.FormEvent) => {
+    e.preventDefault();
+  
+    try {
+      const supabase = createSupabaseBrowserClient();
+      const {data, error} = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: window.location.origin + "/auth/verify-oauth/api",
+          queryParams: {access_type: "offline", prompt: "consent"},
+        },
+      });
+
+      
+      
+
+
+    } catch (error: unknown) {
+      setError(error instanceof Error ? error.message : "An error occurred");
+    } finally {
+      //...
+    }
+  
+  }
+
+
+
+
+
+
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -164,6 +197,10 @@ export const LoginForm = ({
 
               {isPasswordLogin && passwordField}
               {error && <p className="text-sm text-red-500">{error}</p>}
+
+
+              <Button type="button" className="w-full" onClick={handleLoginGoogle}>Sign in with Google</Button>
+
 
               <Button type="submit" className="w-full">
                 {!isLoading
@@ -207,6 +244,10 @@ export const LoginForm = ({
                 Sign up
               </Link>
             </div>
+
+
+
+
           </form>
         </CardContent>
       </Card>

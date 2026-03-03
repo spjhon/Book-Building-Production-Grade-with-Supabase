@@ -2,48 +2,56 @@ import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { buildUrl } from "@/utils/url-helpers";
 
-
-/**
- * Login Auth Route Handler (POST)
- * ------------------------------
- * Este manejador procesa las solicitudes de inicio de sesión con contraseña (form login).
- * Está diseñado para funcionar tanto con peticiones JavaScript (fetch) como con envíos 
- * nativos de formularios HTML (útil para Progressive Enhancement o JS desactivado).
- * * @param {Request} request - Objeto de petición estándar con los datos del formulario.
- * * @param {Promise} params - Contexto de la ruta que contiene el 'tenant' dinámico.
- * * * Flujo:
- * 1. Resuelve el contexto del 'tenant' y crea el cliente de Supabase para el servidor.
- * 2. Extrae y valida que las credenciales (email y password) sean strings válidos.
- * 3. Intenta la autenticación en Supabase mediante 'signInWithPassword'.
- * 4. Valida la existencia del usuario y verifica que posea permisos para el tenant actual 
- * inspeccionando los 'app_metadata'. Si falla, fuerza el cierre de sesión para limpiar cookies.
- * 5. Redirige al usuario al área de tickets del tenant tras un login exitoso.
- * * * @return NextResponse - Redirección dinámica basada en el resultado de la autenticación.
- */
-
-
+/*** Password Login Route Handler (Route Handler POST API)
+ * ---------------------------------------
+ * Este route handler se encarga de procesar el inicio de sesión tradicional en caso que en el front este javascript desactivado:
+ * - Recibe las credenciales (email y password) desde el formulario de login.
+ * - Valida la autenticidad del usuario en Supabase Auth.
+ * - Verifica que el usuario pertenezca al tenant específico intentando acceder (Multi-tenancy check).
+ * @param request El objeto NextRequest que contiene el FormData con las credenciales.
+ * @params tenant El slug del tenant obtenido desde los parámetros dinámicos de la ruta.
+ * @Flujo
+ * 1. Obtención del slug del tenant y creación del cliente de Supabase (Server Side).
+ * 2. Extracción y validación de tipos de los datos del formulario (Email y Password).
+ * 3. Intento de autenticación en Supabase Auth con las credenciales proporcionadas.
+ * 4. Validación de seguridad Multi-tenant: Verificamos si el tenant actual está en la metadata del usuario.
+ * 5. Gestión de cierre de sesión y redirección en caso de error o acceso no autorizado.
+ * 6. Redirección final exitosa al dashboard (/tickets) manteniendo el contexto del subdominio.
+ * @Return Redirects dinámicos dependiendo del éxito de la autenticación o fallos de pertenencia al tenant.
+ */ 
 export async function POST(request: NextRequest, {params}: { params: Promise<{ tenant: string }>}) {
 
+  // 1.
   const { tenant } = await params;
   const supabase = await createSupabaseServerClient();
 
+  // 2.
   const formData = await request.formData();
   const email = formData.get("email");
   const password = formData.get("password");
 
   if (typeof email !== "string" || typeof password !== "string") {
-      // Ahora buildUrl no protestará porque request ya tiene las propiedades necesarias
-      return NextResponse.redirect(buildUrl("/auth/login?error=invalid-form", tenant, request), { status: 303 });
+      return NextResponse.redirect(buildUrl(`/auth/error?type=invalid-form`, tenant, request), { status: 303 });
   }
 
+  // 3.
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
+  // 4.
   const userData = data?.user;
+  
+  /* Nota de seguridad: No basta con que el password sea correcto. 
+     Debemos confirmar que el usuario tiene acceso explícito a este subdominio/tenant
+     verificando la propiedad 'tenants' dentro de su app_metadata.
+  */
   if (error || !userData || !userData.app_metadata?.tenants?.includes(tenant)) {
+    
+    // 5.
     await supabase.auth.signOut();
-    return NextResponse.redirect(buildUrl("/auth/login?error=auth-failed", tenant, request), { status: 303 });
+    return NextResponse.redirect(buildUrl(`/auth/error?type=${error?.message ?? "Error Auth"}`, tenant, request), { status: 303 });
   }
 
+  // 6.
   return NextResponse.redirect(buildUrl("/tickets", tenant, request), { status: 303 });
 }
 

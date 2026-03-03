@@ -78,8 +78,8 @@ export async function updateSession(request: NextRequest) { //funcion proxy espe
     // Nota: Esto asume que en Supabase guardas un array de 'tenants' en el metadata del usuario
     else if (!sessionUser.app_metadata?.tenants?.includes(tenantName)) {
       // Si no tiene acceso a este cliente, lo mandamos a Not Found o a una página de "Acceso Denegado"
-    await supabase.auth.signOut();
-      return supabaseResponse
+    const loginUrl = buildUrl('/auth/logout/api', tenantName, request);
+      return NextResponse.redirect(loginUrl);
     }
 
 

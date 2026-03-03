@@ -30,6 +30,8 @@ export default async function ErrorPage({searchParams, params}: {searchParams: P
     "invalid_magiclink",
     "magiclink",
     "recovery",
+    "No_token_hash_or_type",
+    
   ];
 
   return (
@@ -39,6 +41,9 @@ export default async function ErrorPage({searchParams, params}: {searchParams: P
       {/*3.*/}
       {type === "login-failed" && (
         <strong>Login was not successfull, sorry.</strong>
+      )}
+      {type === "No_token_hash_or_type" && (
+        <strong>Bad token hash or type.</strong>
       )}
       {type === "invalid_magiclink" && (
         <strong>
@@ -62,7 +67,9 @@ export default async function ErrorPage({searchParams, params}: {searchParams: P
       {!knownErrors.includes(type) && (
         <strong>
           Something went wrong. Please try again or contact support.
+          <p>{type}</p>
         </strong>
+        
       )}
 
       <br />
