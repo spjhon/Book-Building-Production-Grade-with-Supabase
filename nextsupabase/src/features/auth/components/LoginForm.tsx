@@ -146,7 +146,9 @@ export const LoginForm = ({
         },
       });
 
-      
+      if (error){
+        throw new Error(error?.code || "Error insesperado al intentar login con google")
+      }
       
 
 

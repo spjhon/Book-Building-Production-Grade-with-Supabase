@@ -46,12 +46,13 @@ export async function POST(request: NextRequest, {params}: { params: Promise<{ t
     }
 
 //VALIDACION QUE EL TENANT QUE LLEGA POR MEDIO DE PARAMS SE ENCUENTRA EN LA BASE DE DATOS PARA PODER SER PROCESADO
+//2.
   const tenantDomainValidatedInDb = await fetchTenantDomainCached(tenant);
   if (!tenantDomainValidatedInDb) {
     return NextResponse.redirect(buildUrl("/not-found", tenant, request), { status: 303 });
   } 
 
-
+//3.
 const emailLowered = email.toLowerCase()
 const passwordLowered = password
 const userNameTrimmed = userName.trim()
@@ -74,7 +75,7 @@ if (userError) {
 
 
 
-
+//4.
 try{
 
 
@@ -117,8 +118,8 @@ try{
   }
 
 
-
 }catch(err: unknown){
+  //5.
   await supabaseAdmin.auth.admin.deleteUser(userData.user.id);
   const errorMessage = err instanceof Error ? err.message : "An unexpected error occurred creating user";
   return NextResponse.redirect(buildUrl(`/auth/error?type=${encodeURIComponent(errorMessage)}&email=${safeEmailString}`, tenant, request),{ status: 303 })
@@ -126,7 +127,7 @@ try{
 
 }
 
-
+//6.
 const { error } = await supabaseAdmin.auth.signInWithOtp({email, options: { shouldCreateUser: false, emailRedirectTo: `http://${tenant}.miapp:3000/auth/confirm?tenant=${tenant}`}});
 
 
