@@ -1,5 +1,15 @@
 "use client";
-import { useRef } from "react";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { use, useRef, useState } from "react";
+
+
+
+interface TicketsProps {
+  params: Promise<{ tenant: string }>;
+}
+
+
+
 
 /**
  * Create Ticket Page (Client Page Component)
@@ -14,10 +24,54 @@ import { useRef } from "react";
  * 4. Captura los datos ingresados para su posterior envío a la API o servidor (pendiente de implementación).
  * * * @return JSX.Element - Un formulario de creación estilizado contenido en un artículo semántico.
  */
-const CreateTicketPage = () => {
-  // 1. Inicialización de referencias para el DOM
-  const ticketTitleRef = useRef(null);
-  const ticketDescriptionRef = useRef(null);
+const CreateTicketPage = ({params}:TicketsProps) => {
+  // 1. Inicialización de referencias con tipos de HTML
+  const ticketTitleRef = useRef<HTMLInputElement>(null);
+  const ticketDescriptionRef = useRef<HTMLTextAreaElement>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const supabase = createSupabaseBrowserClient();
+  const { tenant } = use(params)
+
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>){
+
+
+    event.preventDefault();
+    // 4. Punto de extensión para la lógica de negocio
+    // Capturamos los valores (TS ahora sabe que son strings o undefined)
+
+    const title = ticketTitleRef.current?.value || "";
+    const description = ticketDescriptionRef.current?.value || "";
+    
+
+    if (title.trim().length > 4 && description.trim().length > 9) {
+      // 1. Usamos async/await para manejar la respuesta de forma lineal
+      const { data, error } = await supabase
+      .from("tickets")
+      .insert({title, description, tenant_id: "tenant", created_by: "123" })// Asegúrate de usar el nombre de columna correcto de tu DB
+      .select()
+      .single();
+
+      // 2. Manejo de error limpio
+      if (error) {
+        setIsLoading(false);
+        alert("Could not create ticket");
+        console.error("Error detallado:", error.message);
+        return; // Detenemos la ejecución aquí
+      }
+
+      // 3. Éxito (Si llegamos aquí, es porque no hubo error)
+      alert("Successfully created ticket");
+      // Aquí puedes limpiar el formulario o redireccionar
+    
+    }else{
+      console.log(tenant)
+      alert("A title must have at least 5 chars and a description must at least contain 10");
+      
+    }
+  }
+
+
 
   return (
     // 2. Contenedor principal con diseño de tarjeta
@@ -28,11 +82,7 @@ const CreateTicketPage = () => {
 
       {/* 3. Manejo del formulario */}
       <form
-        onSubmit={(event) => {
-          event.preventDefault();
-          // 4. Punto de extensión para la lógica de negocio
-          alert("TODO: Add a new ticket");
-        }}
+        onSubmit={handleSubmit}
         className="space-y-5"
       >
         {/* Campo de Título */}
@@ -40,6 +90,7 @@ const CreateTicketPage = () => {
           <label className="text-sm font-medium text-gray-700">Title</label>
           <input
             ref={ticketTitleRef}
+            disabled={isLoading}
             placeholder="Add a title"
             className="w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
@@ -51,6 +102,7 @@ const CreateTicketPage = () => {
           <textarea
             ref={ticketDescriptionRef}
             placeholder="Add a comment"
+            disabled={isLoading}
             rows={4}
             className="w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
           />
@@ -59,6 +111,8 @@ const CreateTicketPage = () => {
         {/* Botón de Envío */}
         <button
           type="submit"
+          disabled={isLoading}
+          aria-busy={isLoading}
           className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200"
         >
           Create ticket now
