@@ -4,9 +4,6 @@
 
 create table public.tickets (
   id uuid primary key default gen_random_uuid(),
-
-  -- Identificador humano secuencial por tenant
-  ticket_number bigint not null, -- Se llena vía Trigger
   
   -- Relación con el tenant (Obligatorio para aislamiento)
   tenant_id uuid not null references public.tenants(id) on delete cascade,
@@ -22,9 +19,6 @@ create table public.tickets (
   -- Auditoría
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
-
-  -- CONSTRAINT DE UNICIDAD: Evita duplicados de número dentro del mismo cliente
-  constraint unique_ticket_number_per_tenant unique (tenant_id, ticket_number)
 );
 
 -- ==========================================
@@ -46,8 +40,7 @@ create index tickets_created_by_idx on public.tickets (created_by);
 -- Índice para filtros de estado
 create index tickets_status_idx on public.tickets (status);
 
--- Búsqueda ultra rápida por número (usado en URLs: /tenant/tickets/42)
-create index tickets_tenant_ticket_num_idx on public.tickets (tenant_id, ticket_number);
+
 -- ==========================================
 -- GRANTS
 -- ==========================================

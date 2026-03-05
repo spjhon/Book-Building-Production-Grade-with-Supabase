@@ -6,4 +6,4 @@ EL TICKET SYSTEM
 
 ## CLI commands
 
-Local Types Generation: pnpx supabase gen types typescript --local > /supabase/types/database.types.ts
+Local Types Generation: pnpx supabase gen types typescript --local > supabase/types/database.types.ts
