@@ -135,6 +135,7 @@ export type Database = {
           id: string
           status: string
           tenant_id: string
+          ticket_number: number
           title: string
           updated_at: string
         }
@@ -145,6 +146,7 @@ export type Database = {
           id?: string
           status?: string
           tenant_id: string
+          ticket_number: number
           title: string
           updated_at?: string
         }
@@ -155,6 +157,7 @@ export type Database = {
           id?: string
           status?: string
           tenant_id?: string
+          ticket_number?: number
           title?: string
           updated_at?: string
         }

@@ -1,5 +1,14 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import TicketComments from "../../../../../features/tickets/components/ticketComment";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+
+const TICKET_STATUS = {
+  open: "Open",
+  in_progress: "In progress",
+  information_missing: "Information missing",
+  canceled: "Canceled",
+  done: "Done",
+  };
 
 
 export default async function TicketDetailPage({
@@ -11,22 +20,38 @@ export default async function TicketDetailPage({
 
 
 
-  const supabaseServerClient = createSupabaseServerClient();
+  const supabaseServerClient = await createSupabaseServerClient();
+  const supabaseAdmin = await createSupabaseAdminClient();
 
 
-  const { data: ticket, error } = await supabase
+  const { data: ticket, error: fetchTicketError } = await supabaseServerClient
   .from("tickets")
   .select("*")
-  .eq("id", "2ba2c5f6-09f3-4510-aa49-5adaf82fa04c")
+  .eq("ticket_number", Number(slugId))
   .single();
 
+  
+  if (fetchTicketError){
+    console.log(fetchTicketError?.message)
+    return
+  }
 
 
+  
+  const { data: Autor, error: fetchAutorError } = await supabaseAdmin
+  .from("service_users")
+  .select("*")
+  .eq("id", ticket.created_by)
+  .maybeSingle();
+
+  if (fetchAutorError){
+    console.log(fetchAutorError?.code)
+    return
+  } 
 
 
-
-
-
+console.log(fetchAutorError)
+console.log(Autor)
 
 
 

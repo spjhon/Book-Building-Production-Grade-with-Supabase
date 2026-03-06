@@ -28,7 +28,7 @@ interface TicketsProps {
  * - Se utiliza 'as never' en el insert debido a que los tipos generados exigen 
  * 'created_by', pero la lógica de base de datos lo resuelve automáticamente.
  * * @param {TicketsProps} params - Contiene el slug del tenant extraído de la URL dinámica.
- * @returns {JSX.Element} Formulario estilizado con Tailwind CSS.
+ * @returns Formulario estilizado con Tailwind CSS.
  */
 
 const CreateTicketPage = ({params}:TicketsProps) => {
