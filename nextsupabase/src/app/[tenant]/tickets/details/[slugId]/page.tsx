@@ -19,7 +19,7 @@ const TICKET_STATUS = {
 } as const; // 'as const' nos da seguridad de tipos
 
 
-export default async function TicketDetailPage({params}: Readonly<{ params: Promise<{ slugId: string; tenant: string }> }>) {
+export default async function TicketDetailPage({params}: Readonly<{ params: Promise<{ slugId: string; tenant: string }>, }>) {
   
   
   const { slugId } = await params;
@@ -33,13 +33,11 @@ export default async function TicketDetailPage({params}: Readonly<{ params: Prom
 
 
 
-const { data: fetchTenantID, error: fetchTenantError } = await supabaseAdmin
+const { data: fetchTenantID, error: fetchTenantError } = await supabaseServerClient
   .from("tenants")
   .select("id")
   .eq("domain", tenant) // Asumiendo que tu columna se llama 'domain'
   .single(); // Usamos maybeSingle para evitar errores si no existe
-
-
 
 
 if (fetchTenantError){
@@ -79,7 +77,12 @@ const { data: ticket, error: fetchTicketError } = await supabaseServerClient
   } 
 
 
-console.log(Autor)
+
+
+
+
+
+const dateString = new Date(ticket.created_at).toLocaleString("en-US");
 
   return (
     
@@ -106,17 +109,17 @@ console.log(Autor)
             </span>
 
             <time className="text-sm text-gray-500">
-              December 10th 2025
+              Ticket creado el: {dateString}
             </time>
           </div>
 
           <div>
             <h2 className="text-2xl font-semibold text-gray-900">
-              Ticket title should be here
+              {ticket.title}
             </h2>
             <p className="text-orange-500 mt-1">
-              Created by{" "}
-              <strong className="text-gray-700">AuthorName</strong>
+              Created by: 
+              <strong className="text-gray-700">{" " + Autor.full_name}</strong>
             </p>
           </div>
         </header>
@@ -125,9 +128,7 @@ console.log(Autor)
 
         {/* Body */}
         <section className="text-gray-700 text-[15px] leading-relaxed">
-          Some details about the ticket should be here.  
-          You can expand this section with additional description, metadata, 
-          reproduction steps, or attachments.
+          {ticket.description}
         </section>
 
         <hr className="border-gray-200" />

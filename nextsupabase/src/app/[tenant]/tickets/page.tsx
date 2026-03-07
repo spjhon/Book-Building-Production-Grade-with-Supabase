@@ -1,4 +1,5 @@
 import { TicketList } from "@/features/tickets/components/TicketList";
+import { TicketFilters } from "@/features/tickets/components/TicketsFilter";
 
 export interface DummyTicket {
   id: number;
@@ -9,51 +10,24 @@ export interface DummyTicket {
 
 interface TicketsPageProps {
   params: Promise<{ tenant: string }>;
+  searchParams: Promise<{ page: string }> 
 }
 
-/**
- * Tickets Main Page (Server Component)
- * -----------------------------------
- * Esta página es la vista principal del dashboard donde se listan todos los tickets 
- * asociados al tenant actual. Sirve como punto de entrada para la gestión de tareas.
- * * * @param {Promise} params - Parámetros de la ruta que contienen el identificador del 'tenant'.
- * * * Datos:
- * - Define la interfaz 'DummyTicket' para asegurar la consistencia de tipos en la lista.
- * - 'dummyTickets': Conjunto de datos estáticos para prototipado y visualización inicial.
- * * * Flujo:
- * 1. Resuelve el 'tenant' de forma asíncrona para contextualizar la navegación.
- * 2. Renderiza una cabecera con un botón de acción para la creación de nuevos recursos.
- * 3. Inyecta los datos de los tickets y el ID del tenant en el componente especializado 'TicketList'.
- * 4. Utiliza clases de Tailwind CSS para crear una estructura de lista limpia y profesional.
- * * * @return JSX.Element - Una página organizada con el listado completo de tickets.
- */
-export const dummyTickets: DummyTicket[] = [
-  {
-    id: 1,
-    title: "Write Supabase Book",
-    status: "Not started",
-    author: "Chayan",
-  },
-  {
-    id: 2,
-    title: "Read more Packt Books",
-    status: "In progress",
-    author: "David",
-  },
-  {
-    id: 3,
-    title: "Make videos for the YouTube Channel",
-    status: "Done",
-    author: "David",
-  },
-];
 
-export default async function TicketsPage({ params }: TicketsPageProps) {
+
+export default async function TicketsPage({ params, searchParams }: TicketsPageProps) {
 
   // 1.
   const { tenant } = await params;
+  const{page} = await searchParams || 1;
+
+
+
+
+  
 
   return (
+    
     // 2.
     <div className="max-w-5xl mx-auto py-10 space-y-8">
       
@@ -74,7 +48,8 @@ export default async function TicketsPage({ params }: TicketsPageProps) {
 
       {/* 3. & 4. Ticket List Container */}
       <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-6">
-        <TicketList tickets={dummyTickets} tenant={tenant} />
+        <TicketFilters tenant={tenant}/>
+        <TicketList tenant={tenant}  page={page}/>
       </div>
     </div>
   );

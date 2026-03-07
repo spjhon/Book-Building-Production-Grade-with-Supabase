@@ -66,9 +66,6 @@ const CreateTicketPage = ({params}:TicketsProps) => {
         alert("Error: Tenant no válido.");
         return;
       }
-
-      console.log(tenantData)
-
       
       // Usamos async/await para manejar la respuesta de forma lineal
       const { data, error } = await supabase

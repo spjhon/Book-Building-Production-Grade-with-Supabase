@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { DummyTicket } from "@/app/[tenant]/tickets/page";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 interface TicketListProps {
-  tickets: DummyTicket[];
+ page: string,
   tenant: string
 }
 
@@ -13,28 +15,97 @@ const statusStyles: Record<string, string> = {
 };
 
 
+export const tickets: DummyTicket[] = [
+  {
+    id: 1,
+    title: "Write Supabase Book",
+    status: "Not started",
+    author: "Chayan",
+  },
+  {
+    id: 2,
+    title: "Read more Packt Books",
+    status: "In progress",
+    author: "David",
+  },
+  {
+    id: 3,
+    title: "Make videos for the YouTube Channel",
+    status: "Done",
+    author: "David",
+  },
+];
 
-/**
- * TicketList (Presentational Component)
- * ------------------------------------
- * Componente encargado de renderizar una tabla detallada con la colección de tickets.
- * Organiza la información técnica de manera tabular para facilitar la lectura del usuario.
- *
- * * * @param {DummyTicket[]} tickets - Arreglo de objetos que contienen los datos de cada ticket.
- * * * @param {string} tenant - Identificador del tenant para construir las rutas de navegación.
- * * * * Datos:
- * - 'statusStyles': Diccionario de mapeo para aplicar clases de Tailwind según el estado (Not started, In progress, Done).
- * - Utiliza interfaces tipadas para garantizar la integridad de los datos de entrada.
- * * * * Flujo:
- * 1. Define una estructura de tabla responsiva con cabeceras fijas (ID, Title, Status).
- * 2. Mapea la colección de tickets para generar filas dinámicas con efectos de hover.
- * 3. Construye enlaces dinámicos para cada título, dirigiendo a la vista de detalles específica del ticket.
- * 4. Implementa etiquetas visuales (badges) mediante clases condicionales basadas en el estado del ticket.
- * 5. Muestra metadatos secundarios como el autor debajo del título principal.
- * * * * @return JSX.Element - Una tabla organizada con navegación integrada y estilos de estado.
- */
 
-export function TicketList({ tickets, tenant }: TicketListProps) {
+
+export async function TicketList({tenant, page}: TicketListProps) {
+
+const supabase = await createSupabaseServerClient();
+const supabaseAdmin = await createSupabaseAdminClient()
+
+
+
+let pageSanitazed = 1
+
+if (Number.isInteger(Number(page)) && Number(page) > 0) {
+  pageSanitazed = Number(page);
+}
+
+const { data: fetchTenantID, error: fetchTenantError } = await supabase
+  .from("tenants")
+  .select("id")
+  .eq("domain", tenant) // Asumiendo que tu columna se llama 'domain'
+  .single(); // Usamos maybeSingle para evitar errores si no existe
+
+
+if (fetchTenantError){
+    console.log(fetchTenantError?.message + " No se puedo obtener info del tenant")
+    return
+  }
+
+  
+
+  
+  const { count, data, error: errorFetchingCountedTickets } = await supabaseAdmin
+  .from("tickets")
+  .select("*", { count: 'exact', head: true })
+  .eq("tenant_id", fetchTenantID.id)
+
+  if (errorFetchingCountedTickets || !count){
+    console.log(errorFetchingCountedTickets?.message + " No se logro contar los tickets")
+    return
+  }
+
+
+const startingPoint = (pageSanitazed - 1) * 6;
+
+
+
+
+
+const { data: fetchedTickets, error: errorFetchedTickets } = await supabaseAdmin
+  .from("tickets")
+  .select("*")
+  .eq("tenant_id", fetchTenantID.id)
+  .limit(6)
+  .range(startingPoint, startingPoint + 5);
+
+ if (errorFetchedTickets || !fetchedTickets){
+    console.log(errorFetchedTickets?.message + " No se encontraron tickets")
+    return
+  }
+
+
+ 
+
+  console.log(count + " cuenta")
+  console.log(fetchedTickets.length + "tickets lenght")
+  const moreRows = count - pageSanitazed * 6 > 0;
+
+
+  
+ 
+  
   return (
     <div className="overflow-x-auto">
       <table className="w-full border-collapse text-left">
@@ -84,6 +155,35 @@ export function TicketList({ tickets, tenant }: TicketListProps) {
           ))}
         </tbody>
       </table>
+
+
+
+
+      <div className="flex mt-4 w-full">
+        {pageSanitazed > 1 && (
+          <Link 
+            className="px-4 py-2 bg-gray-100 rounded hover:bg-gray-200" 
+            href={`?page=${pageSanitazed - 1}}`}
+          >
+            ← Previous page
+          </Link>
+        )}
+
+        {moreRows && (
+          <Link 
+            className="ml-auto px-4 py-2 bg-gray-100 rounded hover:bg-gray-200" 
+            href={`?page=${pageSanitazed + 1}`}
+          >
+            Next page →
+          </Link>
+        )}
+      </div>
+
+
+
+
+
+
     </div>
   );
 }
