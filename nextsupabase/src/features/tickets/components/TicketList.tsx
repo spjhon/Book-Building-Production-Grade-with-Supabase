@@ -15,26 +15,7 @@ const statusStyles: Record<string, string> = {
 };
 
 
-export const tickets: DummyTicket[] = [
-  {
-    id: 1,
-    title: "Write Supabase Book",
-    status: "Not started",
-    author: "Chayan",
-  },
-  {
-    id: 2,
-    title: "Read more Packt Books",
-    status: "In progress",
-    author: "David",
-  },
-  {
-    id: 3,
-    title: "Make videos for the YouTube Channel",
-    status: "Done",
-    author: "David",
-  },
-];
+
 
 
 
@@ -98,8 +79,8 @@ const { data: fetchedTickets, error: errorFetchedTickets } = await supabaseAdmin
 
  
 
-  console.log(count + " cuenta")
-  console.log(fetchedTickets.length + "tickets lenght")
+  console.log(fetchedTickets)
+  
   const moreRows = count - pageSanitazed * 6 > 0;
 
 
@@ -118,26 +99,26 @@ const { data: fetchedTickets, error: errorFetchedTickets } = await supabaseAdmin
         </thead>
 
         <tbody className="text-gray-800">
-          {tickets.map((ticket) => (
+          {fetchedTickets.map((ticket) => (
             <tr
               key={ticket.id}
               className="border-b border-gray-100 hover:bg-gray-50 transition"
             >
               {/* ID */}
               <td className="py-3 px-2 text-gray-500 font-medium">
-                #{ticket.id}
+                #{ticket.ticket_number}
               </td>
 
               {/* Title */}
               <td className="py-3 px-2">
                 <Link
-                  href={`/tickets/details/${ticket.id}`}
+                  href={`/tickets/details/${ticket.ticket_number}`}
                   className="text-blue-600 hover:underline font-semibold"
                 >
                   {ticket.title}
                 </Link>
                 <div className="text-xs text-gray-500 mt-1">
-                  by {ticket.author}
+                  by {ticket.created_by}
                 </div>
               </td>
 
@@ -163,7 +144,7 @@ const { data: fetchedTickets, error: errorFetchedTickets } = await supabaseAdmin
         {pageSanitazed > 1 && (
           <Link 
             className="px-4 py-2 bg-gray-100 rounded hover:bg-gray-200" 
-            href={`?page=${pageSanitazed - 1}}`}
+            href={`?page=${pageSanitazed - 1}`}
           >
             ← Previous page
           </Link>
