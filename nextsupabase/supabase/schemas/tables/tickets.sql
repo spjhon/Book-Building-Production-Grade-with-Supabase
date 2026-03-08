@@ -13,11 +13,13 @@ create table public.tickets (
   
   -- Autor del ticket (Relacionado con tu tabla de perfiles públicos)
   created_by uuid not null references public.service_users(id),
+  assignee uuid references public.service_users(id) on delete set null,
   
   -- Datos del ticket
   title text not null check (char_length(title) > 0),
   description text,
   status text not null default 'open' check (status in ('open', 'in_progress', 'done', 'cancelled', 'information_missing')),
+  assignee_name text,
   
   -- Auditoría
   created_at timestamptz not null default now(),
@@ -45,6 +47,7 @@ create index tickets_tenant_id_idx on public.tickets (tenant_id);
 create index tickets_created_by_idx on public.tickets (created_by);
 -- Índice para filtros de estado
 create index tickets_status_idx on public.tickets (status);
+create index if not exists tickets_assignee_idx on public.tickets (assignee);
 
 -- Búsqueda ultra rápida por número (usado en URLs: /tenant/tickets/42)
 create index tickets_tenant_ticket_num_idx on public.tickets (tenant_id, ticket_number);

@@ -40,6 +40,8 @@ export type Database = {
           created_at: string
           full_name: string | null
           id: string
+          is_available: boolean
+          job_title: string | null
           updated_at: string
         }
         Insert: {
@@ -47,6 +49,8 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id?: string
+          is_available?: boolean
+          job_title?: string | null
           updated_at?: string
         }
         Update: {
@@ -54,6 +58,8 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id?: string
+          is_available?: boolean
+          job_title?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -129,6 +135,8 @@ export type Database = {
       }
       tickets: {
         Row: {
+          assignee: string | null
+          assignee_name: string | null
           created_at: string
           created_by: string
           description: string | null
@@ -140,6 +148,8 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          assignee?: string | null
+          assignee_name?: string | null
           created_at?: string
           created_by: string
           description?: string | null
@@ -151,6 +161,8 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          assignee?: string | null
+          assignee_name?: string | null
           created_at?: string
           created_by?: string
           description?: string | null
@@ -162,6 +174,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "tickets_assignee_fkey"
+            columns: ["assignee"]
+            isOneToOne: false
+            referencedRelation: "service_users"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "tickets_created_by_fkey"
             columns: ["created_by"]
@@ -183,8 +202,28 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_service_users_with_tenant: {
+        Args: { target_tenant_id: string }
+        Returns: {
+          auth_user_id: string
+          created_at: string
+          full_name: string | null
+          id: string
+          is_available: boolean
+          job_title: string | null
+          updated_at: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "service_users"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       get_tenant_domain: { Args: { p_tenant_slug: string }; Returns: string }
       get_tenant_name: { Args: { p_tenant_slug: string }; Returns: string }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { "": string }; Returns: string[] }
     }
     Enums: {
       [_ in never]: never

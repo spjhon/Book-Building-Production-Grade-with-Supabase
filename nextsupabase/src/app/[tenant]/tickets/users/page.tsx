@@ -1,41 +1,51 @@
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { Check, UserX } from "lucide-react";
 
-/**
- * User List Component  (Server Page Component)
- * -------------------
- * Este componente se encarga de listar usuarios y sus estados de disponibilidad
- * en un formato de tabla estructurada y responsiva.
- * * * Datos:
- * - Actualmente utiliza una constante estática 'users' para definir los perfiles.
- * - Cada usuario contiene: nombre, cargo (job) y estado de disponibilidad (isAvailable).
- * * * Flujo:
- * 1. Itera sobre el arreglo de usuarios mediante el método '.map()'.
- * 2. Utiliza renderizado condicional para mostrar iconos de 'Lucide React' (Check/UserX) 
- * según la disponibilidad.
- * 3. Aplica estilos dinámicos de Tailwind CSS para generar "badges" de colores 
- * (verde para disponible, rojo para no disponible).
- * 4. Implementa efectos de hover en las filas para mejorar la experiencia de usuario (UX).
- * * * @return JSX.Element - Una tabla estilizada con la lista de miembros del equipo.
- */
-const users = [
-  {
-    name: "Harry Green",
-    job: "QA Engineer",
-    isAvailable: false,
-  },
-  {
-    name: "Trudy Torres",
-    job: "Project Manager",
-    isAvailable: true,
-  },
-  {
-    name: "Alice Ling",
-    job: "Software Engineer",
-    isAvailable: false,
-  },
-];
 
-export default function UserList() {
+
+export default async function UserList({params}: Readonly<{ params: Promise<{tenant: string }>}>) {
+
+
+
+
+const supabase = await createSupabaseServerClient();
+const{tenant} = await params
+
+
+
+
+
+
+  const { data: tenantData, error: tenantError } = await supabase
+  .from("tenants")
+  .select("id")
+  .eq("domain", tenant)
+  .single();
+
+  if (tenantError || !tenantData) {
+    alert("Error: Tenant no válido.");
+    return;
+  }
+
+
+
+
+
+
+
+
+const { data: users, error: usersError } = await supabase.rpc("get_service_users_with_tenant", {
+  target_tenant_id: tenantData.id
+});
+
+if (usersError || !users) {
+        alert(`Error: no se puedo traer a la lista de users:  ${usersError.message}`);
+        return;
+      }
+
+console.log(users)
+
+
   return (
     // 1. Contenedor con scroll horizontal para dispositivos móviles
     <div className="overflow-x-auto rounded-xl border border-gray-200 shadow-sm bg-white">
@@ -52,25 +62,25 @@ export default function UserList() {
           {/* 2. Mapeo de la lista de usuarios */}
           {users.map((user) => (
             <tr
-              key={user.name}
+              key={user.full_name}
               className="border-b border-gray-100 hover:bg-gray-50 transition"
             >
               {/* 3. Renderizado condicional de iconos y nombres */}
               <td className="py-3 px-4 flex items-center gap-2">
-                {user.isAvailable ? (
+                {user.is_available ? (
                   <Check className="text-green-500" />
                 ) : (
                   <UserX className="text-red-500" />
                 )}
-                <span className="font-medium">{user.name}</span>
+                <span className="font-medium">{user.full_name}</span>
               </td>
 
               {/* Información del cargo */}
-              <td className="py-3 px-4 text-gray-700">{user.job}</td>
+              <td className="py-3 px-4 text-gray-700">{user.job_title}</td>
 
               {/* 4. Badges de estado dinámicos */}
               <td className="py-3 px-4 text-center">
-                {user.isAvailable ? (
+                {user.is_available ? (
                   <span className="px-3 py-1 text-xs bg-green-100 text-green-700 rounded-full font-semibold">
                     Available
                   </span>
