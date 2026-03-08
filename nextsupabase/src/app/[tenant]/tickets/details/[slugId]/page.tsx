@@ -1,6 +1,8 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import TicketComments from "../../../../../features/tickets/components/ticketComment";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { Button } from "@/components/ui/button";
+import DeleteButton from "@/features/tickets/components/DeleteButton";
 
 const TICKET_STATUS = {
   open: "Open",
@@ -78,7 +80,25 @@ const { data: ticket, error: fetchTicketError } = await supabaseServerClient
 
 
 
+const { data } = await supabaseServerClient.auth.getClaims(); //se obtiene el claims osea el usuario
+  const sessionUser = data?.claims;
 
+
+  const supabase_user_id = sessionUser?.sub || "";
+
+
+
+
+const { data: serviceUserId } = await supabaseServerClient
+.from("service_users")
+.select("id")
+.eq("auth_user_id", supabase_user_id)
+.single();
+
+
+
+
+const isAuthor = serviceUserId?.id === ticket.created_by;
 
 
 
@@ -111,6 +131,10 @@ const dateString = new Date(ticket.created_at).toLocaleString("en-US");
             <time className="text-sm text-gray-500">
               Ticket creado el: {dateString}
             </time>
+
+            {isAuthor && (
+              <DeleteButton ticketId ={ticket.id} tenant={fetchTenantID.id}></DeleteButton>
+            )}
           </div>
 
           <div>

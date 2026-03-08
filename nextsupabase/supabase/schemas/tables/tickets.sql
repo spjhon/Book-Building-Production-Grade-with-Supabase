@@ -120,3 +120,45 @@ with check (
     select id from public.service_users where auth_user_id = auth.uid()
   )
 );
+
+
+
+create policy "Users can delete own tickets"
+on public.tickets
+for delete
+to authenticated
+using (
+  exists (
+    select 1 
+    from public.service_users su
+    join public.tenant_permissions tp on tp.service_user_id = su.id
+    where su.auth_user_id = auth.uid()
+    and public.tickets.created_by = su.id
+    and public.tickets.tenant_id = tp.tenant_id
+  )
+);
+
+
+
+
+
+
+/*
+-- (esta es una forma de DELETE POCO EFICIENTE)
+create policy "Users can delete own tickets"
+on public.tickets
+for delete
+to authenticated
+using (
+  created_by in (
+    select id from public.service_users where auth_user_id = auth.uid()
+  ) and
+  tenant_id in (
+    select tenant_id 
+    from public.tenant_permissions 
+    where service_user_id in (
+      select id from public.service_users where auth_user_id = auth.uid()
+    )
+  )
+)
+*/

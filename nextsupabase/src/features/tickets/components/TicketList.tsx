@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { DummyTicket } from "@/app/[tenant]/tickets/page";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 interface TicketListProps {
  page: string,
   tenant: string
+  search: string
 }
 
 const statusStyles: Record<string, string> = {
@@ -19,18 +19,25 @@ const statusStyles: Record<string, string> = {
 
 
 
-export async function TicketList({tenant, page}: TicketListProps) {
+export async function TicketList({tenant, page, search}: TicketListProps) {
+
+
+const pageSize = 6;
+const searchValue = search?.trim() || "";
+let pageSanitazed = 1
+
+
+if (Number.isInteger(Number(page)) && Number(page) > 0) {
+  pageSanitazed = Number(page);
+}
+
+
+const startingPoint = (pageSanitazed - 1) * pageSize;
 
 const supabase = await createSupabaseServerClient();
 const supabaseAdmin = await createSupabaseAdminClient()
 
 
-
-let pageSanitazed = 1
-
-if (Number.isInteger(Number(page)) && Number(page) > 0) {
-  pageSanitazed = Number(page);
-}
 
 const { data: fetchTenantID, error: fetchTenantError } = await supabase
   .from("tenants")
@@ -46,47 +53,51 @@ if (fetchTenantError){
 
   
 
-  
-  const { count, data, error: errorFetchingCountedTickets } = await supabaseAdmin
+// Crea las variables de consulta, pero NO las esperes con 'await'
+let countStatement = supabaseAdmin
   .from("tickets")
   .select("*", { count: 'exact', head: true })
-  .eq("tenant_id", fetchTenantID.id)
+  .eq("tenant_id", fetchTenantID.id);
 
+let ticketsStatement = supabaseAdmin
+  .from("tickets")
+  .select("*")
+  .eq("tenant_id", fetchTenantID.id);
+
+
+
+
+// AQUÍ es donde entra tu lógica de búsqueda (el filtro OR)
+if (searchValue) {
+
+  const postgrestFilterString = `title.ilike.%${searchValue}%,description.ilike.%${searchValue}%`;
+  
+  countStatement = countStatement.or(postgrestFilterString);
+  ticketsStatement = ticketsStatement.or(postgrestFilterString);
+}
+
+  // Ahora, al final de todo, aplicamos los modificadores finales a la statement
+  ticketsStatement = ticketsStatement
+    .range(startingPoint, startingPoint + 5)
+    .order("created_at", { ascending: true });
+
+  // Y AHORA SÍ, ejecutamos ambas consultas
+  const { count, error: errorFetchingCountedTickets } = await countStatement;
   if (errorFetchingCountedTickets || !count){
     console.log(errorFetchingCountedTickets?.message + " No se logro contar los tickets")
     return
   }
 
 
-const startingPoint = (pageSanitazed - 1) * 6;
-
-
-
-
-
-const { data: fetchedTickets, error: errorFetchedTickets } = await supabaseAdmin
-  .from("tickets")
-  .select("*")
-  .eq("tenant_id", fetchTenantID.id)
-  .limit(6)
-  .range(startingPoint, startingPoint + 5);
-
- if (errorFetchedTickets || !fetchedTickets){
+  const { data: fetchedTickets, error: errorFetchedTickets } = await ticketsStatement;
+  if (errorFetchedTickets || !fetchedTickets){
     console.log(errorFetchedTickets?.message + " No se encontraron tickets")
     return
   }
 
-
- 
-
-  console.log(fetchedTickets)
-  
   const moreRows = count - pageSanitazed * 6 > 0;
 
 
-  
- 
-  
   return (
     <div className="overflow-x-auto">
       <table className="w-full border-collapse text-left">

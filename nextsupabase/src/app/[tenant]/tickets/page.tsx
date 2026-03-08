@@ -10,16 +10,17 @@ export interface DummyTicket {
 
 interface TicketsPageProps {
   params: Promise<{ tenant: string }>;
-  searchParams: Promise<{ page: string }> 
+  searchParams: Promise<{ page: string, search: string }> 
 }
 
 
 
-export default async function TicketsPage({ params, searchParams }: TicketsPageProps) {
+export default async function TicketsPage({ params, searchParams}: TicketsPageProps) {
 
   // 1.
   const { tenant } = await params;
   const{page} = await searchParams || 1;
+  const {search} = await searchParams || "";
 
 
 
@@ -49,7 +50,7 @@ export default async function TicketsPage({ params, searchParams }: TicketsPageP
       {/* 3. & 4. Ticket List Container */}
       <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-6">
         <TicketFilters tenant={tenant}/>
-        <TicketList tenant={tenant}  page={page}/>
+        <TicketList tenant={tenant}  page={page} search={search}/>
       </div>
     </div>
   );
