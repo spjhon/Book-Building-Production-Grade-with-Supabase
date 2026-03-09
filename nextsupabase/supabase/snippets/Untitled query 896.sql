@@ -1,17 +1,24 @@
-create policy "Users can read service_users from their same tenants"
-on public.service_users
-for select
-to authenticated
-using (
-  id in (
-    select service_user_id 
-    from public.tenant_permissions
-    where tenant_id in (
-      select tenant_id 
-      from public.tenant_permissions
-      where service_user_id = (select id from public.service_users where auth_user_id = auth.uid())
-    )
-  )
-);
+create or replace function public.set_ticket_assignee_name()
+returns trigger
+language plpgsql
+set search_path = public
+as $$
+begin
+    IF (NEW.assignee IS NULL) THEN
+        NEW.assignee_name = NULL;
+        
+    ELSE NEW.assignee_name = (
+        SELECT full_name FROM service_users WHERE id = NEW.assignee AND EXISTS (
+            SELECT FROM tenant_permissions p WHERE
+            p.tenant_id = NEW.tenant_id AND p.id=NEW.created_by
+        )
+    );
 
-/*Otra forma de entenderlo seria, con la parte mas profunda estamos buscando el id del tenant al que pertenece el auth.uid(), luego con ese tenant_id se busca todos los service_user_id cuyos tenant_ids sean iguales al tenant_id o tenants_ids si es que el auth.uid() tiene mas tenants, eso me da una lista de service_users_ids y si el id de service_users que se esta evaluando se encuentra en la lista de service_users_ids que sale de la consulta entonces esa perosna, ese auth.uid(), puede pasar*/
+    IF (NEW.assignee_name IS NULL) THEN
+    NEW.assignee = NULL;
+    END IF;
+
+    END IF;
+    RETURN NEW;
+end;
+$$;
