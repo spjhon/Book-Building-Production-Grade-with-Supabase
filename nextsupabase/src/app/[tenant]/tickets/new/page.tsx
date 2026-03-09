@@ -1,6 +1,7 @@
 "use client";
+import { AssigneeSelect } from "@/features/tickets/components/AssigneeSelect";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-import { use, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 
 interface TicketsProps {
   params: Promise<{ tenant: string }>;
@@ -9,27 +10,6 @@ interface TicketsProps {
 
 
 
-/**
- * CreateTicketPage - Client Component
- * ------------------------------------
- * Esta página gestiona la creación de tickets en una arquitectura multi-tenant.
- * * CARACTERÍSTICAS TÉCNICAS:
- * 1. Uncontrolled Components: Usa 'useRef' para optimizar el rendimiento y evitar 
- * re-renders innecesarios al escribir.
- * * 2. Seguridad Multi-tenant (RLS): 
- * - Traduce el 'slug/domain' de la URL a un UUID real de tenant.
- * - La base de datos valida esta operación mediante políticas RLS, asegurando 
- * que un usuario solo pueda obtener el ID de su propio tenant.
- * * 3. Integridad de Datos mediante Triggers:
- * - El campo 'created_by' NO se envía desde el cliente por razones de seguridad.
- * - Se delega la asignación del autor a un Trigger de PostgreSQL (set_created_by_table_tickets) 
- * que utiliza la sesión interna (auth.uid()) para inyectar el ID de usuario real.
- * * 4. TypeScript Bypass:
- * - Se utiliza 'as never' en el insert debido a que los tipos generados exigen 
- * 'created_by', pero la lógica de base de datos lo resuelve automáticamente.
- * * @param {TicketsProps} params - Contiene el slug del tenant extraído de la URL dinámica.
- * @returns Formulario estilizado con Tailwind CSS.
- */
 
 const CreateTicketPage = ({params}:TicketsProps) => {
   // 1. Inicialización de referencias con tipos de HTML
@@ -38,6 +18,28 @@ const CreateTicketPage = ({params}:TicketsProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const supabase = createSupabaseBrowserClient();
   const { tenant } = use(params)
+  const [tenantID, setTenantID] = useState<string | null>(null);
+  const [assignee, setAssignee] = useState<string | null>(null);
+
+
+
+  useEffect(() => {
+
+    const fetchTenantID = async () => {
+      const { data: tenantData } = await supabase
+        .from("tenants")
+        .select("id")
+        .eq("domain", tenant)
+        .single();
+      
+      if (tenantData) setTenantID(tenantData.id);
+    };
+
+    fetchTenantID();
+
+  }, [tenant, supabase]);
+
+
 
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>){
@@ -53,25 +55,14 @@ const CreateTicketPage = ({params}:TicketsProps) => {
     if (title.trim().length > 4 && description.trim().length > 9) {
 
 
-      // 1. TRADUCCIÓN: Buscamos el UUID real del tenant usando el slug
-      // Esto es seguro porque el RLS verificará si tienes permiso sobre este UUID
-      const { data: tenantData, error: tenantError } = await supabase
-      .from("tenants")
-      .select("id")
-      .eq("domain", tenant)
-      .single();
- 
-      if (tenantError || !tenantData) {
-        setIsLoading(false);
-        alert("Error: Tenant no válido.");
-        return;
-      }
+
+      
       
       // Usamos async/await para manejar la respuesta de forma lineal
       const { data, error } = await supabase
       .from("tickets")
       //ojo, aqui se presenta el error debito a que created_by se va a insertar por medio de un trigger
-      .insert({title, description, tenant_id: tenantData.id,  } as never)
+      .insert({title, description, tenant_id: tenantID, assignee } as never)
       .select()
       .single();
 
@@ -83,6 +74,7 @@ const CreateTicketPage = ({params}:TicketsProps) => {
         return; // Detenemos la ejecución aquí
       }
 
+
       // Éxito (Si llegamos aquí, es porque no hubo error)
       alert("Successfully created ticket");
       // Aquí puedes limpiar el formulario o redireccionar
@@ -90,8 +82,10 @@ const CreateTicketPage = ({params}:TicketsProps) => {
     }else{
       console.log(tenant)
       alert("A title must have at least 5 chars and a description must at least contain 10");
-      
     }
+
+
+
   }
 
 
@@ -130,6 +124,13 @@ const CreateTicketPage = ({params}:TicketsProps) => {
             className="w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
           />
         </div>
+
+
+        {/* Botón de Envío */}
+        <AssigneeSelect tenant_id={tenantID} onValueChanged={(val) => setAssignee(val)}></AssigneeSelect>
+
+
+
 
         {/* Botón de Envío */}
         <button

@@ -10,7 +10,7 @@ export default function DeleteButton({ ticketId, tenant }: { ticketId: string, t
   const handleDelete = async () => {
     const{data, error} = await supabase.from("tickets").delete().eq("id", ticketId);
      console.log(error||"no hubo error")
-     console.log(data)
+     
     router.push(`/tickets`); // Redirige después de borrar
     router.refresh(); // Opcional: fuerza a Next.js a re-renderizar la lista
 

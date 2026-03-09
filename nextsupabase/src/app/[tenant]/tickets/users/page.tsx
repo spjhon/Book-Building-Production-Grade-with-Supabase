@@ -43,7 +43,7 @@ if (usersError || !users) {
         return;
       }
 
-console.log(users)
+
 
 
   return (

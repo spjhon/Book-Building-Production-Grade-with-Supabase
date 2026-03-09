@@ -1,8 +1,8 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import TicketComments from "../../../../../features/tickets/components/ticketComment";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
-import { Button } from "@/components/ui/button";
 import DeleteButton from "@/features/tickets/components/DeleteButton";
+import AssigneeWrapper from "@/features/tickets/components/AssigneeWrapper";
 
 const TICKET_STATUS = {
   open: "Open",
@@ -131,6 +131,12 @@ const dateString = new Date(ticket.created_at).toLocaleString("en-US");
             <time className="text-sm text-gray-500">
               Ticket creado el: {dateString}
             </time>
+
+            <AssigneeWrapper
+              ticketId={ticket.id} 
+              tenantId={fetchTenantID.id} 
+              defaultValue={ticket.assignee}
+            />
 
             {isAuthor && (
               <DeleteButton ticketId ={ticket.id} tenant={fetchTenantID.id}></DeleteButton>
