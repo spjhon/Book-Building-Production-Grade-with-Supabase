@@ -35,23 +35,24 @@ export default async function TicketDetailPage({params}: Readonly<{ params: Prom
 
 
 
-const { data: fetchTenantID, error: fetchTenantError } = await supabaseServerClient
+  const { data: fetchTenantID, error: fetchTenantError } = await supabaseServerClient
   .from("tenants")
   .select("id")
   .eq("domain", tenant) // Asumiendo que tu columna se llama 'domain'
   .single(); // Usamos maybeSingle para evitar errores si no existe
 
 
-if (fetchTenantError){
+  if (fetchTenantError){
     console.log(fetchTenantError?.message + " No se puedo obtener info del tenant")
     return
   }
   
 
   // Asumiendo que ya obtuviste el tenantId con el código anterior
-const { data: ticket, error: fetchTicketError } = await supabaseServerClient
+  const { data: ticket, error: fetchTicketError } = await supabaseServerClient
   .from("tickets")
-  .select("*")
+  .select("*, comments (*)")
+  .order("created_at", { ascending: true, foreignTable: "comments" })
   .eq("ticket_number", Number(slugId))
   .eq("tenant_id", fetchTenantID.id) // Filtro de seguridad multi-tenant
   .single();
@@ -66,6 +67,7 @@ const { data: ticket, error: fetchTicketError } = await supabaseServerClient
   }
 
 
+ 
   
   const { data: Autor, error: fetchAutorError } = await supabaseAdmin
   .from("service_users")
@@ -80,7 +82,7 @@ const { data: ticket, error: fetchTicketError } = await supabaseServerClient
 
 
 
-const { data } = await supabaseServerClient.auth.getClaims(); //se obtiene el claims osea el usuario
+  const { data } = await supabaseServerClient.auth.getClaims(); //se obtiene el claims osea el usuario
   const sessionUser = data?.claims;
 
 
@@ -89,20 +91,18 @@ const { data } = await supabaseServerClient.auth.getClaims(); //se obtiene el cl
 
 
 
-const { data: serviceUserId } = await supabaseServerClient
-.from("service_users")
-.select("id")
-.eq("auth_user_id", supabase_user_id)
-.single();
+  const { data: serviceUserId } = await supabaseServerClient
+  .from("service_users")
+  .select("id")
+  .eq("auth_user_id", supabase_user_id)
+  .single();
 
 
 
 
-const isAuthor = serviceUserId?.id === ticket.created_by;
-
-
-
-const dateString = new Date(ticket.created_at).toLocaleString("en-US");
+  const isAuthor = serviceUserId?.id === ticket.created_by;
+  const{comments} = ticket;
+  const dateString = new Date(ticket.created_at).toLocaleString("en-US");
 
   return (
     
@@ -164,7 +164,7 @@ const dateString = new Date(ticket.created_at).toLocaleString("en-US");
         <hr className="border-gray-200" />
 
         {/* Comments / Related components */}
-        <TicketComments />
+        <TicketComments ticket_id ={ticket.id} comments ={comments} />
       </article>
     </div>
   );

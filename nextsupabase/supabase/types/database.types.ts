@@ -34,6 +34,61 @@ export type Database = {
   }
   public: {
     Tables: {
+      comments: {
+        Row: {
+          author_name: string
+          comment_text: string
+          created_at: string
+          created_by: string
+          id: string
+          tenant_id: string
+          ticket_id: string
+          updated_at: string
+        }
+        Insert: {
+          author_name: string
+          comment_text: string
+          created_at?: string
+          created_by: string
+          id?: string
+          tenant_id: string
+          ticket_id: string
+          updated_at?: string
+        }
+        Update: {
+          author_name?: string
+          comment_text?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          tenant_id?: string
+          ticket_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comments_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "service_users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       service_users: {
         Row: {
           auth_user_id: string

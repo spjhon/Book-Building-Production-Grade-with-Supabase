@@ -41,7 +41,7 @@ export function AssigneeSelect({ tenant_id, onValueChanged, defaultValue }: {
   }, [tenant_id_string, supabase]);
 
  
-console.log(users)
+
 
 
   return (
@@ -50,9 +50,11 @@ console.log(users)
       defaultValue={defaultValue ?? "none"}
       disabled={users === null}
     >
+
       <SelectTrigger className="w-full">
         <SelectValue placeholder={users === null ? "Cargando..." : "Sin asignar"} />
       </SelectTrigger>
+
       <SelectContent>
         <SelectGroup>
           <SelectItem value="none">Sin asignar</SelectItem>
@@ -63,6 +65,8 @@ console.log(users)
           ))}
         </SelectGroup>
       </SelectContent>
+
+      
     </Select>
   );
 }
