@@ -1,14 +1,13 @@
 "use client";
 
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 
 
 
-type TicketCommentsProps = {
-  ticket_id: string;
-  comments: {
+type TicketComment = {
+  
     id: string,
     tenant_id: string,
     ticket_id: string,
@@ -17,9 +16,12 @@ type TicketCommentsProps = {
     updated_at: string,
     author_name: string,
     comment_text: string
-  }[];
 }
 
+type TicketCommentsProps = {
+  ticket_id: string;
+  comments: TicketComment[];
+};
 
 const TicketComments = ({ticket_id, comments}: TicketCommentsProps) => {
 
@@ -27,7 +29,32 @@ const TicketComments = ({ticket_id, comments}: TicketCommentsProps) => {
   const supabaseBrowser = createSupabaseBrowserClient()
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [commentsState, setComments] = useState<string | null>(comments || []);
+  const [commentsState, setComments] = useState<TicketComment[]>(comments || []);
+
+
+  // Sincronizar estado si las props cambian al navegar
+  useEffect(() => {
+    setComments(comments || []);
+  }, [comments]);
+
+
+
+  useEffect(() => {
+
+    const subscription = supabaseBrowser
+    .channel("realtime comments")
+    .on("postgres_changes", {event: "*", schema: "public", table: "comments", filter: `ticket_id=eq.${ticket_id}`}, (payload) => {
+      console.log("se recibio el event correctamente: " + payload)
+      
+      setComments((prev) => [...prev, payload.new as TicketComment]) })
+    .subscribe()
+
+    return () => {subscription.unsubscribe();} //supabaseBrowser.removeChannel(channel);
+
+  }, [supabaseBrowser, ticket_id])
+
+
+
 
   async function handleSubmit (event: React.FormEvent<HTMLFormElement>) {
 
@@ -73,7 +100,7 @@ const TicketComments = ({ticket_id, comments}: TicketCommentsProps) => {
 
   return (
     <footer>
-      <h4>Comments ({comments.length})</h4>
+      <h4>Comments ({commentsState.length})</h4>
 
       <form
         onSubmit={handleSubmit}
@@ -86,7 +113,7 @@ const TicketComments = ({ticket_id, comments}: TicketCommentsProps) => {
 
       {/* <section>We have {comments.length} comments.</section> */}
       <section>
-        {comments.map((comment) => (
+        {commentsState.map((comment) => (
           <article key={comment.id}>
             <strong>{comment.author_name} </strong>
             <time>{new Date(comment.created_at).toLocaleString("en-US")}</time>
