@@ -17,3 +17,10 @@ CREATE TRIGGER tr_comments_autoset_created_by
 BEFORE INSERT ON public.comments
 FOR EACH ROW
 EXECUTE FUNCTION public.set_created_by_value();
+
+
+
+CREATE TRIGGER tr_comments_derive_tenant
+BEFORE INSERT ON public.comments
+FOR EACH ROW
+EXECUTE FUNCTION public.derive_tenant_from_ticket();
