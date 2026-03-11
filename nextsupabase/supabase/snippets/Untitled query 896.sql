@@ -1,5 +1,11 @@
-INSERT INTO public.comments (ticket_id, comment_text)
-VALUES (
-  '919ee102-3e74-4beb-b6a8-6b8f3a0818bc', 
-  'comentario desde el dashboard 2'
-);
+-- ==========================================
+-- Seed: tenants
+-- ==========================================
+
+insert into public.tenants (id, name, domain, slug)
+values
+  ('aaaaaaaa-0000-0000-0000-000000000001', 'Acme Corp', 'acme', 'acme'),
+  ('bbbbbbbb-0000-0000-0000-000000000002', 'Globex Inc', 'globex', 'globex'),
+  ('cccccccc-0000-0000-0000-000000000003', 'Initech', 'initech', 'initech'),
+  ('dddddddd-0000-0000-0000-000000000004', 'Umbrella Co', 'umbrella', 'umbrella');
+

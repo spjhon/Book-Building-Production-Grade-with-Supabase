@@ -1,5 +1,4 @@
 -- Asegurar que el trigger no se duplique
-DROP TRIGGER IF EXISTS trg_set_ticket_assignee_name ON public.tickets;
 
 -- Crear el trigger
 CREATE TRIGGER trg_set_ticket_assignee_name

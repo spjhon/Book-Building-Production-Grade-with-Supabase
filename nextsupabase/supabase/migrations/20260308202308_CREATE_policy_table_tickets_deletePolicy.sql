@@ -2,9 +2,6 @@
 -- Migración: Agregar política de borrado para tickets
 -- ==========================================================
 
--- 1. Primero, verificamos y eliminamos si la política ya existe (por seguridad)
-drop policy if exists "Users can delete own tickets" on public.tickets;
-
 -- 2. Creamos la política definitiva
 create policy "Users can delete own tickets"
 on public.tickets
