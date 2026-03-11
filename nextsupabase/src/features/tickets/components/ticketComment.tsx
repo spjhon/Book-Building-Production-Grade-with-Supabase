@@ -48,7 +48,7 @@ const TicketComments = ({ticket_id, comments}: TicketCommentsProps) => {
       console.log(payload.eventType)
       
       setComments((prev) => [...prev, payload.new as TicketComment]) })
-    .subscribe()
+    .subscribe((status) => console.log('connection status', status))
 
     console.log(subscription)
 
