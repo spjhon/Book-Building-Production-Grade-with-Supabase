@@ -134,7 +134,7 @@ export default async function TicketDetailPage({params}: Readonly<{ params: Prom
 
             <AssigneeWrapper
               ticketId={ticket.id} 
-              tenantId={fetchTenantID.id} 
+              tenant={tenant} 
               defaultValue={ticket.assignee}
             />
 

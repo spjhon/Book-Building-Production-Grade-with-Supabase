@@ -1,7 +1,7 @@
 "use client";
 import { AssigneeSelect } from "@/features/tickets/components/AssigneeSelect";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-import { use, useEffect, useRef, useState } from "react";
+import { use, useRef, useState } from "react";
 
 interface TicketsProps {
   params: Promise<{ tenant: string }>;
@@ -12,32 +12,16 @@ interface TicketsProps {
 
 
 const CreateTicketPage = ({params}:TicketsProps) => {
+
+
   // 1. Inicialización de referencias con tipos de HTML
   const ticketTitleRef = useRef<HTMLInputElement>(null);
   const ticketDescriptionRef = useRef<HTMLTextAreaElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const supabase = createSupabaseBrowserClient();
   const { tenant } = use(params)
-  const [tenantID, setTenantID] = useState<string | null>(null);
   const [assignee, setAssignee] = useState<string | null>(null);
 
-
-
-  useEffect(() => {
-
-    const fetchTenantID = async () => {
-      const { data: tenantData } = await supabase
-        .from("tenants")
-        .select("id")
-        .eq("domain", tenant)
-        .single();
-      
-      if (tenantData) setTenantID(tenantData.id);
-    };
-
-    fetchTenantID();
-
-  }, [tenant, supabase]);
 
 
 
@@ -56,13 +40,29 @@ const CreateTicketPage = ({params}:TicketsProps) => {
 
 
 
+
+const { data: tenantData, error: tenantDataError } = await supabase
+        .from("tenants")
+        .select("id")
+        .eq("domain", tenant)
+        .single();
+
+
+// Manejo de error limpio
+      if (tenantDataError) {
+        setIsLoading(false);
+        alert("No se pudo extraer el id del tenant" + tenantDataError.message);
+        
+        return; // Detenemos la ejecución aquí
+      }
+
       
       
       // Usamos async/await para manejar la respuesta de forma lineal
       const { data, error } = await supabase
       .from("tickets")
       //ojo, aqui se presenta el error debito a que created_by se va a insertar por medio de un trigger
-      .insert({title, description, tenant_id: tenantID, assignee } as never)
+      .insert({title, description, tenant_id: tenantData.id, assignee } as never)
       .select()
       .single();
 
@@ -127,7 +127,7 @@ const CreateTicketPage = ({params}:TicketsProps) => {
 
 
         {/* Botón de Envío */}
-        <AssigneeSelect tenant_id={tenantID} onValueChanged={(val) => setAssignee(val)}></AssigneeSelect>
+        <AssigneeSelect tenant={tenant} onValueChanged={(val) => setAssignee(val)}></AssigneeSelect>
 
 
 

@@ -42,12 +42,15 @@ const TicketComments = ({ticket_id, comments}: TicketCommentsProps) => {
   useEffect(() => {
 
     const subscription = supabaseBrowser
-    .channel("realtime comments")
-    .on("postgres_changes", {event: "*", schema: "public", table: "comments", filter: `ticket_id=eq.${ticket_id}`}, (payload) => {
-      console.log("se recibio el event correctamente: " + payload)
+    .channel("realtime_comments")
+    .on("postgres_changes", {event: "INSERT", schema: "public", table: "comments", filter: `ticket_id=eq.${ticket_id}`}, (payload) => {
+      console.log("se recibio el event correctamente: ")
+      console.log(payload.eventType)
       
       setComments((prev) => [...prev, payload.new as TicketComment]) })
     .subscribe()
+
+    console.log(subscription)
 
     return () => {subscription.unsubscribe();} //supabaseBrowser.removeChannel(channel);
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { cn, mapSupabaseAuthError } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
@@ -34,26 +34,6 @@ export function UpdatePasswordForm({
   const router = useRouter();
 
 
-/**
- * Update Password Form (Client Component)
- * --------------------------------------
- * Este componente permite a los usuarios establecer una nueva contraseña una vez que han 
- * accedido al sistema mediante un enlace de recuperación. Es la fase final del flujo de reset.
- * * @param {string} tenant - Identificador de la organización para redirigir al usuario tras el éxito.
- * * Datos:
- * - 'password': Estado local que almacena la nueva cadena de caracteres ingresada.
- * - 'error': Maneja mensajes de fallo, utilizando 'mapSupabaseAuthError' para clarificar el feedback.
- * - 'isLoading': Estado booleano para gestionar el feedback visual durante la petición asíncrona.
- * * Flujo:
- * 1. Inicializa el router de Next.js y el cliente de Supabase para operaciones en el navegador.
- * 2. Captura el evento del formulario, resetea errores previos y activa el estado de carga.
- * 3. Ejecuta 'supabase.auth.updateUser', actualizando la propiedad de contraseña del usuario activo.
- * 4. Tras una actualización exitosa, redirige automáticamente al dashboard de tickets del tenant.
- * 5. Implementa un bloque catch que mapea errores técnicos a mensajes legibles o personalizados.
- * 6. Renderiza una interfaz de tarjeta con campos validados y botones de acción con estado dinámico.
- * * @return JSX.Element - Un formulario seguro para la actualización de credenciales.
- */
-
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     const supabase = createSupabaseBrowserClient();
@@ -66,7 +46,7 @@ export function UpdatePasswordForm({
       // Update this route to redirect to an authenticated route. The user already has an active session.
       router.push(`/tickets`);
     } catch (error: unknown) {
-      setError(error instanceof Error ? mapSupabaseAuthError(error.name) : "Ha ocurrido un error, yuka");
+      setError(error instanceof Error ? error.message : "Ha ocurrido un error, yuka");
     } finally {
       setIsLoading(false);
     }

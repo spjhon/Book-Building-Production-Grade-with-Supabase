@@ -19,8 +19,8 @@ interface User {
 }
 
 
-export function AssigneeSelect({ tenant_id, onValueChanged, defaultValue }: { 
-  tenant_id: string | null; 
+export function AssigneeSelect({ tenant, onValueChanged, defaultValue }: { 
+  tenant: string; 
   onValueChanged: (val: string | null) => void;
   defaultValue?: string | null;
 }) {
@@ -28,17 +28,38 @@ export function AssigneeSelect({ tenant_id, onValueChanged, defaultValue }: {
 
   const [users, setUsers] = useState<User[] | null>(null);
   const supabase = createSupabaseBrowserClient();
-  const tenant_id_string = tenant_id || "";
+  
 
 
 
   useEffect(() => {
-    supabase
-      .rpc("get_service_users_with_tenant", { target_tenant_id: tenant_id_string })
-      .then(({ data }) => {
+    const fetchData = async () => {
+    try {
+
+      const { data: tenantData, error: tenantDataError } = await supabase
+      .from("tenants")
+      .select("id")
+      .eq("domain", tenant)
+      .single();
+
+      if (tenantDataError){
+        throw new Error;
+      }
+
+      const { data, error } = await supabase.rpc("get_service_users_with_tenant", { target_tenant_id: tenantData.id });
+
+      if (error) {
+        console.error("Error detallado del RPC:", error);
+      } else {
         setUsers(data ?? []);
-      });
-  }, [tenant_id_string, supabase]);
+      }
+    } catch (e) {
+      console.error("Error inesperado en el useEffect:", e);
+    }
+  };
+
+  fetchData();
+  }, [tenant, supabase]);
 
  
 
