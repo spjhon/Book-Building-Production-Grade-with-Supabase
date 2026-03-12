@@ -4,6 +4,7 @@ import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import DeleteButton from "@/features/tickets/components/DeleteButton";
 import AssigneeWrapper from "@/features/tickets/components/AssigneeWrapper";
 
+
 const TICKET_STATUS = {
   open: "Open",
   in_progress: "In progress",
@@ -161,10 +162,12 @@ export default async function TicketDetailPage({params}: Readonly<{ params: Prom
           {ticket.description}
         </section>
 
+       
+
         <hr className="border-gray-200" />
 
         {/* Comments / Related components */}
-        <TicketComments ticket_id ={ticket.id} comments ={comments} />
+        <TicketComments ticket_id ={ticket.id} comments ={comments} tenant_id={fetchTenantID.id}/>
       </article>
     </div>
   );
