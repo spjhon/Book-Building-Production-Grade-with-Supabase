@@ -81,7 +81,7 @@ const TicketComments = ({ticket_id, comments, tenant_id}: TicketCommentsProps) =
 
 
 
-  let uploadedFiles: { path: string }[] = [];
+  
 
 
 
@@ -98,6 +98,9 @@ const TicketComments = ({ticket_id, comments, tenant_id}: TicketCommentsProps) =
     event.preventDefault();
     alert("TODO: Add comment");
 
+    let uploadedFiles: { path: string }[] = [];
+    let commentIDforDeleteInCaseOfError;
+
     const comment_text = textareaRef.current?.value.trim();
     if (!comment_text) return alert("Please enter a comment");
 
@@ -110,7 +113,7 @@ const TicketComments = ({ticket_id, comments, tenant_id}: TicketCommentsProps) =
 
     
     try {
-
+      
       
       //Intento de subida de archivos si es que los hay
       if (fileList && fileList.length > 0) {
@@ -118,11 +121,14 @@ const TicketComments = ({ticket_id, comments, tenant_id}: TicketCommentsProps) =
 
           const filePath = `${tenant_id}/${ticket_id}/${getFormattedDate()}/${getRandomHexString()}_${file.name}`;
 
-          const { data, error } = await supabaseBrowser.storage
+          const { data, error: errorUploadingFiles } = await supabaseBrowser.storage
           .from("comments-attachments")
           .upload(filePath, file);
         
-          if (error) {console.log(error.message); throw error};
+          if (errorUploadingFiles) {throw {
+            contexto: "Error al insertar archivos en el bucket", // Tu mensaje personalizado
+            supabaseError: errorUploadingFiles // El objeto completo de Supabase
+          }};
           
           return { path: data.path };
 
@@ -134,40 +140,97 @@ const TicketComments = ({ticket_id, comments, tenant_id}: TicketCommentsProps) =
 
 
       //Intento de creacion de ticket con una asercion, lo voy a dejar asi
-      const { error } = await supabaseBrowser
+      const { data: commentData, error: errorCreatingComment } = await supabaseBrowser
       .from("comments")
       .insert({
         ticket_id,
         comment_text
         // Nota: No enviamos tenant_id, created_by ni author_name.
         // Los triggers se encargan de eso automáticamente.
-      } as never);
+      } as never)
+      .select()
+      .single()
 
 
-      if (error) throw error;
+      if (errorCreatingComment) throw {
+        contexto: "Error al insertar en la tabla de comentarios", // Tu mensaje personalizado
+        supabaseError: errorCreatingComment // El objeto completo de Supabase
+      };
+
+      
+      commentIDforDeleteInCaseOfError = commentData.id;
+
+
+
+      if (uploadedFiles.length > 0) {
+        const { error: attachError } = await supabaseBrowser
+          .from("comment_attachments")
+          .insert(
+            uploadedFiles.map((file) => ({
+              comment_id: commentData.id, // ID del comentario recién creado
+              file_path: file.path,
+              tenant_id: tenant_id,
+            }))
+          );
+
+        if (attachError) {throw {
+          contexto: "Error al crear la relacion en la tabla comment_attachments", // Tu mensaje personalizado
+          supabaseError: attachError // El objeto completo de Supabase
+        };
+      }}
+
+
+
+
 
 
       // Limpiar el textarea solo si la inserción fue exitosa
       if (textareaRef.current) {
         textareaRef.current.value = "";
-        setFileList(null);
+      }
+
+      setFileList(null);
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
       }
 
 
     } catch (err: unknown) {
 
+     // console.log(err instanceof Error ? err.message : "An unexpected error occurred")
+      console.log(err);
+      console.log("esta es la variable commentIDforDeleteInCaseOfError: " + commentIDforDeleteInCaseOfError)
+      
 
+      //borra el comentario en caso de error, OJO SI FALLA POR RLS, NO VA A MOSTRAR ERROR, EL ERROR DE RLS SOLO APARECE EN INSERT
+      if (commentIDforDeleteInCaseOfError) {
+        const {data: dataDeletingComment, error: errorDeletingComment} = await supabaseBrowser
+          .from("comments")
+          .delete()
+          .eq("id", commentIDforDeleteInCaseOfError);
+        
+        console.log("se activo el dataDeletingComment: " + dataDeletingComment)
+        if(dataDeletingComment) console.log("Se borro el comentario correctamente");
+        if(errorDeletingComment){console.log(errorDeletingComment + "Error borrando el comentario")}
+      }
+
+      //borra los atachment en caso de error
       if (uploadedFiles.length > 0) {
         const pathsToDelete = uploadedFiles.map(f => f.path);
-        await supabaseBrowser.storage
+        const{data: deletingAttachmentsData, error: errorDeletingAttachments} = await supabaseBrowser.storage
           .from("comments-attachments")
           .remove(pathsToDelete);
         
-        const errorMessage = err instanceof Error ? err.message : "An unexpected error occurred creating user";
-        console.log(errorMessage);
+        if(deletingAttachmentsData) console.log("se borraron los attachments correctamente");
+        if(errorDeletingAttachments) console.log("error en el borrado de attachments" + errorDeletingAttachments)
+        
       }
+ 
+      
 
-      alert("Error al guardar el comentario o la subida de archivos. Se han limpiado los archivos temporales." + err);
+      
+      alert("Error al guardar el comentario o la subida de archivos. Se han limpiado los archivos temporales.");
 
 
     } finally {

@@ -34,6 +34,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      comment_attachments: {
+        Row: {
+          comment_id: string
+          created_at: string
+          file_path: string
+          id: string
+          tenant_id: string
+          updated_at: string
+        }
+        Insert: {
+          comment_id: string
+          created_at?: string
+          file_path: string
+          id?: string
+          tenant_id: string
+          updated_at?: string
+        }
+        Update: {
+          comment_id?: string
+          created_at?: string
+          file_path?: string
+          id?: string
+          tenant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comment_attachments_comment_id_fkey"
+            columns: ["comment_id"]
+            isOneToOne: false
+            referencedRelation: "comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comment_attachments_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       comments: {
         Row: {
           author_name: string
