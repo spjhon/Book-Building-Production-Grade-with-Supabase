@@ -52,7 +52,7 @@ export default async function TicketDetailPage({params}: Readonly<{ params: Prom
   // Asumiendo que ya obtuviste el tenantId con el código anterior
   const { data: ticket, error: fetchTicketError } = await supabaseServerClient
   .from("tickets")
-  .select("*, comments (*)")
+  .select("*, comments (*, comment_attachments (*) )")
   .order("created_at", { ascending: true, foreignTable: "comments" })
   .eq("ticket_number", Number(slugId))
   .eq("tenant_id", fetchTenantID.id) // Filtro de seguridad multi-tenant
@@ -103,6 +103,7 @@ export default async function TicketDetailPage({params}: Readonly<{ params: Prom
 
   const isAuthor = serviceUserId?.id === ticket.created_by;
   const{comments} = ticket;
+  console.log(comments)
   const dateString = new Date(ticket.created_at).toLocaleString("en-US");
 
   return (

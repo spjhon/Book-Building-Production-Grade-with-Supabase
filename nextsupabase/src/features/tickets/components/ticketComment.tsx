@@ -21,7 +21,15 @@ const getFormattedDate = () => {
 };
 
 
-
+type Comment_Attachment = {
+  id: string,
+  
+  comment_id: string,
+  tenant_id: string,
+  file_path: string,
+  created_at: string,
+  updated_at: string
+}
 
 
 type TicketComment = {
@@ -33,7 +41,8 @@ type TicketComment = {
     created_by: string,
     updated_at: string,
     author_name: string,
-    comment_text: string
+    comment_text: string,
+    comment_attachments: Comment_Attachment[]
 }
 
 type TicketCommentsProps = {
@@ -54,6 +63,7 @@ const TicketComments = ({ticket_id, comments, tenant_id}: TicketCommentsProps) =
 
 
 
+
   // Sincronizar estado si las props cambian al navegar
   useEffect(() => {
     setComments(comments || []);
@@ -65,11 +75,35 @@ const TicketComments = ({ticket_id, comments, tenant_id}: TicketCommentsProps) =
 
     const subscription = supabaseBrowser
     .channel("realtime_comments")
-    .on("postgres_changes", {event: "INSERT", schema: "public", table: "comments", filter: `ticket_id=eq.${ticket_id}`}, (payload) => {
+    .on("postgres_changes", {event: "INSERT", schema: "public", table: "comments", filter: `ticket_id=eq.${ticket_id}`}, async (payload) => {
       console.log("se recibio el event correctamente: ")
       console.log(payload.eventType)
+
+      // 1. Obtenemos el comentario nuevo
+      const newComment = payload.new as TicketComment;
+
+  
+      const { data: attachments, error: errorFetchngNewComment } = await supabaseBrowser
+      .from("comment_attachments")
+      .select("*")
+      .eq("comment_id", newComment.id);
+
+      if (errorFetchngNewComment){
+      alert("error trallendo los adjuntos, lo siento: " + errorFetchngNewComment.message)
+      }
+       
+        
+
       
-      setComments((prev) => [...prev, payload.new as TicketComment]) })
+
+
+      const commentWithAttachments: TicketComment = {
+          ...newComment,
+          comment_attachments: attachments || []
+        };
+
+      
+      setComments((prev) => [...prev, commentWithAttachments]) })
     .subscribe((status) => console.log('connection status', status))
 
 
@@ -80,7 +114,19 @@ const TicketComments = ({ticket_id, comments, tenant_id}: TicketCommentsProps) =
 
 
 
+async function onClickHandlerButtonDownload (path: string){
+  const {data, error: errorDownloading} = await supabaseBrowser.storage
+  .from("comments-attachments")
+  .createSignedUrl(path, 60, {download: false})
 
+  if (errorDownloading) {
+    console.log("error descargando el archivo: " + errorDownloading.message)
+    return
+  }
+  
+  window.open(data?.signedUrl, "_blank");
+
+}
   
 
 
@@ -139,7 +185,7 @@ const TicketComments = ({ticket_id, comments, tenant_id}: TicketCommentsProps) =
       }
 
 
-      //Intento de creacion de ticket con una asercion, lo voy a dejar asi
+      //Intento de creacion de un comentario para un ticket con una asercion, lo voy a dejar asi
       const { data: commentData, error: errorCreatingComment } = await supabaseBrowser
       .from("comments")
       .insert({
@@ -266,6 +312,22 @@ const TicketComments = ({ticket_id, comments, tenant_id}: TicketCommentsProps) =
             <strong>{comment.author_name} </strong>
             <time>{new Date(comment.created_at).toLocaleString("en-US")}</time>
             <p>{comment.comment_text}</p>
+
+              {comment.comment_attachments?.length > 0 && (<>
+                <small style={{ display: "block" }}>Attachments</small>
+
+                {comment.comment_attachments.map((attachment) => (
+                  <button 
+                    key={attachment.id} 
+                    onClick={() => onClickHandlerButtonDownload(attachment.file_path)}
+                    className="inline-block w-auto mr-2 px-2 py-[0.26em] text-[0.9rem] rounded-[4px] bg-white/15 cursor-pointer hover:bg-white/25 transition-colors border-0"
+                  >
+                    {attachment.file_path.split("/").pop()}
+                  </button>
+                ))}
+              </>
+              )}
+
           </article>
         ))}
       </section>

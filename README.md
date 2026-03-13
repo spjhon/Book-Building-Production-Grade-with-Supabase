@@ -15,6 +15,7 @@ hacer backup completo del sistema local: pnpx supabase db dump --local > backup_
 1. 
 2. el buscador cuando se borra lo que se esta buscando, no se refresca la pagina y se queda ahi la url con los mismos params
 3. no funciona el boton de crear ticket
+4. supabase no genera types para los buckets
 
 ## Pendientes
 
@@ -26,3 +27,4 @@ hacer backup completo del sistema local: pnpx supabase db dump --local > backup_
 6. Se recomienda en la arquitectura multitenant, dejar el tenant en todas las tablas para la politica de rls sea mas facil y se recomienda un trigger para agregar este tenant en las tablas donde se necesite basandose en otros campos y en el uid().
 7. organizar todo el typescript para que sea mas funcional
 8. organizar todos los errores de acuerdo a tocketComments
+9. ordenar los nombres ya que me confundi a creer que los adjuntos iban por ticket y no, iban por comentario en el ticket
