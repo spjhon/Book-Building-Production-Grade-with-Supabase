@@ -103,7 +103,7 @@ export default async function TicketDetailPage({params}: Readonly<{ params: Prom
 
   const isAuthor = serviceUserId?.id === ticket.created_by;
   const{comments} = ticket;
-  console.log(comments)
+  
   const dateString = new Date(ticket.created_at).toLocaleString("en-US");
 
   return (
@@ -168,7 +168,7 @@ export default async function TicketDetailPage({params}: Readonly<{ params: Prom
         <hr className="border-gray-200" />
 
         {/* Comments / Related components */}
-        <TicketComments ticket_id ={ticket.id} comments ={comments} tenant_id={fetchTenantID.id}/>
+        <TicketComments ticket_id ={ticket.id} comments ={comments} tenant_id={fetchTenantID.id} tenantName={tenant}/>
       </article>
     </div>
   );

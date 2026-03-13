@@ -1,7 +1,9 @@
 "use client";
 
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-import { useEffect, useRef, useState } from "react";
+import { buildUrl, urlPath } from "@/utils/url-helpers";
+import Image from "next/image";
+import { Fragment, useEffect, useRef, useState } from "react";
 
 
 function getRandomHexString() {
@@ -49,9 +51,10 @@ type TicketCommentsProps = {
   ticket_id: string;
   comments: TicketComment[];
   tenant_id: string;
+  tenantName: string;
 };
 
-const TicketComments = ({ticket_id, comments, tenant_id}: TicketCommentsProps) => {
+const TicketComments = ({ticket_id, comments, tenant_id, tenantName}: TicketCommentsProps) => {
 
 
   const supabaseBrowser = createSupabaseBrowserClient()
@@ -286,7 +289,7 @@ async function onClickHandlerButtonDownload (path: string){
   }
 
 
-
+  
   return (
     <footer>
       <h4>Comments ({commentsState.length})</h4>
@@ -317,13 +320,30 @@ async function onClickHandlerButtonDownload (path: string){
                 <small style={{ display: "block" }}>Attachments</small>
 
                 {comment.comment_attachments.map((attachment) => (
+                  <Fragment key={attachment.id}>
                   <button 
-                    key={attachment.id} 
+                     
                     onClick={() => onClickHandlerButtonDownload(attachment.file_path)}
                     className="inline-block w-auto mr-2 px-2 py-[0.26em] text-[0.9rem] rounded-[4px] bg-white/15 cursor-pointer hover:bg-white/25 transition-colors border-0"
                   >
                     {attachment.file_path.split("/").pop()}
                   </button>
+
+
+                  {attachment.file_path.endsWith(".png") && (
+                    
+                    <Image
+                    
+                    alt="thumbnail"
+                      style={{ marginLeft: "10px" }}
+                      src={urlPath(`/cdn/api?image=${attachment.file_path}`,tenantName)}
+                      width={100}
+                      height={100}
+                      unoptimized
+                    />
+                  )}
+
+                  </Fragment>
                 ))}
               </>
               )}

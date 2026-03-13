@@ -12,6 +12,15 @@ const nextConfig: NextConfig = {
       permanent: true,
     },
   ],
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: '**.miapp', // Esto permite cualquier subdominio de miapp
+        port: '3000',
+      },
+    ],
+  },
   
 };
 

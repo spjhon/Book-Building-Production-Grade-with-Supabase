@@ -28,3 +28,4 @@ hacer backup completo del sistema local: pnpx supabase db dump --local > backup_
 7. organizar todo el typescript para que sea mas funcional
 8. organizar todos los errores de acuerdo a tocketComments
 9. ordenar los nombres ya que me confundi a creer que los adjuntos iban por ticket y no, iban por comentario en el ticket
+10. en cuanto al resize de las imagenes, el trabajo en supabase vale dinero pero se puede por ejemplo transformarlas en el cliente antes de subirlas y subir las imagenes a la base de datos ya listas.
