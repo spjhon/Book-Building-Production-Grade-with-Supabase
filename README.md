@@ -29,3 +29,13 @@ hacer backup completo del sistema local: pnpx supabase db dump --local > backup_
 8. organizar todos los errores de acuerdo a tocketComments
 9. ordenar los nombres ya que me confundi a creer que los adjuntos iban por ticket y no, iban por comentario en el ticket
 10. en cuanto al resize de las imagenes, el trabajo en supabase vale dinero pero se puede por ejemplo transformarlas en el cliente antes de subirlas y subir las imagenes a la base de datos ya listas.
+11. No olvidar los tips de seguridad de los dos ultimos capitulos incluyendo la seguridad para las columnas created_at para no permitir que se modifiquen al hacer un update
+12. El rate limiting a la base de datos se puede implementar con el middleware especial de supabase para todas las llamada api
+13. proteccion para que solo escuche la ip que querramos
+14. forzar el ssl
+15. busqueda vectorial por medio de AI y el guardado de embedings en las tablas
+16. Supabnase tiene algo llamado wrappers que es para meter tablas externas en la base de datos y asi poder consultar e insertar info, muy util para un sistema de pagos.
+17. hecharle ojo a las edge
+18. los cronjobs
+19. validacion de json con la extencion pj_jsonschema, muy util en las validaciones de las rpc
+20. deshabilitar graphql y otras cosas cuando no se necesita.
