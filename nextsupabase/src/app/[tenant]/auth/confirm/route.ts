@@ -45,11 +45,11 @@ export async function GET(request: NextRequest) {
       //5.
       return NextResponse.redirect(buildUrl("/tickets", tenant, request), { status: 303 });
     } else {
-      return NextResponse.redirect(buildUrl(`/auth/error?type=${error.message ?? "Error al verificar token"}`, tenant, request), { status: 303 });
+      return NextResponse.redirect(buildUrl(`/error?type=${error.message ? "Error al verificar token: " + error.message : "Error al verificar token"}`, tenant, request), { status: 303 });
     }
   }
 
-  return NextResponse.redirect(buildUrl("/auth/error?type=No_token_hash_or_type", tenant, request), { status: 303 });
+  return NextResponse.redirect(buildUrl("/error?type=No existe el tocken o el tipo de verificacion es incorrecto", tenant, request), { status: 303 });
 }
 
 

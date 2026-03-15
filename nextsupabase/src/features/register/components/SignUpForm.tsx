@@ -14,11 +14,12 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 //import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { TenantId } from "@/types/authTypes";
 
 
 // Definimos qué esperamos recibir
 interface SignUpFormProps extends React.ComponentPropsWithoutRef<"div"> {
-  tenant: string;
+  tenant: TenantId;
 }
 
 export function SignUpForm({
@@ -40,7 +41,12 @@ async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
 
   // 1. Validación de contraseñas iguales
   if (password !== repeatPassword) {
-    setError("Passwords do not match");
+    setError("Las contraseñas no combinan");
+    return;
+  }
+
+  if (password.length<3){
+    setError("La contraseña debe tener al menos tres letras");
     return;
   }
 
@@ -59,7 +65,8 @@ async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.message || "Something went wrong");
+      setError(errorData.message || "Ocurrió un error inesperado");
+      return
     }
 
     const data = await response.json();
@@ -78,12 +85,12 @@ async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
 
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
+    <div className={cn("flex flex-col gap-6 border border-black rounded-xs", className)} {...props}>
+      <Card className="rounded-xs">
 
         <CardHeader>
-          <CardTitle className="text-2xl">Sign up</CardTitle>
-          <CardDescription>Create a new account con {tenant}</CardDescription>
+          <CardTitle className="text-2xl">Registro</CardTitle>
+          <CardDescription>Crear una nueva cuenta con: {tenant}</CardDescription>
         </CardHeader>
 
         <CardContent>
@@ -93,12 +100,12 @@ async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
 
 
               <div className="grid gap-2">
-                <Label htmlFor="userName">User Name</Label>
+                <Label htmlFor="userName">Nombre del usuario</Label>
                 <Input
                   id="userName"
                   type="name"
                   name="userName"
-                  placeholder="User Name"
+                  placeholder="Nombre Completo"
                   required
                   value={userName}
                   onChange={(e) => setUserName(e.target.value)}
@@ -112,7 +119,7 @@ async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
                   id="email"
                   type="email"
                   name="email"
-                  placeholder="m@example.com"
+                  placeholder="m@ejemplo.com"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -122,7 +129,7 @@ async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
 
               <div className="grid gap-2">
                 <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password">Contraseña</Label>
                 </div>
                 <Input
                   id="password"
@@ -137,7 +144,7 @@ async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
 
               <div className="grid gap-2">
                 <div className="flex items-center">
-                  <Label htmlFor="repeat-password">Repeat Password</Label>
+                  <Label htmlFor="repeat-password">Repetir Contraseña</Label>
                 </div>
                 <Input
                   id="repeat-password"
@@ -152,7 +159,7 @@ async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
               {error && <p className="text-sm text-red-500">{error}</p>}
 
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Creating an account..." : "Sign up"}
+                {isLoading ? "Creando cuenta..." : "Registrame"}
               </Button>
 
 
@@ -160,9 +167,9 @@ async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
 
 
             <div className="mt-4 text-center text-sm">
-              Already have an account?{" "}
+              Ya tiene una cuenta?{" "}
               <Link href="/auth/login" className="underline underline-offset-4">
-                Login
+                Ingresar
               </Link>
             </div>
 

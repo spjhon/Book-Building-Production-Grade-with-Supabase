@@ -1,6 +1,7 @@
 
 import { LoginForm } from "@/features/auth/components/LoginForm";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { TenantId } from "@/types/authTypes";
 import { redirect } from "next/navigation";
 
 //import { createSupabaseBrowserClient } from "@/lib/supabase/client";
@@ -23,7 +24,7 @@ import { redirect } from "next/navigation";
  * 5. Si no está autenticado, renderiza el formulario con el modo correspondiente (Password o Magic Link).
  * * * @return JSX.Element - Una página centrada con el formulario de inicio de sesión configurado.
  */
-export default async function Login({searchParams, params}: {searchParams: Promise<{[key: string]: string | string[] | undefined}>, params: Promise<{ tenant: string }>}) {
+export default async function Login({searchParams, params}: {searchParams: Promise<{magicLink: string}>, params: Promise<{ tenant: TenantId }>}) {
 
   //1.
   const { tenant } = await params;
@@ -53,11 +54,11 @@ export default async function Login({searchParams, params}: {searchParams: Promi
 
   //5.
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black">
-        
+    
+      <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
+        <div className="w-full max-w-sm">
         <LoginForm isPasswordLogin={!wantsMagicLink} tenant={tenant}></LoginForm>
-      </main>
+      </div>
     </div>
   );
 

@@ -1,5 +1,6 @@
 import { SignUpForm } from "@/features/register/components/SignUpForm";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { TenantId } from "@/types/authTypes";
 import { notFound } from "next/navigation";
 
 
@@ -21,7 +22,7 @@ import { notFound } from "next/navigation";
  * 4. Renderizado seguro: Inyección del tenant validado en el formulario de registro.
  * @Return El layout de registro con el SignUpForm o una página 404 de Next.js.
  */
-export default async function Page({params}: {params: Promise<{ tenant: string }>;}) {
+export default async function Page({params}: {params: Promise<{ tenant: TenantId }>;}) {
   
   //1.
   const { tenant } = await params;
@@ -30,7 +31,7 @@ export default async function Page({params}: {params: Promise<{ tenant: string }
   const supabaseAdmin = createSupabaseAdminClient();
   const { data, error } = await supabaseAdmin
   .from("tenants")
-  .select("*")
+  .select("id")
   .eq("domain", tenant)
   .single();
 

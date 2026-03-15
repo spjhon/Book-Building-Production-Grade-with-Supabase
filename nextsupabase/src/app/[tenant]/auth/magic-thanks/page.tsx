@@ -1,49 +1,50 @@
 import { urlPath } from "@/utils/url-helpers";
 import Link from "next/link";
+import { Mail, CheckCircle2 } from "lucide-react";
+import { TenantId } from "@/types/authTypes";
 
+export const revalidate = 3600; // Cachea la página por 1 hora en el CDN
 
-/**
- * Magic Link Success Page (Server Page Component)
- * -----------------------------------------
- * Esta página informa al usuario que el correo electrónico de autenticación o 
- * recuperación de contraseña ha sido enviado exitosamente.
- * * * @param {Promise} searchParams - Parámetros de búsqueda que definen el contexto ('type').
- * * @param {Promise} params - Parámetros de la ruta que contienen el identificador del 'tenant'.
- * * * Flujo:
- * 1. Resuelve asíncronamente los parámetros de búsqueda y de ruta (Next.js 15).
- * 2. Determina si el flujo actual es de recuperación de contraseña ('recovery') o inicio de sesión.
- * 3. Renderiza dinámicamente el título y el mensaje de instrucciones según el valor de 'type'.
- * 4. Proporciona un enlace de retorno seguro hacia la raíz del tenant utilizando 'urlPath'.
- * * * @return JSX.Element - Una interfaz informativa con mensajes dinámicos y navegación de retorno.
- */
-
-export default async function MagicLinkSuccessPage({searchParams, params}: {searchParams: Promise<{ type: string }>, params: Promise<{ tenant: string }>}) {
+export default async function MagicLinkSuccessPage({params}: {params: Promise<{ tenant: TenantId }>}) {
+ 
+  const { tenant } = await params;
   
-  //1.
-  const { type } = await searchParams
-  const {tenant} = await params
-  //2.
-  const isRecovery = type === "recovery";
+  
 
   return (
-    //3.
-    <div style={{ textAlign: "center" }}>
-      <h1>
-        {isRecovery && "Password "}
-        Magic on its way!
-      </h1>
-      {type === "recovery" ? (
-        <p>Reviza tu email para encontrar el link de entrada</p>
-      ) : (
-        <p>Reviza tu email</p>
-      )}
-      <br />
-      <br />
+    <div className="flex items-center justify-center h-screen">
+      <div className="mx-auto flex w-full max-w-sm flex-col items-center space-y-6 text-center border border-black rounded-xs p-5 sm:p-20">
+        
+        {/* Icono decorativo de éxito */}
+        <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
+          <Mail className="h-10 w-10 text-primary" />
+          <div className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full bg-background border-4 border-background">
+            <CheckCircle2 className="h-6 w-6 text-green-500" />
+          </div>
+        </div>
 
-      {/*4.*/}
-      <Link role="button" href={urlPath('/', tenant)}>
-        Go back.
-      </Link>
+        {/* Título y Mensaje */}
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold tracking-tight">
+            Magia en camino
+          </h1>
+          <p className="text-muted-foreground leading-relaxed">
+           Revisa tu bandeja de entrada. Hemos enviado un enlace mágico para que inicies sesión sin complicaciones.
+          </p>
+        </div>
+
+        {/* Botón de acción */}
+        <Link
+          href={urlPath("/", tenant)}
+          className="inline-flex h-10 w-full items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+        >
+          Volver al inicio
+        </Link>
+
+        <p className="text-xs text-muted-foreground">
+          ¿No recibiste el correo? Revisa tu carpeta de spam.
+        </p>
+      </div>
     </div>
   );
 }

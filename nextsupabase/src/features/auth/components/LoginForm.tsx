@@ -39,7 +39,7 @@ export const LoginForm = ({
   
 
   const passwordField = (
-    <div className="grid gap-2">
+    <div className="grid gap-2 ">
       <div className="flex items-center">
         <Label htmlFor="password">Password</Label>
         <Link
@@ -167,7 +167,7 @@ export const LoginForm = ({
 
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div className={cn("flex flex-col gap-6 border border-black rounded-xs", className)} {...props}>
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl">Login</CardTitle>

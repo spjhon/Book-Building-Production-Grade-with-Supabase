@@ -261,7 +261,7 @@ async function onClickHandlerButtonDownload (path: string){
         
         console.log("se activo el dataDeletingComment: " + dataDeletingComment)
         if(dataDeletingComment) console.log("Se borro el comentario correctamente");
-        if(errorDeletingComment){console.log(errorDeletingComment + "Error borrando el comentario")}
+        if(errorDeletingComment){console.log(errorDeletingComment.message + "Error borrando el comentario")}
       }
 
       //borra los atachment en caso de error

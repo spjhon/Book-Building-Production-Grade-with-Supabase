@@ -1,5 +1,6 @@
 import { fetchTenantDomainCached } from "@/lib/dbFunctions/fetch_tenant_domain_cached";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { TenantId } from "@/types/authTypes";
 import { buildUrl } from "@/utils/url-helpers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -24,7 +25,7 @@ import { NextRequest, NextResponse } from "next/server";
  * 6. Disparo de Magic Link (OTP) para validación final de correo electrónico.
  * @Return JSON de éxito o redirecciones de error dinámicas con mensajes técnicos codificados.
  */
-export async function POST(request: NextRequest, {params}: { params: Promise<{ tenant: string }>}) {
+export async function POST(request: NextRequest, {params}: { params: Promise<{ tenant: TenantId }>}) {
 
   //1.
   const { tenant } = await params;
@@ -34,15 +35,31 @@ export async function POST(request: NextRequest, {params}: { params: Promise<{ t
   const email = formData.get("email");
   const password = formData.get("password");
 
+
+  
   if (typeof email !== "string" || typeof password !== "string" || typeof userName !== "string"){
       // Ahora buildUrl no protestará porque request ya tiene las propiedades necesarias
-      return NextResponse.redirect(buildUrl("/auth/login?error=invalid-form", tenant, request), { status: 303 });
+      return NextResponse.json(
+        { message: "Los datos del formulario son inválidos." }, 
+        { status: 400 } 
+      );
+  }
+
+
+  if (password.length<3){
+    return NextResponse.json(
+        { message: "La contraseña no tiene el largor que es" }, 
+        { status: 400 } 
+      );
   }
 
   const isNonEmptyString = (value: string) => typeof value === "string" && value.trim().length > 0;
 
   if (!isNonEmptyString(userName) || !isNonEmptyString(email) || !isNonEmptyString(password)) {
-      return NextResponse.redirect(buildUrl("/error?type=No hay datos", tenant, request),303);
+      return NextResponse.json(
+        { message: "No hay datos" }, 
+        { status: 400 } 
+      );
     }
 
 //VALIDACION QUE EL TENANT QUE LLEGA POR MEDIO DE PARAMS SE ENCUENTRA EN LA BASE DE DATOS PARA PODER SER PROCESADO
@@ -67,10 +84,12 @@ const { data: userData, error: userError } = await supabaseAdmin.auth.admin.crea
   user_metadata: { name:`${userNameTrimmed}`}
 });
 
-const safeEmailString = encodeURIComponent(emailLowered);
 
 if (userError) {
-  return NextResponse.redirect(buildUrl(`/error?type=${userError.code}&email=${safeEmailString}`, tenant, request),{ status: 303 })
+  return NextResponse.json(
+        { message: "Error creando el registro: " + userError.message }, 
+        { status: 400 } 
+      );
 }
 
 
@@ -98,7 +117,10 @@ try{
   .single();
 
   if (fetchTenantError){
-    throw new Error(fetchTenantError.message || "Algo salio mal al checkear el tenant");
+    throw {
+        contexto: "Error al insertar en la tabla de comentarios", // Tu mensaje personalizado
+        supabaseError: fetchTenantError // El objeto completo de Supabase
+      };
   }
 
 
@@ -121,8 +143,11 @@ try{
 }catch(err: unknown){
   //5.
   await supabaseAdmin.auth.admin.deleteUser(userData.user.id);
-  const errorMessage = err instanceof Error ? err.message : "An unexpected error occurred creating user";
-  return NextResponse.redirect(buildUrl(`/auth/error?type=${encodeURIComponent(errorMessage)}&email=${safeEmailString}`, tenant, request),{ status: 303 })
+  const errorMessage = err instanceof Error ? err.message : "Ah ocurrido un error inesperado al crear un usuario";
+  return NextResponse.json(
+        { message: errorMessage }, 
+        { status: 400 } 
+      );
 }finally{
 
 }

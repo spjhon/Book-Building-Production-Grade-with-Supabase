@@ -1,5 +1,6 @@
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { TenantId } from "@/types/authTypes";
 import { buildUrl } from "@/utils/url-helpers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -20,12 +21,7 @@ import { NextRequest, NextResponse } from "next/server";
  * 6. Gestión de salida (signOut) si el usuario no tiene perfil creado y redirección final.
  * @Return Redirecciones dinámicas al Dashboard (/tickets) o a páginas de error según el resultado.
  */ 
-
-
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ tenant: string }> },
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ tenant: TenantId }>}) {
   
   // 1.
   const { tenant } = await params;
@@ -42,7 +38,7 @@ export async function GET(
   
   // 3.
   if (!code) {
-    return NextResponse.redirect(buildUrl("/auth/error?type=no-code", tenant, request), { status: 303 });
+    return NextResponse.redirect(buildUrl("/error?type=No hay codigo de autenticacion de google", tenant, request), { status: 303 });
   }
   
   // 4.
@@ -50,18 +46,18 @@ export async function GET(
   const { data: sessionData, error: sessionError } = await supabase.auth.exchangeCodeForSession(code);
 
   if (sessionError || !sessionData?.user) {
-    return NextResponse.redirect(buildUrl("/auth/error?type=login-failed", tenant, request), { status: 303 });
+    return NextResponse.redirect(buildUrl("/error?type=login-failed", tenant, request), { status: 303 });
   }
 
   const user = sessionData.user;
 
   // 5. --- EL FILTRO DE SEGURIDAD ---
-  // Buscamos si el usuario existe en tu tabla de 'service_users' 
+  // Buscamos si el usuario existe en la tabla de 'service_users' 
   const { data: profile, error: profileError } = await supabase
-    .from("service_users")
-    .select("id")
-    .eq("auth_user_id", user.id)
-    .single();
+  .from("service_users")
+  .select("id")
+  .eq("auth_user_id", user.id)
+  .single();
 
     
 
@@ -75,45 +71,11 @@ export async function GET(
     await supabaseAdmin.auth.admin.deleteUser(user.id);
 
     // Redirigimos al error informando que no está registrado
-    const errorType = "user-not-registered";
-    return NextResponse.redirect(buildUrl(`/auth/error?type=${errorType}`, tenant, request), { status: 303 });
+    const errorType = "Usuario no registrado, primero registrate para poder acceder";
+    return NextResponse.redirect(buildUrl(`/error?type=${errorType}`, tenant, request), { status: 303 });
   }
 
   // 7.
   return NextResponse.redirect(buildUrl("/tickets", tenant, request), { status: 303 });
   
 }
-
-/** 
-export async function GET(request: Request) {
-  const { searchParams, origin } = new URL(request.url)
-  const code = searchParams.get('code')
-  // if "next" is in param, use it as the redirect URL
-  let next = searchParams.get('next') ?? '/'
-  if (!next.startsWith('/')) {
-    // if "next" is not a relative URL, use the default
-    next = '/'
-  }
-
-  if (code) {
-    const supabase = await createSupabaseServerClient()
-    const { error } = await supabase.auth.exchangeCodeForSession(code)
-    if (!error) {
-      const forwardedHost = request.headers.get('x-forwarded-host') // original origin before load balancer
-      const isLocalEnv = process.env.NODE_ENV === 'development'
-      if (isLocalEnv) {
-        // we can be sure that there is no load balancer in between, so no need to watch for X-Forwarded-Host
-        return NextResponse.redirect(`${origin}${next}`)
-      } else if (forwardedHost) {
-        return NextResponse.redirect(`https://${forwardedHost}${next}`)
-      } else {
-        return NextResponse.redirect(`${origin}${next}`)
-      }
-    }
-  }
-
-  // return the user to an error page with instructions
-  return NextResponse.redirect(`${origin}/auth/auth-code-error`)
-}
-
-*/

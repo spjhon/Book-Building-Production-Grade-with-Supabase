@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { buildUrl } from "@/utils/url-helpers";
+import { TenantId } from "@/types/authTypes";
 
 /*** Password Login Route Handler (Route Handler POST API)
  * ---------------------------------------
@@ -19,7 +20,7 @@ import { buildUrl } from "@/utils/url-helpers";
  * 6. Redirección final exitosa al dashboard (/tickets) manteniendo el contexto del subdominio.
  * @Return Redirects dinámicos dependiendo del éxito de la autenticación o fallos de pertenencia al tenant.
  */ 
-export async function POST(request: NextRequest, {params}: { params: Promise<{ tenant: string }>}) {
+export async function POST(request: NextRequest, {params}: { params: Promise<{ tenant: TenantId }>}) {
 
   // 1.
   const { tenant } = await params;
@@ -31,7 +32,7 @@ export async function POST(request: NextRequest, {params}: { params: Promise<{ t
   const password = formData.get("password");
 
   if (typeof email !== "string" || typeof password !== "string") {
-      return NextResponse.redirect(buildUrl(`/auth/error?type=invalid-form`, tenant, request), { status: 303 });
+      return NextResponse.redirect(buildUrl(`/error?type=invalid-form`, tenant, request), { status: 303 });
   }
 
   // 3.
@@ -48,7 +49,7 @@ export async function POST(request: NextRequest, {params}: { params: Promise<{ t
     
     // 5.
     await supabase.auth.signOut();
-    return NextResponse.redirect(buildUrl(`/auth/error?type=${error?.message ?? "Error Auth"}`, tenant, request), { status: 303 });
+    return NextResponse.redirect(buildUrl(`/error?type=${error?.message ?? "Error al intentar hacer login por medio de route handler"}`, tenant, request), { status: 303 });
   }
 
   // 6.

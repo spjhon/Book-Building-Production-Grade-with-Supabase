@@ -12,7 +12,7 @@ hacer backup completo del sistema local: pnpx supabase db dump --local > backup_
 
 ## bugs que organizar
 
-1. 
+1. bug al volver al login en el forgot password
 2. el buscador cuando se borra lo que se esta buscando, no se refresca la pagina y se queda ahi la url con los mismos params
 3. no funciona el boton de crear ticket
 4. supabase no genera types para los buckets
@@ -39,3 +39,7 @@ hacer backup completo del sistema local: pnpx supabase db dump --local > backup_
 18. los cronjobs
 19. validacion de json con la extencion pj_jsonschema, muy util en las validaciones de las rpc
 20. deshabilitar graphql y otras cosas cuando no se necesita.
+
+## Mejoras de rendimiento a futuro
+
+1. Utilizar una libreria llamada jose para captuar el jwt en el middlware y comprobar la info para los permisos en lugar de hacer un llamado a la base de datos por cada request que pase por el middleware.

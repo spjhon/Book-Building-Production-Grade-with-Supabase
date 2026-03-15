@@ -16,36 +16,14 @@ import Link from "next/link";
 import { useState } from "react";
 
 
-interface ForgotPasswordFormProps
-  extends React.ComponentPropsWithoutRef<"div"> {
-  tenant: string;
-}
 
-/**
- * ForgotPasswordForm (Client Component)
- * ------------------------------------
- * Este componente gestiona la solicitud de recuperación de contraseña. Permite a los usuarios 
- * ingresar su correo electrónico para recibir un enlace de restablecimiento vinculado al tenant.
- * * @param {string} tenant - El identificador del tenant para construir la URL de redirección.
- * * Datos:
- * - Estados locales para manejar el 'email', mensajes de 'error', estado de 'success' y carga ('isLoading').
- * - Utiliza el método 'resetPasswordForEmail' de Supabase Auth.
- * * Flujo:
- * 1. Captura el envío del formulario y previene el comportamiento por defecto.
- * 2. Inicializa el cliente de Supabase y gestiona los estados de carga y error previos.
- * 3. Ejecuta la petición de recuperación definiendo una 'redirectTo' dinámica basada en el tenant actual.
- * 4. Maneja el éxito de la operación activando la vista de confirmación (estado success).
- * 5. Captura y despliega errores en caso de fallos en la comunicación con el backend.
- * 6. Renderiza condicionalmente el formulario o el mensaje de éxito basado en el estado del proceso.
- * * @return JSX.Element - Un formulario de recuperación o un mensaje de instrucciones enviado.
- */
 
 
 export function ForgotPasswordForm({
   className,
-  tenant,
+  //tenant,
   ...props
-}: ForgotPasswordFormProps) {
+}: React.ComponentPropsWithoutRef<"div">) {
 
 
 
@@ -74,7 +52,7 @@ export function ForgotPasswordForm({
 
       //5.
     } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "An error occurred");
+      setError(error instanceof Error ? error.message : "Ah ocurrido un error");
     } finally {
       setIsLoading(false);
     }
@@ -84,27 +62,25 @@ export function ForgotPasswordForm({
   return (
 
     //6.
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div className={cn("flex flex-col gap-6 border border-black rounded-xs", className)} {...props}>
       {success ? (
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">Check Your Email</CardTitle>
-            <CardDescription>Password reset instructions sent</CardDescription>
+            <CardTitle className="text-2xl">Reviza tu correo electronico</CardTitle>
+            <CardDescription>Instrucciones para el reseteo de la constraseña fueron enviados</CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
-              If you registered using your email and password, you will receive
-              a password reset email.
+              Si eres un usuario registrado, va a llegar el link al correo registrado
             </p>
           </CardContent>
         </Card>
       ) : (
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">Reset Your Password</CardTitle>
+            <CardTitle className="text-2xl">Resetea tu contraseña</CardTitle>
             <CardDescription>
-              Type in your email and we&apos;ll send you a link to reset your
-              password
+              Ingresa el correo electronico registrado
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -115,7 +91,7 @@ export function ForgotPasswordForm({
                   <Input
                     id="email"
                     type="email"
-                    placeholder="m@example.com"
+                    placeholder="m@ejemplo.com"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -123,13 +99,13 @@ export function ForgotPasswordForm({
                 </div>
                 {error && <p className="text-sm text-red-500">{error}</p>}
                 <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? "Sending..." : "Send reset email"}
+                  {isLoading ? "Enviando..." : "Enviar correo de reseteo"}
                 </Button>
               </div>
               <div className="mt-4 text-center text-sm">
-                Already have an account?{" "}
+                Ya tiene una cuenta?{" "}
                 <Link
-                  href={`/${tenant}/auth/login`}
+                  href={`/auth/login`}
                   className="underline underline-offset-4"
                 >
                   Login

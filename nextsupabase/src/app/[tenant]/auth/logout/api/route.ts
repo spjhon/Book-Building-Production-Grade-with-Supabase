@@ -1,10 +1,11 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { TenantId } from "@/types/authTypes";
 import { buildUrl } from "@/utils/url-helpers";
 import { NextRequest, NextResponse } from "next/server";
 
 
 
-export async function POST(request: NextRequest, { params }: { params: Promise<{ tenant: string }> }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ tenant: TenantId }> }) {
 
   // 1. Obtenemos el tenant de los parámetros
   const { tenant } = await params;
@@ -15,7 +16,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   const { error } = await supabase.auth.signOut();
 
   if (error){
-    return NextResponse.redirect(buildUrl(`/auth/error?type=Logout Error`, tenant, request), { status: 303 });
+    return NextResponse.redirect(buildUrl(`/error?type=Logout Error`, tenant, request), { status: 303 });
   }
 
   // 3. Construimos la URL absoluta usando el helper
