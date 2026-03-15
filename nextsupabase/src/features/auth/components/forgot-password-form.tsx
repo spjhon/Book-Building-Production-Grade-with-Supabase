@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useState } from "react";
+import { AuthError } from "@supabase/supabase-js";
 
 
 
@@ -22,8 +23,7 @@ import { useState } from "react";
 export function ForgotPasswordForm({
   className,
   //tenant,
-  ...props
-}: React.ComponentPropsWithoutRef<"div">) {
+...props}: React.ComponentPropsWithoutRef<"div">) {
 
 
 
@@ -34,10 +34,10 @@ export function ForgotPasswordForm({
   const [isLoading, setIsLoading] = useState(false);
 
   const handleForgotPassword = async (e: React.FormEvent) => {
-    //1.
+    
     e.preventDefault();
 
-    //2.
+    
     const supabase = createSupabaseBrowserClient();
     setIsLoading(true);
     setError(null);
@@ -46,13 +46,24 @@ export function ForgotPasswordForm({
       // 3. The url which will be included in the email. This URL needs to be configured in your redirect URLs in the Supabase dashboard at https://supabase.com/dashboard/project/_/auth/url-configuration
       const { error } = await supabase.auth.resetPasswordForEmail(email, {redirectTo: `${window.location.origin}/auth/update-password`});
 
-      if (error) throw error;
-      //4.
+      if (error) throw error
+      
       setSuccess(true);
 
-      //5.
+      
     } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "Ah ocurrido un error");
+        
+
+        if (error instanceof AuthError) {
+        // Aquí TypeScript ya sabe que 'error' tiene .message, .code, .status, etc.
+        setError(error.message);
+        console.dir(error)
+      } else {
+        // Si no es un error de Supabase, es un error genérico (ej: error de red)
+        setError("Ha ocurrido un error inesperado");
+      }
+  
+      
     } finally {
       setIsLoading(false);
     }

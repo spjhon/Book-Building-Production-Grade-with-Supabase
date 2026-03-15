@@ -1,0 +1,43 @@
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { Ratelimit } from '@upstash/ratelimit';
+import { Redis } from '@upstash/redis';
+
+// 1. Inicializa Redis
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL!,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+});
+
+// 2. Crea el limitador: 20 peticiones por cada 60 segundos
+const ratelimit = new Ratelimit({
+  redis: redis,
+  limiter: Ratelimit.slidingWindow(20, '60 s'),
+});
+
+export async function middleware(request: NextRequest) {
+  // Solo aplicamos protección a rutas de API o rutas que consumen cómputo
+  // Ejemplo: proteger el acceso a tus rutas dinámicas o de auth
+  const ip = request.ip ?? '127.0.0.1';
+  
+  const { success, limit, reset, remaining } = await ratelimit.limit(ip);
+
+  // Si el usuario excede el límite, retornamos un error 429
+  if (!success) {
+    return new NextResponse('Demasiadas solicitudes. Inténtalo más tarde.', {
+      status: 429,
+      headers: {
+        'X-RateLimit-Limit': limit.toString(),
+        'X-RateLimit-Remaining': remaining.toString(),
+        'X-RateLimit-Reset': reset.toString(),
+      },
+    });
+  }
+
+  return NextResponse.next();
+}
+
+// Configura en qué rutas quieres que se ejecute el middleware
+export const config = {
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+};

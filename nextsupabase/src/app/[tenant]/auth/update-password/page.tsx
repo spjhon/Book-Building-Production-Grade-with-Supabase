@@ -1,4 +1,4 @@
-import { TenantId } from "@/types/authTypes";
+
 import { UpdatePasswordForm } from "../../../../features/auth/components/update-password-form";
 
 
@@ -15,10 +15,9 @@ import { UpdatePasswordForm } from "../../../../features/auth/components/update-
  * que el formulario maneje la lógica de redirección y seguridad específica del cliente.
  * * * @return JSX.Element - Una página de actualización de credenciales estructurada.
  */
-export default async function UpdatePasswordFormPage({params}: {params: Promise<{ tenant: TenantId }>}) {
+export default function UpdatePasswordFormPage() {
 
-  //1.
-const { tenant } = await params;
+  
 
 
   return (
@@ -26,7 +25,7 @@ const { tenant } = await params;
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
       <div className="w-full max-w-sm">
         {/* 3. */}
-        <UpdatePasswordForm tenant = {tenant}/>
+        <UpdatePasswordForm/>
       </div>
     </div>
   );

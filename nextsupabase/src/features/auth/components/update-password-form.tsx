@@ -16,18 +16,13 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 
-interface UpdatePasswordFormProps
-  extends React.ComponentPropsWithoutRef<"div"> {
-  tenant: string;
-}
-
 
 
 
 export function UpdatePasswordForm({
   className,
   ...props
-}: UpdatePasswordFormProps) {
+}: React.ComponentPropsWithoutRef<"div">) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
