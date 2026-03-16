@@ -64,7 +64,10 @@ export async function POST(request: NextRequest, {params}: { params: Promise<{ t
 
 //VALIDACION QUE EL TENANT QUE LLEGA POR MEDIO DE PARAMS SE ENCUENTRA EN LA BASE DE DATOS PARA PODER SER PROCESADO
 //2.
-  const tenantDomainValidatedInDb = await fetchTenantDomainCached(tenant);
+  const tenantData = await fetchTenantDomainCached(tenant);
+  const tenantDomainValidatedInDb = tenantData?.domain
+
+
   if (!tenantDomainValidatedInDb) {
     return NextResponse.redirect(buildUrl("/not-found", tenant, request), { status: 303 });
   } 
