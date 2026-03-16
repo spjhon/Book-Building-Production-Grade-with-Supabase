@@ -41,7 +41,7 @@ export function LogoutButton() {
       onSubmit={handleLogout}
     >
       <button type="submit" className="secondary">
-        Logout
+        Salir
       </button>
     </form>
   );

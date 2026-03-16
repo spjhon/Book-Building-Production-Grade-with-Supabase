@@ -280,7 +280,7 @@ export const LoginForm = ({
                 href={`/register`}
                 className="underline underline-offset-4"
               >
-                Ingresar
+                Registrarse
               </Link>
             </div>
 

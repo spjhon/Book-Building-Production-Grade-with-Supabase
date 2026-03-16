@@ -1,7 +1,7 @@
 "use client";
 
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-import { buildUrl, urlPath } from "@/utils/url-helpers";
+import {  urlPath } from "@/utils/url-helpers";
 import Image from "next/image";
 import { Fragment, useEffect, useRef, useState } from "react";
 
@@ -324,7 +324,7 @@ async function onClickHandlerButtonDownload (path: string){
                   <button 
                      
                     onClick={() => onClickHandlerButtonDownload(attachment.file_path)}
-                    className="inline-block w-auto mr-2 px-2 py-[0.26em] text-[0.9rem] rounded-[4px] bg-white/15 cursor-pointer hover:bg-white/25 transition-colors border-0"
+                    className="inline-block w-auto mr-2 px-2 py-[0.26em] text-[0.9rem] rounded-lg bg-white/15 cursor-pointer hover:bg-white/25 transition-colors border-0"
                   >
                     {attachment.file_path.split("/").pop()}
                   </button>

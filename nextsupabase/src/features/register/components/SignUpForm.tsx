@@ -74,9 +74,9 @@ async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     
   } catch (err: unknown) {
     // 2. Catch que muestra el error capturado
-    const errorMessage = err instanceof Error ? err.message : "An unexpected error occurred";
+    const errorMessage = err instanceof Error ? err.message : "Ah ocurrido un error desconocido al momento de registrar";
     setError(errorMessage);
-    console.error("Signup error:", err);
+    console.error("Error de registro:", err);
   } finally {
     setIsLoading(false);
   }

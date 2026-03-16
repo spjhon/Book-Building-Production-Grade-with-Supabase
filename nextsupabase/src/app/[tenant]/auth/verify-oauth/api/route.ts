@@ -46,7 +46,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   const { data: sessionData, error: sessionError } = await supabase.auth.exchangeCodeForSession(code);
 
   if (sessionError || !sessionData?.user) {
-    return NextResponse.redirect(buildUrl("/error?type=login-failed", tenant, request), { status: 303 });
+    return NextResponse.redirect(buildUrl("/error?type=Fallo el login con google", tenant, request), { status: 303 });
   }
 
   const user = sessionData.user;

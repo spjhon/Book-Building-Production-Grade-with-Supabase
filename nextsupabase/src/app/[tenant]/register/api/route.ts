@@ -140,25 +140,25 @@ try{
   }
 
 
-}catch(err: unknown){
-  //5.
-  await supabaseAdmin.auth.admin.deleteUser(userData.user.id);
-  const errorMessage = err instanceof Error ? err.message : "Ah ocurrido un error inesperado al crear un usuario";
-  return NextResponse.json(
-        { message: errorMessage }, 
-        { status: 400 } 
-      );
-}finally{
+  }catch(err: unknown){
+    //5.
+    await supabaseAdmin.auth.admin.deleteUser(userData.user.id);
+    const errorMessage = err instanceof Error ? err.message : "Ah ocurrido un error inesperado al crear un usuario";
+    return NextResponse.json(
+      { message: errorMessage }, 
+      { status: 400 } 
+    );
+  }finally{
 
-}
+  }
 
-//6.
-const { error } = await supabaseAdmin.auth.signInWithOtp({email, options: { shouldCreateUser: false, emailRedirectTo: `http://${tenant}.miapp:3000/auth/confirm?tenant=${tenant}`}});
+  //6.
+  const { error } = await supabaseAdmin.auth.signInWithOtp({email, options: { shouldCreateUser: false, emailRedirectTo: `http://${tenant}.miapp:3000/auth/confirm?tenant=${tenant}`}});
 
 
-if (error) {
- return NextResponse.redirect(buildUrl(`/auth/error?type=${error.code}`, tenant, request), 303);
-};
+  if (error) {
+  return NextResponse.redirect(buildUrl(`/auth/error?type=${error.code}`, tenant, request), 303);
+  };
       
 
 
