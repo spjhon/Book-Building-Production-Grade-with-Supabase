@@ -317,7 +317,14 @@ export type Database = {
           isSetofReturn: true
         }
       }
-      get_tenant_domain: { Args: { p_tenant_slug: string }; Returns: string }
+      get_tenant_data: {
+        Args: { p_tenant_slug: string }
+        Returns: {
+          domain: string
+          id: string
+          name: string
+        }[]
+      }
       get_tenant_name: { Args: { p_tenant_slug: string }; Returns: string }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }

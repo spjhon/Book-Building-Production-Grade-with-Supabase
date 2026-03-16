@@ -1,23 +1,10 @@
--- 3. Creamos la ÚNICA política maestra
-CREATE POLICY "Aislar_tenants_en_storage"
-ON storage.objects
-FOR ALL
-TO authenticated
-USING (
-  bucket_id = "c"
-  AND (storage.foldername(name))[1]::uuid IN (
-    SELECT tp.tenant_id 
-    FROM public.tenant_permissions tp
-    JOIN public.service_users su ON tp.service_user_id = su.id
-    WHERE su.auth_user_id = auth.uid()
-  )
-)
-WITH CHECK (
-  bucket_id = 'comments-attachments'
-  AND (storage.foldername(name))[1]::uuid IN (
-    SELECT tp.tenant_id 
-    FROM public.tenant_permissions tp
-    JOIN public.service_users su ON tp.service_user_id = su.id
-    WHERE su.auth_user_id = auth.uid()
-  )
-);
+create or replace function public.get_tenant_data(p_tenant_slug text)
+returns table
+language sql
+SET search_path = public
+as $$
+  select id, name, domain
+  from tenants
+  where domain = p_tenant_slug
+  limit 1;
+$$

@@ -14,8 +14,6 @@ const{tenant} = await params
 
 
 
-
-
   const { data: tenantData, error: tenantError } = await supabase
   .from("tenants")
   .select("id")
@@ -30,31 +28,30 @@ const{tenant} = await params
 
 
 
+  const { data: users, error: usersError } = await supabase.rpc("get_service_users_with_tenant", {
+    target_tenant_id: tenantData.id
+  });
 
 
-
-
-const { data: users, error: usersError } = await supabase.rpc("get_service_users_with_tenant", {
-  target_tenant_id: tenantData.id
-});
-
-if (usersError || !users) {
-        alert(`Error: no se puedo traer a la lista de users:  ${usersError.message}`);
-        return;
-      }
+  
+  if (usersError || !users) {
+    alert(`Error: no se puedo traer a la lista de users:  ${usersError.message}`);
+    return;
+  }
 
 
 
 
   return (
     // 1. Contenedor con scroll horizontal para dispositivos móviles
-    <div className="overflow-x-auto rounded-xl border border-gray-200 shadow-sm bg-white">
+    <div className="max-w-xl mx-auto">
+    <div className="mt-20 mx-5 overflow-x-auto border border-black rounded-xs shadow-sm bg-white">
       <table className="w-full border-collapse text-left">
         <thead>
-          <tr className="text-sm text-gray-600 bg-gray-50 border-b border-gray-200">
-            <th className="py-3 px-4 font-medium">Name</th>
-            <th className="py-3 px-4 font-medium">Job</th>
-            <th className="py-3 px-4 font-medium text-center">Status</th>
+          <tr className="text-sm font-bold bg-gray-50 border-b border-gray-200">
+            <th className="py-3 px-4  ">Nombre</th>
+            <th className="py-3 px-4  ">Trabajo</th>
+            <th className="py-3 px-4  text-center">Estado</th>
           </tr>
         </thead>
 
@@ -94,6 +91,7 @@ if (usersError || !users) {
           ))}
         </tbody>
       </table>
+    </div>
     </div>
   );
 }

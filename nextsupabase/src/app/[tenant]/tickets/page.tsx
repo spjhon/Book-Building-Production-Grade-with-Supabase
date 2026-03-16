@@ -1,5 +1,6 @@
 import { TicketList } from "@/features/tickets/components/TicketList";
 import { TicketFilters } from "@/features/tickets/components/TicketsFilter";
+import Link from "next/link";
 
 export interface DummyTicket {
   id: number;
@@ -30,7 +31,7 @@ export default async function TicketsPage({ params, searchParams}: TicketsPagePr
   return (
     
     // 2.
-    <div className="max-w-5xl mx-auto py-10 space-y-8">
+    <div className="max-w-5xl mx-auto mt-20 space-y-8">
       
       {/* Header & Actions */}
       <div className="flex items-center justify-between">
@@ -38,13 +39,13 @@ export default async function TicketsPage({ params, searchParams}: TicketsPagePr
           Tickets
         </h1>
 
-        <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg shadow transition">
-          + Create Ticket
-        </button>
+        <Link href={"/tickets/new"} className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg shadow transition">
+          + Crear Ticket
+        </Link>
       </div>
 
       <p className="text-gray-600">
-        Manage all your tickets, track progress, and view details.
+        Tickes creados
       </p>
 
       {/* 3. & 4. Ticket List Container */}

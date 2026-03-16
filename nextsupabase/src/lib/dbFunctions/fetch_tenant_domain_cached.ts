@@ -12,7 +12,7 @@ async function fetchTenantDomain(tenantSlug: string) {
 
   const supabaseAdmin = createSupabaseAdminClient()
 
-  const { data, error } = await supabaseAdmin.rpc("get_tenant_domain", {
+  const { data, error } = await supabaseAdmin.rpc("get_tenant_data", {
     p_tenant_slug: tenantSlug,
   });
 
@@ -21,7 +21,7 @@ async function fetchTenantDomain(tenantSlug: string) {
     return null;
   }
 
-  return data ?? null;
+  return data[0] ?? null;
 }
 
 // versión cacheada con TTL de 60 segundos

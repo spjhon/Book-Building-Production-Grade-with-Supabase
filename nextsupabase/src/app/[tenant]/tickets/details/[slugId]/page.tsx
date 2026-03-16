@@ -108,7 +108,7 @@ export default async function TicketDetailPage({params}: Readonly<{ params: Prom
 
   return (
     
-    <div className="max-w-3xl mx-auto py-10 space-y-8">
+    <div className="max-w-3xl mx-auto mt-20">
       {/* Title Section */}
       <div className="space-y-2">
         <h1 className="text-3xl font-bold text-gray-900 tracking-tight">

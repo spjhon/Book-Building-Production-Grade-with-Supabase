@@ -30,6 +30,8 @@ export async function updateSession(request: NextRequest) { //funcion proxy espe
   const { data } = await supabase.auth.getClaims(); //se obtiene el claims osea el usuario
   const sessionUser = data?.claims; //se obtiene el usuario si es que existe y esta autenticado
   
+  console.log(sessionUser)
+
   // 1. EXTRAER INFORMACIÓN BÁSICA
   const [hostname, port] = getHostnameAndPort(request); //Se obtiene el hostname desde una funcion en utils, "acme.miapp" o "globex.miapp"
   const applicationPath = request.nextUrl.pathname; // puede ser "/" o "/auth" o "/auth/login"
@@ -53,8 +55,8 @@ export async function updateSession(request: NextRequest) { //funcion proxy espe
  //OBTENCION Y VERIFICACION DEL TENANT DESDE LA DB CON UN CACHE DE 1 MINUTO
 
   const tenantSlug = hostname.split(".")[0];
-  const tenantName = await fetchTenantDomainCached(tenantSlug);
-  
+  const tenantData = await fetchTenantDomainCached(tenantSlug);
+  const tenantName = tenantData?.domain
   if (!tenantName) {
     return NextResponse.rewrite(new URL("/not-found", request.url));
   } 

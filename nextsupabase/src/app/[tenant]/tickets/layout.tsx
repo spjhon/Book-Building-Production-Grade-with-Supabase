@@ -13,7 +13,7 @@ export default function TicketsLayout({ children }: TicketsLayoutProps) {
         <Navbar></Navbar>
       </section>
 
-      <section>
+      <section className="min-h-screen">
         {children}
       </section>
     </>

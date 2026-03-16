@@ -41,14 +41,14 @@ const CreateTicketPage = ({params}:TicketsProps) => {
 
 
 
-const { data: tenantData, error: tenantDataError } = await supabase
-        .from("tenants")
-        .select("id")
-        .eq("domain", tenant)
-        .single();
+      const { data: tenantData, error: tenantDataError } = await supabase
+      .from("tenants")
+      .select("id")
+      .eq("domain", tenant)
+      .single();
 
 
-// Manejo de error limpio
+      // Manejo de error limpio
       if (tenantDataError) {
         setIsLoading(false);
         alert("No se pudo extraer el id del tenant" + tenantDataError.message);
@@ -59,7 +59,7 @@ const { data: tenantData, error: tenantDataError } = await supabase
       
       
       // Usamos async/await para manejar la respuesta de forma lineal
-      const { data, error } = await supabase
+      const {error } = await supabase
       .from("tickets")
       //ojo, aqui se presenta el error debito a que created_by se va a insertar por medio de un trigger
       .insert({title, description, tenant_id: tenantData.id, assignee } as never)
@@ -92,9 +92,10 @@ const { data: tenantData, error: tenantDataError } = await supabase
 
   return (
     // Contenedor principal con diseño de tarjeta
-    <article className="max-w-xl mx-auto mt-10 bg-white shadow-lg border border-gray-200 rounded-2xl p-8 space-y-6">
-      <h3 className="text-2xl font-semibold text-gray-900">
-        Create a new ticket
+    <div className="max-w-xl mx-auto">
+    <article className="mt-20 mx-5 bg-white shadow-lg border border-black rounded-xs p-8 ">
+      <h3 className="text-2xl font-bold text-gray-900">
+        Crear un nuevo ticket
       </h3>
 
       {/* Manejo del formulario */}
@@ -104,21 +105,21 @@ const { data: tenantData, error: tenantDataError } = await supabase
       >
         {/* Campo de Título */}
         <div className="flex flex-col space-y-2">
-          <label className="text-sm font-medium text-gray-700">Title</label>
+          <label className="">Titulo</label>
           <input
             ref={ticketTitleRef}
             disabled={isLoading}
-            placeholder="Add a title"
+            placeholder="Escribe un titulo"
             className="w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>
 
         {/* Campo de Descripción */}
         <div className="flex flex-col space-y-2">
-          <label className="text-sm font-medium text-gray-700">Description</label>
+          <label className="">Descripcion</label>
           <textarea
             ref={ticketDescriptionRef}
-            placeholder="Add a comment"
+            placeholder="Adiciona una descripcion"
             disabled={isLoading}
             rows={4}
             className="w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
@@ -127,8 +128,10 @@ const { data: tenantData, error: tenantDataError } = await supabase
 
 
         {/* Botón de Envío */}
-        <AssigneeSelect tenant={tenant} onValueChanged={(val) => setAssignee(val)}></AssigneeSelect>
-
+        <div className="flex flex-col space-y-2">
+          <label className="">Asignar Usuario</label>
+          <AssigneeSelect tenant={tenant} onValueChanged={(val) => setAssignee(val)}></AssigneeSelect>
+        </div>
 
 
 
@@ -139,10 +142,11 @@ const { data: tenantData, error: tenantDataError } = await supabase
           aria-busy={isLoading}
           className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200"
         >
-          Create ticket now
+          Crear el ticket ahora
         </button>
       </form>
     </article>
+    </div>
   );
 };
 
