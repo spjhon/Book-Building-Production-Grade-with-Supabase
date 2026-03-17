@@ -1,11 +1,10 @@
 import { urlPath } from "@/utils/url-helpers";
 import Link from "next/link";
 import { Mail, CheckCircle2 } from "lucide-react";
-import { TenantId } from "@/types/authTypes";
 
 export const revalidate = 3600; // Cachea la página por 1 hora en el CDN
 
-export default async function MagicLinkSuccessPage({params}: {params: Promise<{ tenant: TenantId }>}) {
+export default async function MagicLinkSuccessPage({params}: {params: Promise<{ tenant: string }>}) {
  
   const { tenant } = await params;
   

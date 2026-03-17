@@ -4,12 +4,10 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useRef } from "react";
 
-interface TicketFiltersProps {
-  tenant: string; 
-}
 
 
-export function TicketFilters({ tenant }: TicketFiltersProps) {
+
+export function TicketFilters() {
 
 const router = useRouter();
 const pathname = usePathname();

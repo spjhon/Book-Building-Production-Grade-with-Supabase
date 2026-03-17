@@ -1,11 +1,10 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { TenantId } from "@/types/authTypes";
 import { buildUrl } from "@/utils/url-helpers";
 import { NextRequest, NextResponse } from "next/server";
 
 
 
-export async function POST(request: NextRequest, { params }: { params: Promise<{ tenant: TenantId }> }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ tenant: string }> }) {
 
   // 1. Obtenemos el tenant de los parámetros
   const { tenant } = await params;

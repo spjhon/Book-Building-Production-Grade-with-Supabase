@@ -1,5 +1,6 @@
 "use client";
 import { AssigneeSelect } from "@/features/tickets/components/AssigneeSelect";
+import { fetchTenantDataCached } from "@/lib/dbFunctions/fetch_tenant_domain_cached";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { use, useRef, useState } from "react";
 
@@ -40,19 +41,16 @@ const CreateTicketPage = ({params}:TicketsProps) => {
 
 
 
-
-      const { data: tenantData, error: tenantDataError } = await supabase
-      .from("tenants")
-      .select("id")
-      .eq("domain", tenant)
-      .single();
+      const {data: tenantData, error: fetchingTenantDataError} = await fetchTenantDataCached(tenant)
+      
 
 
       // Manejo de error limpio
-      if (tenantDataError) {
-        setIsLoading(false);
-        alert("No se pudo extraer el id del tenant" + tenantDataError.message);
+      if (!tenantData || fetchingTenantDataError){
         
+        alert("No se pudo extraer el id del tenant");
+        alert(fetchingTenantDataError)
+        setIsLoading(false);
         return; // Detenemos la ejecución aquí
       }
 

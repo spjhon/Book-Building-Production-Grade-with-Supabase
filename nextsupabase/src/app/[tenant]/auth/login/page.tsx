@@ -1,7 +1,6 @@
 
 import { LoginForm } from "@/features/auth/components/LoginForm";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { TenantId } from "@/types/authTypes";
 import { redirect } from "next/navigation";
 
 //import { createSupabaseBrowserClient } from "@/lib/supabase/client";
@@ -24,7 +23,7 @@ import { redirect } from "next/navigation";
  * 5. Si no está autenticado, renderiza el formulario con el modo correspondiente (Password o Magic Link).
  * * * @return JSX.Element - Una página centrada con el formulario de inicio de sesión configurado.
  */
-export default async function Login({searchParams, params}: {searchParams: Promise<{magicLink: string}>, params: Promise<{ tenant: TenantId }>}) {
+export default async function Login({searchParams, params}: {searchParams: Promise<{magicLink: string}>, params: Promise<{ tenant: string }>}) {
 
   //1.
   const { tenant } = await params;

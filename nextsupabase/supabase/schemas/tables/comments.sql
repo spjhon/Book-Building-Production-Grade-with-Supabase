@@ -6,8 +6,8 @@ create table public.comments (
   id uuid primary key default gen_random_uuid(),
   
   -- Relaciones
-  ticket_id uuid not null references public.tickets(id) on delete cascade,
-  tenant_id uuid not null references public.tenants(id) on delete cascade,
+  ticket_id uuid not null,
+  tenant_id uuid not null,
   created_by uuid not null references public.service_users(id),
   
   -- Datos del comentario
@@ -17,8 +17,12 @@ create table public.comments (
   author_name text not null,
   
   -- Auditoría
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
+
+  -- Constraint de integridad compuesta (Necesario para ser igual al Código 1)
+  constraint fk_comments_to_tickets foreign key (ticket_id, tenant_id) 
+    references public.tickets (id, tenant_id) on delete cascade
 );
 
 -- ==========================================

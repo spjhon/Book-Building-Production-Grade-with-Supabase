@@ -14,12 +14,11 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 //import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { TenantId } from "@/types/authTypes";
 
 
 // Definimos qué esperamos recibir
 interface SignUpFormProps extends React.ComponentPropsWithoutRef<"div"> {
-  tenant: TenantId;
+  tenant: string;
 }
 
 export function SignUpForm({
@@ -31,6 +30,7 @@ export function SignUpForm({
   const [password, setPassword] = useState("");
   const [userName, setUserName] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
+  const [userProfecion, setUserProfecion] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -109,6 +109,19 @@ async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
                   required
                   value={userName}
                   onChange={(e) => setUserName(e.target.value)}
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="userName">Profesion</Label>
+                <Input
+                  id="profecion"
+                  type="name"
+                  name="profecion"
+                  placeholder="Profesion"
+                  required
+                  value={userProfecion}
+                  onChange={(e) => setUserProfecion(e.target.value)}
                 />
               </div>
 

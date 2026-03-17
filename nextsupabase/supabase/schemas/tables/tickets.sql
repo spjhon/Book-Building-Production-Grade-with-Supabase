@@ -1,3 +1,4 @@
+
 -- ==========================================
 -- Tabla: tickets, OJO, OBSERVAR SI SE CREA LA RELACION CON EL TICKET COMPUESTO SI SE UTILIZA ESTE CODIGO Y NO LAS MIGRACIONES
 -- ==========================================
@@ -8,8 +9,8 @@ create table public.tickets (
   -- Identificador humano secuencial por tenant
   ticket_number bigint not null, -- Se llena vía Trigger
   
-  -- Relación con el tenant (Obligatorio para aislamiento)
-  tenant_id uuid not null references public.tenants(id) on delete cascade,
+  -- Relación con el tenant (Obligatorio para aislamiento y particionamiento)
+  tenant_id uuid NOT NULL REFERENCES public.tenants(id) ON DELETE CASCADE,
   
   -- Autor del ticket (Relacionado con tu tabla de perfiles públicos)
   created_by uuid not null references public.service_users(id),
@@ -22,7 +23,7 @@ create table public.tickets (
   assignee_name text,
   
   -- Auditoría
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
 
   -- CONSTRAINT DE UNICIDAD Y PK: 

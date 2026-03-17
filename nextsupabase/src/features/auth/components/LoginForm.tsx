@@ -15,12 +15,11 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { TenantId } from "@/types/authTypes";
 import { AuthError } from "@supabase/supabase-js";
 
 type LoginProps = React.ComponentPropsWithoutRef<"div"> & {
   isPasswordLogin?: boolean;
-  tenant: TenantId;
+  tenant: string;
 };
 
 

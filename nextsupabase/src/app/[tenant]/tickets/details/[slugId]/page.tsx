@@ -3,6 +3,8 @@ import TicketComments from "../../../../../features/tickets/components/ticketCom
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import DeleteButton from "@/features/tickets/components/DeleteButton";
 import AssigneeWrapper from "@/features/tickets/components/AssigneeWrapper";
+import { fetchTenantDataCached } from "@/lib/dbFunctions/fetch_tenant_domain_cached";
+import { redirect } from "next/navigation";
 
 
 const TICKET_STATUS = {
@@ -36,18 +38,17 @@ export default async function TicketDetailPage({params}: Readonly<{ params: Prom
 
 
 
-  const { data: fetchTenantID, error: fetchTenantError } = await supabaseServerClient
-  .from("tenants")
-  .select("id")
-  .eq("domain", tenant) // Asumiendo que tu columna se llama 'domain'
-  .single(); // Usamos maybeSingle para evitar errores si no existe
-
-
-  if (fetchTenantError){
-    console.log(fetchTenantError?.message + " No se puedo obtener info del tenant")
-    return
-  }
+  const {data: tenantData, error: errorFetchingTenantData} = await fetchTenantDataCached(tenant)
   
+  if (!tenantData || errorFetchingTenantData) {
+    
+    // 2. Extraemos el mensaje de forma segura para TypeScript
+    const errorMessage = typeof errorFetchingTenantData === "string" 
+      ? errorFetchingTenantData 
+      : errorFetchingTenantData?.message || "Tenant no encontrado";
+
+    redirect(`/error?type=${encodeURIComponent(errorMessage)}`);
+  }
 
   // Asumiendo que ya obtuviste el tenantId con el código anterior
   const { data: ticket, error: fetchTicketError } = await supabaseServerClient
@@ -55,16 +56,13 @@ export default async function TicketDetailPage({params}: Readonly<{ params: Prom
   .select("*, comments (*, comment_attachments (*) )")
   .order("created_at", { ascending: true, foreignTable: "comments" })
   .eq("ticket_number", Number(slugId))
-  .eq("tenant_id", fetchTenantID.id) // Filtro de seguridad multi-tenant
+  .eq("tenant_id", tenantData.id) // Filtro de seguridad multi-tenant
   .single();
 
   
-
-
-
-  if (fetchTicketError){
-    console.log(fetchTicketError?.message + " no se pudo traer el ticket")
-    return
+  if (!ticket || fetchTicketError) {
+    const errorMessage = fetchTicketError?.message || "Error";
+    redirect(`/error?type=Error trallendo el ticket: ${encodeURIComponent(errorMessage)}`);
   }
 
 
@@ -77,14 +75,21 @@ export default async function TicketDetailPage({params}: Readonly<{ params: Prom
   .single();
 
   if (fetchAutorError){
-    console.log(fetchAutorError?.message + "No se puedo traer el autor del ticket")
-    return
+    const errorMessage = fetchAutorError?.message || "Error";
+    redirect(`/error?type=Error trallendo el autor: ${encodeURIComponent(errorMessage)}`);
   } 
 
 
 
-  const { data } = await supabaseServerClient.auth.getClaims(); //se obtiene el claims osea el usuario
-  const sessionUser = data?.claims;
+  const { data: dataClaims, error: errorFetchingClamis } = await supabaseServerClient.auth.getClaims(); //se obtiene el claims osea el usuario
+  
+  
+  if (!dataClaims || errorFetchingClamis){
+    const errorMessage = errorFetchingClamis?.message || "Error";
+    redirect(`/error?type=Error trallendo la session del usuario: ${encodeURIComponent(errorMessage)}`);
+  } 
+  
+  const sessionUser = dataClaims?.claims;
 
 
   const supabase_user_id = sessionUser?.sub || "";
@@ -92,14 +97,17 @@ export default async function TicketDetailPage({params}: Readonly<{ params: Prom
 
 
 
-  const { data: serviceUserId } = await supabaseServerClient
+  const { data: serviceUserId, error: fetchServiceUserIdError } = await supabaseServerClient
   .from("service_users")
   .select("id")
   .eq("auth_user_id", supabase_user_id)
   .single();
 
 
-
+if (!serviceUserId || fetchServiceUserIdError){
+    const errorMessage = fetchServiceUserIdError?.message || "Error";
+    redirect(`/error?type=Error trallendo el id del service user: ${encodeURIComponent(errorMessage)}`);
+  } 
 
   const isAuthor = serviceUserId?.id === ticket.created_by;
   const{comments} = ticket;
@@ -141,7 +149,7 @@ export default async function TicketDetailPage({params}: Readonly<{ params: Prom
             />
 
             {isAuthor && (
-              <DeleteButton ticketId ={ticket.id} tenant={fetchTenantID.id}></DeleteButton>
+              <DeleteButton ticketId ={ticket.id} tenant={tenantData.id}></DeleteButton>
             )}
           </div>
 
@@ -168,7 +176,7 @@ export default async function TicketDetailPage({params}: Readonly<{ params: Prom
         <hr className="border-gray-200" />
 
         {/* Comments / Related components */}
-        <TicketComments ticket_id ={ticket.id} comments ={comments} tenant_id={fetchTenantID.id} tenantName={tenant}/>
+        <TicketComments ticket_id ={ticket.id} comments ={comments} tenant_id={tenantData.id} tenantName={tenant}/>
       </article>
     </div>
   );

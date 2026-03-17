@@ -16,6 +16,7 @@ hacer backup completo del sistema local: pnpx supabase db dump --local > backup_
 2. el buscador cuando se borra lo que se esta buscando, no se refresca la pagina y se queda ahi la url con los mismos params
 3. no funciona el boton de crear ticket
 4. supabase no genera types para los buckets
+5. el middleware proxy esta haciendo un llamado a la base de datos por cada request, se puede cambiar pero no hay seguridad.
 
 ## Pendientes
 

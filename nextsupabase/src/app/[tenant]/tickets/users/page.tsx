@@ -1,5 +1,7 @@
+import { fetchTenantDataCached } from "@/lib/dbFunctions/fetch_tenant_domain_cached";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { Check, UserX } from "lucide-react";
+import { redirect } from 'next/navigation'
 
 
 
@@ -14,15 +16,11 @@ const{tenant} = await params
 
 
 
-  const { data: tenantData, error: tenantError } = await supabase
-  .from("tenants")
-  .select("id")
-  .eq("domain", tenant)
-  .single();
+  const {data: tenantData, error: errorFetchingTenantData} = await fetchTenantDataCached(tenant)
 
-  if (tenantError || !tenantData) {
-    alert("Error: Tenant no válido.");
-    return;
+  
+  if (!tenantData || errorFetchingTenantData) {
+    redirect("/error?type=No fue posible obtener informacion del tenant")
   }
 
 
@@ -35,8 +33,7 @@ const{tenant} = await params
 
   
   if (usersError || !users) {
-    alert(`Error: no se puedo traer a la lista de users:  ${usersError.message}`);
-    return;
+    redirect("/error?type=No fue posible obtener informacion del tenant: " + usersError.message)
   }
 
 
@@ -79,11 +76,11 @@ const{tenant} = await params
               <td className="py-3 px-4 text-center">
                 {user.is_available ? (
                   <span className="px-3 py-1 text-xs bg-green-100 text-green-700 rounded-full font-semibold">
-                    Available
+                    Disponible
                   </span>
                 ) : (
                   <span className="px-3 py-1 text-xs bg-red-100 text-red-700 rounded-full font-semibold">
-                    Unavailable
+                    No disponible
                   </span>
                 )}
               </td>

@@ -1,14 +1,13 @@
 import { urlPath } from "@/utils/url-helpers";
 import Link from "next/link";
 import { AlertCircle } from "lucide-react"; // Shadcn usa mucho esta librería de iconos
-import { TenantId } from "@/types/authTypes";
 
 export default async function ErrorPage({
   searchParams,
   params,
 }: {
   searchParams: Promise<{ type: string }>;
-  params: Promise<{ tenant: TenantId }>;
+  params: Promise<{ tenant: string }>;
 }) {
   const { type } = await searchParams;
   const { tenant } = await params;

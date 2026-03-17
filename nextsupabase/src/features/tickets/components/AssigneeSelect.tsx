@@ -11,6 +11,7 @@ import {
   SelectGroup,
 } from "@/components/ui/select"; // Ajusta el path según tu estructura
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { fetchTenantDataCached } from "@/lib/dbFunctions/fetch_tenant_domain_cached";
 
 
 interface User {
@@ -36,13 +37,9 @@ export function AssigneeSelect({ tenant, onValueChanged, defaultValue }: {
     const fetchData = async () => {
     try {
 
-      const { data: tenantData, error: tenantDataError } = await supabase
-      .from("tenants")
-      .select("id")
-      .eq("domain", tenant)
-      .single();
+      const {data: tenantData, error: errorFetchingTenantData} = await fetchTenantDataCached(tenant);
 
-      if (tenantDataError){
+      if (!tenantData || errorFetchingTenantData){
         throw new Error;
       }
 

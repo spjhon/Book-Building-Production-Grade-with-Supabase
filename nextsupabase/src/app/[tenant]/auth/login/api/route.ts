@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { buildUrl } from "@/utils/url-helpers";
-import { TenantId } from "@/types/authTypes";
+
 
 /*** Password Login Route Handler (Route Handler POST API)
  * ---------------------------------------
@@ -20,7 +20,7 @@ import { TenantId } from "@/types/authTypes";
  * 6. Redirección final exitosa al dashboard (/tickets) manteniendo el contexto del subdominio.
  * @Return Redirects dinámicos dependiendo del éxito de la autenticación o fallos de pertenencia al tenant.
  */ 
-export async function POST(request: NextRequest, {params}: { params: Promise<{ tenant: TenantId }>}) {
+export async function POST(request: NextRequest, {params}: { params: Promise<{ tenant: string }>}) {
 
   // 1.
   const { tenant } = await params;

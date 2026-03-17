@@ -1,34 +1,36 @@
 import { SignUpForm } from "@/features/register/components/SignUpForm";
-import { createSupabaseAdminClient } from "@/lib/supabase/admin";
-import { TenantId } from "@/types/authTypes";
-import { notFound } from "next/navigation";
+import {  fetchTenantDataCached} from "@/lib/dbFunctions/fetch_tenant_domain_cached";
+import { redirect } from "next/navigation";
 
 
 
-export default async function Page({params}: {params: Promise<{ tenant: TenantId }>;}) {
+export default async function Page({params}: {params: Promise<{ tenant: string }>;}) {
   
-  //1.
+  
   const { tenant } = await params;
 
-  //2.
-  const supabaseAdmin = createSupabaseAdminClient();
-  const { error } = await supabaseAdmin
-  .from("tenants")
-  .select("id")
-  .eq("domain", tenant)
-  .single();
+  
+  const {data: tenantData, error: errorFetchingTenantData} = await fetchTenantDataCached(tenant)
 
+  if (!tenantData || errorFetchingTenantData) {
+    
+    // 2. Extraemos el mensaje de forma segura para TypeScript
+    const errorMessage = typeof errorFetchingTenantData === "string" 
+      ? errorFetchingTenantData 
+      : errorFetchingTenantData?.message || "Tenant no encontrado";
 
-  //3.
-  if (error) notFound();
+    redirect(`/error?type=${encodeURIComponent(errorMessage)}`);
+  }
 
+  const tenantDomain  = tenantData.domain
+  
 
   //4.
   return (
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
       <div className="w-full max-w-sm">
         {/* 2. Pasamos el tenant al formulario de registro */}
-        <SignUpForm tenant={tenant} />
+        <SignUpForm tenant={tenantDomain} />
       </div>
     </div>
   );

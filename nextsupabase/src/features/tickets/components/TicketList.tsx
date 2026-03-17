@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { fetchTenantDataCached } from "@/lib/dbFunctions/fetch_tenant_domain_cached";
 
 interface TicketListProps {
  page: string,
@@ -34,20 +34,17 @@ if (Number.isInteger(Number(page)) && Number(page) > 0) {
 
 const startingPoint = (pageSanitazed - 1) * pageSize;
 
-const supabase = await createSupabaseServerClient();
-const supabaseAdmin = await createSupabaseAdminClient()
+
+const supabaseAdmin = createSupabaseAdminClient()
 
 
 
-const { data: fetchTenantID, error: fetchTenantError } = await supabase
-  .from("tenants")
-  .select("id")
-  .eq("domain", tenant) // Asumiendo que tu columna se llama 'domain'
-  .single(); // Usamos maybeSingle para evitar errores si no existe
+const {data: tenantData, error: errorFetchingTenantData} = await fetchTenantDataCached(tenant);
 
 
-if (fetchTenantError){
-    console.log(fetchTenantError?.message + " No se puedo obtener info del tenant")
+if (!tenantData || errorFetchingTenantData){
+    console.log( " No se puedo obtener info del tenant")
+    console.log(errorFetchingTenantData)
     return
   }
 
@@ -57,12 +54,12 @@ if (fetchTenantError){
 let countStatement = supabaseAdmin
   .from("tickets")
   .select("*", { count: 'exact', head: true })
-  .eq("tenant_id", fetchTenantID.id);
+  .eq("tenant_id", tenantData.id);
 
 let ticketsStatement = supabaseAdmin
   .from("tickets")
   .select("*")
-  .eq("tenant_id", fetchTenantID.id);
+  .eq("tenant_id", tenantData.id);
 
 
 

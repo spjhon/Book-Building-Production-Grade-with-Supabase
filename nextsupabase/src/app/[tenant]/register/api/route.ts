@@ -1,6 +1,7 @@
-import { fetchTenantDomainCached } from "@/lib/dbFunctions/fetch_tenant_domain_cached";
+
+import {fetchTenantDataCached } from "@/lib/dbFunctions/fetch_tenant_domain_cached";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
-import { TenantId } from "@/types/authTypes";
+
 import { buildUrl } from "@/utils/url-helpers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -25,7 +26,7 @@ import { NextRequest, NextResponse } from "next/server";
  * 6. Disparo de Magic Link (OTP) para validación final de correo electrónico.
  * @Return JSON de éxito o redirecciones de error dinámicas con mensajes técnicos codificados.
  */
-export async function POST(request: NextRequest, {params}: { params: Promise<{ tenant: TenantId }>}) {
+export async function POST(request: NextRequest, {params}: { params: Promise<{ tenant: string }>}) {
 
   //1.
   const { tenant } = await params;
@@ -34,10 +35,11 @@ export async function POST(request: NextRequest, {params}: { params: Promise<{ t
   const userName = formData.get("userName");
   const email = formData.get("email");
   const password = formData.get("password");
+  const profecion = formData.get("profecion");
 
 
   
-  if (typeof email !== "string" || typeof password !== "string" || typeof userName !== "string"){
+  if (typeof email !== "string" || typeof password !== "string" || typeof userName !== "string" || typeof profecion !== "string"){
       // Ahora buildUrl no protestará porque request ya tiene las propiedades necesarias
       return NextResponse.json(
         { message: "Los datos del formulario son inválidos." }, 
@@ -55,7 +57,7 @@ export async function POST(request: NextRequest, {params}: { params: Promise<{ t
 
   const isNonEmptyString = (value: string) => typeof value === "string" && value.trim().length > 0;
 
-  if (!isNonEmptyString(userName) || !isNonEmptyString(email) || !isNonEmptyString(password)) {
+  if (!isNonEmptyString(userName) || !isNonEmptyString(email) || !isNonEmptyString(password) || !isNonEmptyString(profecion)) {
       return NextResponse.json(
         { message: "No hay datos" }, 
         { status: 400 } 
@@ -64,18 +66,19 @@ export async function POST(request: NextRequest, {params}: { params: Promise<{ t
 
 //VALIDACION QUE EL TENANT QUE LLEGA POR MEDIO DE PARAMS SE ENCUENTRA EN LA BASE DE DATOS PARA PODER SER PROCESADO
 //2.
-  const tenantData = await fetchTenantDomainCached(tenant);
+  const {data: tenantData, error: errorFetchingTenantData} = await fetchTenantDataCached(tenant);
   const tenantDomainValidatedInDb = tenantData?.domain
 
 
-  if (!tenantDomainValidatedInDb) {
+  if (!tenantDomainValidatedInDb || errorFetchingTenantData ) {
     return NextResponse.redirect(buildUrl("/not-found", tenant, request), { status: 303 });
   } 
 
-//3.
-const emailLowered = email.toLowerCase()
-const passwordLowered = password
-const userNameTrimmed = userName.trim()
+  //3.
+  const emailLowered = email.toLowerCase()
+  const passwordLowered = password
+  const userNameTrimmed = userName.trim()
+  const profecionTrimmed = profecion.trim()
 
 
 const supabaseAdmin = createSupabaseAdminClient();
@@ -103,7 +106,7 @@ try{
 
   const { data: serviceUser, error: InsertNewServiceUserError } = await supabaseAdmin
   .from("service_users")
-  .insert({auth_user_id: userData.user.id, full_name: userNameTrimmed })
+  .insert({auth_user_id: userData.user.id, full_name: userNameTrimmed, job_title: profecionTrimmed })
   .select()
   .single();
 

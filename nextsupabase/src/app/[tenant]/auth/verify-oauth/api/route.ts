@@ -1,6 +1,5 @@
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { TenantId } from "@/types/authTypes";
 import { buildUrl } from "@/utils/url-helpers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -21,7 +20,7 @@ import { NextRequest, NextResponse } from "next/server";
  * 6. Gestión de salida (signOut) si el usuario no tiene perfil creado y redirección final.
  * @Return Redirecciones dinámicas al Dashboard (/tickets) o a páginas de error según el resultado.
  */ 
-export async function GET(request: NextRequest, { params }: { params: Promise<{ tenant: TenantId }>}) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ tenant: string }>}) {
   
   // 1.
   const { tenant } = await params;

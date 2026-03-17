@@ -10,7 +10,7 @@ create table public.comment_attachments (
   
   -- Auditoría
   created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
+  updated_at timestamptz not null default now(),
 );
 
 -- IMPORTANTÍSIMO: Índice para velocidad
