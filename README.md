@@ -12,7 +12,7 @@ hacer backup completo del sistema local: pnpx supabase db dump --local > backup_
 
 ## bugs que organizar
 
-1. bug al volver al login en el forgot password
+1. ojo con el max() en la funcion que le da los consecutivos a los tickets, ya que puede llegar a ser lento, se recomienda segunda tabla
 2. el buscador cuando se borra lo que se esta buscando, no se refresca la pagina y se queda ahi la url con los mismos params
 3. no funciona el boton de crear ticket
 4. supabase no genera types para los buckets

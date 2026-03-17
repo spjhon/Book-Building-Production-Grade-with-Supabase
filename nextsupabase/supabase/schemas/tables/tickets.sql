@@ -1,9 +1,9 @@
 -- ==========================================
--- Tabla: tickets
+-- Tabla: tickets, OJO, OBSERVAR SI SE CREA LA RELACION CON EL TICKET COMPUESTO SI SE UTILIZA ESTE CODIGO Y NO LAS MIGRACIONES
 -- ==========================================
 
 create table public.tickets (
-  id uuid primary key default gen_random_uuid(),
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
 
   -- Identificador humano secuencial por tenant
   ticket_number bigint not null, -- Se llena vía Trigger
@@ -22,18 +22,21 @@ create table public.tickets (
   assignee_name text,
   
   -- Auditoría
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
+  created_at timestamptz not null default now()
+  updated_at timestamptz not null default now(),
 
+  -- CONSTRAINT DE UNICIDAD Y PK: 
+  -- En tablas particionadas, la columna de partición DEBE estar en la PK
+  PRIMARY KEY (id, tenant_id),
   -- CONSTRAINT DE UNICIDAD: Evita duplicados de número dentro del mismo cliente
-  constraint unique_ticket_number_per_tenant unique (tenant_id, ticket_number)
-);
+  CONSTRAINT unique_ticket_number_per_tenant UNIQUE (tenant_id, ticket_number)
+) PARTITION BY LIST (tenant_id);
 
 -- ==========================================
 -- Comentarios (Schema v1)
 -- ==========================================
 
-comment on table public.tickets is 'Versión del schema v1. Almacena los tickets de soporte por tenant.';
+comment on table public.tickets is 'Esta es la v2, particionada por tenant_id';
 comment on column public.tickets.status is 'Estado actual del ticket: open, in_progress, done, cancelled.';
 comment on column public.tickets.tenant_id is 'ID del tenant al que pertenece el ticket para aislamiento multi-tenant.';
 
