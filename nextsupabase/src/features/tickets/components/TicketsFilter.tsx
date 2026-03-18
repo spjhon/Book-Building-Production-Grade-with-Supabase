@@ -22,7 +22,7 @@ const searchParams = useSearchParams();
 
 
         const search = searchInputRef.current?.value || "";
-        alert("Search tickets containing " + search);
+        alert("Buscar tickets conteniendo: " + search);
         const updatedParams = new URLSearchParams(searchParams);
 
         updatedParams.set("search", search);
@@ -42,13 +42,13 @@ const searchParams = useSearchParams();
           ref={searchInputRef}
           id="search"
           name="search"
-          placeholder="Search tickets..."
+          placeholder="Buscar Tickets..."
           required
           style={{ margin: 0, maxWidth: "350px" }}
         />
 
         <button type="submit" role="button" style={{ width: "auto" }}>
-          Search
+          Buscar
         </button>
 
 

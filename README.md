@@ -40,6 +40,9 @@ hacer backup completo del sistema local: pnpx supabase db dump --local > backup_
 18. los cronjobs
 19. validacion de json con la extencion pj_jsonschema, muy util en las validaciones de las rpc
 20. deshabilitar graphql y otras cosas cuando no se necesita.
+21. revizar el arbol de renderizado y fetcheado
+22. en el componente de CreateTicketForm agregar un try catch ya que no esta agarrando todos los errores
+23. cambiar los alert por toats
 
 ## Mejoras de rendimiento a futuro
 

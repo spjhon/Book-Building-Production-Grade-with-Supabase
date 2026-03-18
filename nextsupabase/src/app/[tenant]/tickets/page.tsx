@@ -50,7 +50,7 @@ export default async function TicketsPage({ params, searchParams}: TicketsPagePr
 
       {/* 3. & 4. Ticket List Container */}
       <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-6">
-        <TicketFilters tenant={tenant}/>
+        <TicketFilters />
         <TicketList tenant={tenant}  page={page} search={search}/>
       </div>
     </div>

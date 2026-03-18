@@ -101,8 +101,8 @@ if (searchValue) {
         <thead>
           <tr className="text-sm text-gray-600 border-b border-gray-200">
             <th className="py-3 px-2 font-medium">ID</th>
-            <th className="py-3 px-2 font-medium">Title</th>
-            <th className="py-3 px-2 font-medium">Status</th>
+            <th className="py-3 px-2 font-medium">Titulo</th>
+            <th className="py-3 px-2 font-medium">Estado</th>
           </tr>
         </thead>
 

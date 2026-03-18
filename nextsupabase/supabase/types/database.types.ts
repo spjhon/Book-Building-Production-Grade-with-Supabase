@@ -116,18 +116,11 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "comments_tenant_id_fkey"
-            columns: ["tenant_id"]
-            isOneToOne: false
-            referencedRelation: "tenants"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "comments_ticket_id_fkey"
-            columns: ["ticket_id"]
+            foreignKeyName: "fk_comments_to_tickets"
+            columns: ["ticket_id", "tenant_id"]
             isOneToOne: false
             referencedRelation: "tickets"
-            referencedColumns: ["id"]
+            referencedColumns: ["id", "tenant_id"]
           },
         ]
       }
@@ -293,6 +286,132 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      tickets_tenant_acme: {
+        Row: {
+          assignee: string | null
+          assignee_name: string | null
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          status: string
+          tenant_id: string
+          ticket_number: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assignee?: string | null
+          assignee_name?: string | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          status?: string
+          tenant_id: string
+          ticket_number: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assignee?: string | null
+          assignee_name?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          status?: string
+          tenant_id?: string
+          ticket_number?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      tickets_tenant_globex: {
+        Row: {
+          assignee: string | null
+          assignee_name: string | null
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          status: string
+          tenant_id: string
+          ticket_number: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assignee?: string | null
+          assignee_name?: string | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          status?: string
+          tenant_id: string
+          ticket_number: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assignee?: string | null
+          assignee_name?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          status?: string
+          tenant_id?: string
+          ticket_number?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      tickets_tenant_umbrella: {
+        Row: {
+          assignee: string | null
+          assignee_name: string | null
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          status: string
+          tenant_id: string
+          ticket_number: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assignee?: string | null
+          assignee_name?: string | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          status?: string
+          tenant_id: string
+          ticket_number: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assignee?: string | null
+          assignee_name?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          status?: string
+          tenant_id?: string
+          ticket_number?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
     }
     Views: {

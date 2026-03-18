@@ -144,7 +144,7 @@ if (!serviceUserId || fetchServiceUserIdError){
 
             <AssigneeWrapper
               ticketId={ticket.id} 
-              tenant={tenant} 
+              tenant_id={tenantData.id} 
               defaultValue={ticket.assignee}
             />
 

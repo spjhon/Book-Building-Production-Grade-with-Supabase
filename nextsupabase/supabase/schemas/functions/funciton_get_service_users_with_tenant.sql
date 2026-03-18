@@ -18,9 +18,10 @@ begin
 
   -- 2. Si pasó la comprobación, devolvemos los usuarios
   return query
-  select su.*
+  select distinct su.*
   from public.service_users su
   join public.tenant_permissions tp on su.id = tp.service_user_id
   where tp.tenant_id = target_tenant_id;
+  order by su.full_name ASC;
 end;
 $$;
