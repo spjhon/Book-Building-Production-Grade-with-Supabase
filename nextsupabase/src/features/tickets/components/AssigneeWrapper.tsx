@@ -2,11 +2,12 @@
 
 import { AssigneeSelect } from "@/features/tickets/components/AssigneeSelect";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { ServiceUser } from "./CreateTicketForm";
 
-export default function AssigneeWrapper({ ticketId, tenant_id }: { 
+export default function AssigneeWrapper({ ticketId, users, defaultValue }: { 
   ticketId: string; 
-  tenant_id: string;
   defaultValue?: string | null; 
+  users: ServiceUser[];
 }) {
   const supabase = createSupabaseBrowserClient();
 
@@ -22,9 +23,9 @@ export default function AssigneeWrapper({ ticketId, tenant_id }: {
 
   return (
     <AssigneeSelect
-      tenant_id={tenant_id}
-      
+      ServiceUsers={users}
       onValueChanged={handleUpdate}
+      defaultValue={defaultValue}
     />
   );
 }

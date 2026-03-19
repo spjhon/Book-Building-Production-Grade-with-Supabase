@@ -22,7 +22,7 @@ const searchParams = useSearchParams();
 
 
         const search = searchInputRef.current?.value || "";
-        alert("Buscar tickets conteniendo: " + search);
+        
         const updatedParams = new URLSearchParams(searchParams);
 
         updatedParams.set("search", search);
@@ -43,7 +43,7 @@ const searchParams = useSearchParams();
           id="search"
           name="search"
           placeholder="Buscar Tickets..."
-          required
+          
           style={{ margin: 0, maxWidth: "350px" }}
         />
 

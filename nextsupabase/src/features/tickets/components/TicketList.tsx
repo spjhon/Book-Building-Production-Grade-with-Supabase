@@ -1,6 +1,8 @@
 import Link from "next/link";
-import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+
 import { fetchTenantDataCached } from "@/lib/dbFunctions/fetch_tenant_domain_cached";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { Badge } from "@/components/ui/badge";
 
 interface TicketListProps {
  page: string,
@@ -9,9 +11,11 @@ interface TicketListProps {
 }
 
 const statusStyles: Record<string, string> = {
-  "Not started": "bg-gray-200 text-gray-700",
-  "In progress": "bg-blue-100 text-blue-700",
-  "Done": "bg-green-100 text-green-700",
+  open: "bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-100/80",
+  in_progress: "bg-blue-100 text-blue-700 border-blue-200 hover:bg-blue-100/80",
+  done: "bg-emerald-100 text-emerald-700 border-emerald-200 hover:bg-emerald-100/80",
+  cancelled: "bg-red-100 text-red-700 border-red-200 hover:bg-red-100/80",
+  information_missing: "bg-amber-100 text-amber-700 border-amber-200 hover:bg-amber-100/80",
 };
 
 
@@ -35,14 +39,14 @@ if (Number.isInteger(Number(page)) && Number(page) > 0) {
 const startingPoint = (pageSanitazed - 1) * pageSize;
 
 
-const supabaseAdmin = createSupabaseAdminClient()
+const supabaseServer = await createSupabaseServerClient()
 
 
 
 const {data: tenantData, error: errorFetchingTenantData} = await fetchTenantDataCached(tenant);
 
 
-if (!tenantData || errorFetchingTenantData){
+  if (!tenantData || errorFetchingTenantData){
     console.log( " No se puedo obtener info del tenant")
     console.log(errorFetchingTenantData)
     return
@@ -50,32 +54,35 @@ if (!tenantData || errorFetchingTenantData){
 
   
 
-// Crea las variables de consulta, pero NO las esperes con 'await'
-let countStatement = supabaseAdmin
-  .from("tickets")
-  .select("*", { count: 'exact', head: true })
-  .eq("tenant_id", tenantData.id);
+  // Crea las variables de consulta, pero NO las esperes con 'await'
+  let countStatement = supabaseServer
+    .from("tickets")
+    .select("*", { count: 'exact', head: true })
+    .eq("tenant_id", tenantData.id);
 
-let ticketsStatement = supabaseAdmin
-  .from("tickets")
-  .select("*")
-  .eq("tenant_id", tenantData.id);
-
-
+  let ticketsStatement = supabaseServer
+    .from("tickets")
+    .select(`*,creator:service_users!created_by (full_name)`)
+    .eq("tenant_id", tenantData.id);
 
 
-// AQUÍ es donde entra tu lógica de búsqueda (el filtro OR)
-if (searchValue) {
 
-  const postgrestFilterString = `title.ilike.%${searchValue}%,description.ilike.%${searchValue}%`;
-  
-  countStatement = countStatement.or(postgrestFilterString);
-  ticketsStatement = ticketsStatement.or(postgrestFilterString);
-}
+
+  // AQUÍ es donde entra tu lógica de búsqueda (el filtro OR)
+  if (searchValue) {
+
+    const postgrestFilterString = `title.ilike.%${searchValue}%,description.ilike.%${searchValue}%`;
+    
+    countStatement = countStatement.or(postgrestFilterString);
+    ticketsStatement = ticketsStatement.or(postgrestFilterString);
+  }
+
+
+
 
   // Ahora, al final de todo, aplicamos los modificadores finales a la statement
   ticketsStatement = ticketsStatement
-    .range(startingPoint, startingPoint + 5)
+    .range(startingPoint, startingPoint + (pageSize - 1))
     .order("created_at", { ascending: true });
 
   // Y AHORA SÍ, ejecutamos ambas consultas
@@ -87,12 +94,20 @@ if (searchValue) {
 
 
   const { data: fetchedTickets, error: errorFetchedTickets } = await ticketsStatement;
+
   if (errorFetchedTickets || !fetchedTickets){
     console.log(errorFetchedTickets?.message + " No se encontraron tickets")
     return
   }
 
-  const moreRows = count - pageSanitazed * 6 > 0;
+  const moreRows = count > pageSanitazed * pageSize;
+
+  const getHref = (p: number) => {
+  const params = new URLSearchParams();
+  if (searchValue) params.set("search", searchValue);
+  params.set("page", p.toString());
+  return `?${params.toString()}`;
+}
 
 
   return (
@@ -126,19 +141,18 @@ if (searchValue) {
                   {ticket.title}
                 </Link>
                 <div className="text-xs text-gray-500 mt-1">
-                  by {ticket.created_by}
+                  by {ticket.creator?.full_name || "Usuario desconocido"}
                 </div>
               </td>
 
               {/* Status */}
               <td className="py-3 px-2">
-                <span
-                  className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                    statusStyles[ticket.status] || "bg-gray-200 text-gray-700"
-                  }`}
+                <Badge 
+                  variant="outline" 
+                  className={`font-semibold capitalize ${statusStyles[ticket.status] || "bg-gray-100"}`}
                 >
-                  {ticket.status}
-                </span>
+                  {ticket.status.replace('_', ' ')}
+                </Badge>
               </td>
             </tr>
           ))}
@@ -152,7 +166,7 @@ if (searchValue) {
         {pageSanitazed > 1 && (
           <Link 
             className="px-4 py-2 bg-gray-100 rounded hover:bg-gray-200" 
-            href={`?page=${pageSanitazed - 1}`}
+            href={getHref(pageSanitazed - 1)}
           >
             ← Previous page
           </Link>
@@ -161,7 +175,7 @@ if (searchValue) {
         {moreRows && (
           <Link 
             className="ml-auto px-4 py-2 bg-gray-100 rounded hover:bg-gray-200" 
-            href={`?page=${pageSanitazed + 1}`}
+            href={getHref(pageSanitazed + 1)}
           >
             Next page →
           </Link>

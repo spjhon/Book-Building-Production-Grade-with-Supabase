@@ -11,9 +11,10 @@ import {
 
 import { ServiceUser } from "./CreateTicketForm";
 
-export function AssigneeSelect({ onValueChanged, ServiceUsers }: { 
+export function AssigneeSelect({ onValueChanged, ServiceUsers, defaultValue }: { 
   onValueChanged: (val: string | null) => void;
   ServiceUsers: ServiceUser[];
+  defaultValue?: string | null; 
 }) {
 
 
@@ -21,6 +22,7 @@ export function AssigneeSelect({ onValueChanged, ServiceUsers }: {
     <Select 
       onValueChange={(val) => onValueChanged(val === "none" ? null : val)}
       disabled={ServiceUsers === null}
+      defaultValue={defaultValue?defaultValue:undefined }
     >
 
       <SelectTrigger className="w-full">

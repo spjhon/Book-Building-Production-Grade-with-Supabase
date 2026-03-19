@@ -5,24 +5,16 @@ import DeleteButton from "@/features/tickets/components/DeleteButton";
 import AssigneeWrapper from "@/features/tickets/components/AssigneeWrapper";
 import { fetchTenantDataCached } from "@/lib/dbFunctions/fetch_tenant_domain_cached";
 import { redirect } from "next/navigation";
+import { Badge } from "@/components/ui/badge";
 
 
-const TICKET_STATUS = {
-  open: "Open",
-  in_progress: "In progress",
-  information_missing: "Information missing",
-  canceled: "Canceled",
-  done: "Done",
-  };
-
-  const STATUS_STYLES = {
-  open: "bg-blue-100 text-blue-700",
-  in_progress: "bg-yellow-100 text-yellow-700",
-  information_missing: "bg-orange-100 text-orange-700",
-  canceled: "bg-gray-100 text-gray-700",
-  done: "bg-green-100 text-green-700",
-} as const; // 'as const' nos da seguridad de tipos
-
+  const statusStyles: Record<string, string> = {
+  open: "bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-100/80",
+  in_progress: "bg-blue-100 text-blue-700 border-blue-200 hover:bg-blue-100/80",
+  done: "bg-emerald-100 text-emerald-700 border-emerald-200 hover:bg-emerald-100/80",
+  cancelled: "bg-red-100 text-red-700 border-red-200 hover:bg-red-100/80",
+  information_missing: "bg-amber-100 text-amber-700 border-amber-200 hover:bg-amber-100/80",
+};
 
 export default async function TicketDetailPage({params}: Readonly<{ params: Promise<{ slugId: string; tenant: string }>, }>) {
   
@@ -97,86 +89,116 @@ export default async function TicketDetailPage({params}: Readonly<{ params: Prom
 
 
 
-  const { data: serviceUserId, error: fetchServiceUserIdError } = await supabaseServerClient
+  const { data: serviceUsers, error: fetchServiceUsersError } = await supabaseServerClient
   .from("service_users")
   .select("id")
   .eq("auth_user_id", supabase_user_id)
   .single();
 
 
-if (!serviceUserId || fetchServiceUserIdError){
-    const errorMessage = fetchServiceUserIdError?.message || "Error";
+if (!serviceUsers || fetchServiceUsersError){
+    const errorMessage = fetchServiceUsersError?.message || "Error";
     redirect(`/error?type=Error trallendo el id del service user: ${encodeURIComponent(errorMessage)}`);
   } 
 
-  const isAuthor = serviceUserId?.id === ticket.created_by;
+  const isAuthor = serviceUsers?.id === ticket.created_by;
   const{comments} = ticket;
   
   const dateString = new Date(ticket.created_at).toLocaleString("en-US");
 
-  return (
-    
-    <div className="max-w-3xl mx-auto mt-20">
-      {/* Title Section */}
-      <div className="space-y-2">
-        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
-          Ticket #{slugId}
-        </h1>
 
-        <p className="text-gray-500">
-          Detailed information, status, and comments for this ticket.
+
+
+  //SERVICE_USERS PARA EL SELECT
+  const { data: serviceUsersFromSpecificTenant, error: errorUsersFromSpecificTenant } = await supabaseServerClient.rpc("get_service_users_with_tenant", { target_tenant_id: tenantData.id });
+
+    // Manejo de error limpio
+    if (!serviceUsersFromSpecificTenant || errorUsersFromSpecificTenant){
+      redirect(`/error?type=Error trallendo informacion del tenant`);
+    }
+
+  return (
+    <div className="max-w-4xl mx-auto mt-16 px-4 mb-20">
+      {/* Title Section */}
+      <div className="mb-8 space-y-1">
+        <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">
+          Ticket <span className="text-slate-400 font-light">#{slugId}</span>
+        </h1>
+        <p className="text-slate-500 text-sm font-medium">
+          Gestión de detalles, asignación y trazabilidad del caso.
         </p>
       </div>
 
       {/* Main Card */}
-      <article className="bg-white border border-gray-200 shadow-sm rounded-2xl p-8 space-y-6">
+      <article className="bg-white border border-slate-200 shadow-sm rounded-3xl overflow-hidden">
         
         {/* Header info */}
-        <header className="space-y-4">
-          <div className="flex items-center justify-between">
-            <span className={`px-3 py-1 text-sm rounded-full font-semibold ${STATUS_STYLES[ticket.status as keyof typeof STATUS_STYLES]  || " bg-orange-100 text-orange-700"}`}>
-              ● {TICKET_STATUS[ticket.status as keyof typeof TICKET_STATUS] || "Unknown"}
-            </span>
+        <header className="p-8 pb-6 space-y-6">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <Badge 
+                variant="outline" 
+                className={`px-3 py-1 rounded-full text-xs font-bold border-2 transition-colors ${statusStyles[ticket.status] || "bg-slate-100"}`}
+              >
+                {ticket.status.replace('_', ' ')}
+              </Badge>
+              <time className="text-xs font-medium text-slate-400 uppercase tracking-wider">
+                {dateString}
+              </time>
+            </div>
 
-            <time className="text-sm text-gray-500">
-              Ticket creado el: {dateString}
-            </time>
-
-            <AssigneeWrapper
-              ticketId={ticket.id} 
-              tenant_id={tenantData.id} 
-              defaultValue={ticket.assignee}
-            />
-
-            {isAuthor && (
-              <DeleteButton ticketId ={ticket.id} tenant={tenantData.id}></DeleteButton>
-            )}
+            <div className="flex items-center gap-2">
+              <AssigneeWrapper
+                ticketId={ticket.id} 
+                users={serviceUsersFromSpecificTenant}
+                defaultValue={ticket.assignee}
+              />
+              {isAuthor && (
+                <div className="pl-2 border-l border-slate-200">
+                  <DeleteButton ticketId={ticket.id} tenant={tenantData.id} />
+                </div>
+              )}
+            </div>
           </div>
 
-          <div>
-            <h2 className="text-2xl font-semibold text-gray-900">
+          <div className="space-y-2">
+            <h2 className="text-2xl font-bold text-slate-900 leading-tight">
               {ticket.title}
             </h2>
-            <p className="text-orange-500 mt-1">
-              Created by: 
-              <strong className="text-gray-700">{" " + Autor.full_name}</strong>
-            </p>
+            <div className="flex items-center gap-2 text-sm text-slate-500">
+              <span>Creado por</span>
+              <span className="flex items-center gap-1.5 font-semibold text-slate-900 bg-slate-100 px-2 py-0.5 rounded-md">
+                <div className="w-4 h-4 rounded-full bg-slate-300" /> 
+                {Autor.full_name}
+              </span>
+            </div>
           </div>
         </header>
 
-        <hr className="border-gray-200" />
+        <div className="px-8">
+          <hr className="border-slate-100" />
+        </div>
 
         {/* Body */}
-        <section className="text-gray-700 text-[15px] leading-relaxed">
-          {ticket.description}
+        <section className="p-8 pt-6 prose prose-slate max-w-none">
+          <p className="text-slate-700 text-[16px] leading-relaxed whitespace-pre-wrap">
+            {ticket.description}
+          </p>
         </section>
 
-       
+        <div className="px-8">
+          <hr className="border-slate-100" />
+        </div>
 
-        <hr className="border-gray-200" />
-
-        {/* Comments / Related components */}
-        <TicketComments ticket_id ={ticket.id} comments ={comments} tenant_id={tenantData.id} tenantName={tenant}/>
+        {/* Comments Section - Secciones con fondo sutil para separar del cuerpo */}
+        <footer className="bg-slate-50/50 p-8">
+          <TicketComments 
+            ticket_id={ticket.id} 
+            comments={comments} 
+            tenant_id={tenantData.id} 
+            tenantName={tenant}
+          />
+        </footer>
       </article>
     </div>
   );

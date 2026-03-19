@@ -1,13 +1,7 @@
 import { TicketList } from "@/features/tickets/components/TicketList";
 import { TicketFilters } from "@/features/tickets/components/TicketsFilter";
 import Link from "next/link";
-
-export interface DummyTicket {
-  id: number;
-  title: string;
-  status: string;
-  author: string;
-}
+import { Suspense } from "react";
 
 interface TicketsPageProps {
   params: Promise<{ tenant: string }>;
@@ -20,8 +14,11 @@ export default async function TicketsPage({ params, searchParams}: TicketsPagePr
 
   // 1.
   const { tenant } = await params;
-  const{page} = await searchParams || 1;
-  const {search} = await searchParams || "";
+  
+
+  const sParams = await searchParams;
+  const page = sParams.page || "1";
+  const search = sParams.search || "";
 
 
 
@@ -31,7 +28,8 @@ export default async function TicketsPage({ params, searchParams}: TicketsPagePr
   return (
     
     // 2.
-    <div className="max-w-5xl mx-auto mt-20 space-y-8">
+    <div className="max-w-300 mx-auto">
+    <div className=" mt-20 space-y-8 border border-black rounded-xs p-5 mx-5 self">
       
       {/* Header & Actions */}
       <div className="flex items-center justify-between">
@@ -51,8 +49,11 @@ export default async function TicketsPage({ params, searchParams}: TicketsPagePr
       {/* 3. & 4. Ticket List Container */}
       <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-6">
         <TicketFilters />
-        <TicketList tenant={tenant}  page={page} search={search}/>
+        <Suspense key={search + page} fallback={<p className="py-10 text-center">Cargando tickets...</p>}>
+          <TicketList tenant={tenant} page={page} search={search}/>
+        </Suspense>
       </div>
+    </div>
     </div>
   );
 };

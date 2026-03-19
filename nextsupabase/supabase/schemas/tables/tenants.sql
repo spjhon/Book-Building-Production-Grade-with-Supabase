@@ -75,21 +75,21 @@ on public.tenants
 for select
 to authenticated
 using (
-  -- 1. Verificación rápida por JWT (Filtro de primera línea)
-  ((auth.jwt() -> 'app_metadata' -> 'tenants') ? slug::text)
+  -- 1. Filtro de primera línea (JWT)
+  -- Buscamos el slug de la fila actual dentro del array de tenants del JWT
+  ((auth.jwt() -> 'app_metadata' -> 'tenants') ? tenants.slug)
   
-  AND -- AMBAS deben cumplirse
+  AND 
   
-  -- 2. Verificación en tiempo real en la DB (Verdad absoluta)
+  -- 2. Verdad absoluta (Base de Datos)
   exists (
     select 1 
     from public.tenant_permissions tp
     inner join public.service_users su on tp.service_user_id = su.id
-    where tp.tenant_id = public.tenants.id
-    and su.auth_user_id = auth.uid()
+    where tp.tenant_id = tenants.id  -- Referencia a la fila evaluada
+    and su.auth_user_id = auth.uid() -- Filtro por el usuario actual
   )
 );
-
 
 
 
