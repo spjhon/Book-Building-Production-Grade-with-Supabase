@@ -6,6 +6,7 @@ import AssigneeWrapper from "@/features/tickets/components/AssigneeWrapper";
 import { fetchTenantDataCached } from "@/lib/dbFunctions/fetch_tenant_domain_cached";
 import { redirect } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
+import TicketStatusSelect from "@/features/tickets/components/TicketStatusSelect";
 
 
   const statusStyles: Record<string, string> = {
@@ -29,20 +30,19 @@ export default async function TicketDetailPage({params}: Readonly<{ params: Prom
 
 
 
-
+  //LLAMADO DB: Se extrae el nombre, el dominio y el id del tenant actual
   const {data: tenantData, error: errorFetchingTenantData} = await fetchTenantDataCached(tenant)
   
   if (!tenantData || errorFetchingTenantData) {
-    
-    // 2. Extraemos el mensaje de forma segura para TypeScript
     const errorMessage = typeof errorFetchingTenantData === "string" 
       ? errorFetchingTenantData 
       : errorFetchingTenantData?.message || "Tenant no encontrado";
-
     redirect(`/error?type=${encodeURIComponent(errorMessage)}`);
   }
 
-  // Asumiendo que ya obtuviste el tenantId con el código anterior
+
+
+  // LLAMADO DB: Se estan trallendo todos los tickets con sus comentarios pegados
   const { data: ticket, error: fetchTicketError } = await supabaseServerClient
   .from("tickets")
   .select("*, comments (*, comment_attachments (*) )")
@@ -51,7 +51,6 @@ export default async function TicketDetailPage({params}: Readonly<{ params: Prom
   .eq("tenant_id", tenantData.id) // Filtro de seguridad multi-tenant
   .single();
 
-  
   if (!ticket || fetchTicketError) {
     const errorMessage = fetchTicketError?.message || "Error";
     redirect(`/error?type=Error trallendo el ticket: ${encodeURIComponent(errorMessage)}`);
@@ -59,8 +58,8 @@ export default async function TicketDetailPage({params}: Readonly<{ params: Prom
 
 
  
-  
-  const { data: Autor, error: fetchAutorError } = await supabaseAdmin
+  //LLAMADO DB: Se extrae el nombre del autor del ticket creado
+  const { data: AutorName, error: fetchAutorError } = await supabaseAdmin
   .from("service_users")
   .select("*")
   .eq("id", ticket.created_by)
@@ -72,8 +71,8 @@ export default async function TicketDetailPage({params}: Readonly<{ params: Prom
   } 
 
 
-
-  const { data: dataClaims, error: errorFetchingClamis } = await supabaseServerClient.auth.getClaims(); //se obtiene el claims osea el usuario
+  //LLAMADO DB: Se extrae la informacion del usuario loggeado
+  const { data: dataClaims, error: errorFetchingClamis } = await supabaseServerClient.auth.getClaims();
   
   
   if (!dataClaims || errorFetchingClamis){
@@ -81,27 +80,27 @@ export default async function TicketDetailPage({params}: Readonly<{ params: Prom
     redirect(`/error?type=Error trallendo la session del usuario: ${encodeURIComponent(errorMessage)}`);
   } 
   
+
   const sessionUser = dataClaims?.claims;
-
-
   const supabase_user_id = sessionUser?.sub || "";
 
 
 
-
-  const { data: serviceUsers, error: fetchServiceUsersError } = await supabaseServerClient
+  //LLAMADA DB: Extraccion de la informacion del service_user que esta logeado
+  const { data: serviceUser, error: fetchServiceUserError } = await supabaseServerClient
   .from("service_users")
   .select("id")
   .eq("auth_user_id", supabase_user_id)
   .single();
 
-
-if (!serviceUsers || fetchServiceUsersError){
-    const errorMessage = fetchServiceUsersError?.message || "Error";
-    redirect(`/error?type=Error trallendo el id del service user: ${encodeURIComponent(errorMessage)}`);
+  if (!serviceUser || fetchServiceUserError){
+      const errorMessage = fetchServiceUserError?.message || "Error";
+      redirect(`/error?type=Error trallendo el id del service user: ${encodeURIComponent(errorMessage)}`);
   } 
 
-  const isAuthor = serviceUsers?.id === ticket.created_by;
+
+
+  const isAuthor = serviceUser?.id === ticket.created_by;
   const{comments} = ticket;
   
   const dateString = new Date(ticket.created_at).toLocaleString("en-US");
@@ -109,13 +108,15 @@ if (!serviceUsers || fetchServiceUsersError){
 
 
 
-  //SERVICE_USERS PARA EL SELECT
+  //LLAMADA DB: SERVICE_USERS PARA EL SELECT, todos los service_users bajo el tenant
   const { data: serviceUsersFromSpecificTenant, error: errorUsersFromSpecificTenant } = await supabaseServerClient.rpc("get_service_users_with_tenant", { target_tenant_id: tenantData.id });
 
     // Manejo de error limpio
     if (!serviceUsersFromSpecificTenant || errorUsersFromSpecificTenant){
       redirect(`/error?type=Error trallendo informacion del tenant`);
     }
+
+
 
   return (
     <div className="max-w-4xl mx-auto mt-16 px-4 mb-20">
@@ -142,6 +143,17 @@ if (!serviceUsers || fetchServiceUsersError){
               >
                 {ticket.status.replace('_', ' ')}
               </Badge>
+
+
+
+              <TicketStatusSelect
+              user_id={ticket.created_by}
+              ticket_status={ticket.status}
+              ticket_id={ticket.id}
+              >
+              </TicketStatusSelect>
+
+
               <time className="text-xs font-medium text-slate-400 uppercase tracking-wider">
                 {dateString}
               </time>
@@ -169,7 +181,7 @@ if (!serviceUsers || fetchServiceUsersError){
               <span>Creado por</span>
               <span className="flex items-center gap-1.5 font-semibold text-slate-900 bg-slate-100 px-2 py-0.5 rounded-md">
                 <div className="w-4 h-4 rounded-full bg-slate-300" /> 
-                {Autor.full_name}
+                {AutorName.full_name}
               </span>
             </div>
           </div>

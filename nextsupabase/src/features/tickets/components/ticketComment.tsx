@@ -253,6 +253,7 @@ async function onClickHandlerButtonDownload (path: string){
       
 
       //borra el comentario en caso de error, OJO SI FALLA POR RLS, NO VA A MOSTRAR ERROR, EL ERROR DE RLS SOLO APARECE EN INSERT
+      //sin embargo se puede pedir el dato despues para saber si si o no.
       if (commentIDforDeleteInCaseOfError) {
         const {data: dataDeletingComment, error: errorDeletingComment} = await supabaseBrowser
           .from("comments")

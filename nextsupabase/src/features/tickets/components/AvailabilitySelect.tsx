@@ -17,7 +17,6 @@ export function AvailabilitySelect({
   user_id, 
   is_available 
 }: { 
-  tenant_id: string;
   user_id: string;
   is_available: boolean;
 }) {

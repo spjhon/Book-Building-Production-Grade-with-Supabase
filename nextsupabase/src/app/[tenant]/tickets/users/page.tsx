@@ -87,7 +87,7 @@ export default async function UserList({params}: Readonly<{ params: Promise<{ten
 
                 {currentAuthId === user.auth_user_id?   
                   <AvailabilitySelect 
-                    tenant_id={tenantData.id} 
+                    
                     user_id={user.id}
                     is_available={user.is_available} 
                   /> 
