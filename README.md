@@ -4,6 +4,8 @@ Sistema de tickets escalable que permite a múltiples organizaciones (tenants) o
 
 Los usuarios pueden registrarse en tenants específicos, crear tickets y gestionar su flujo de trabajo. La seguridad está blindada: solo el autor puede eliminar o cerrar un ticket, mientras que la colaboración se potencia con un feed de comentarios en tiempo real y carga de archivos, todo ejecutándose sobre una infraestructura distribuida en el Edge con Cloudflare Workers.
 
+![screenshot](./Screenshots.jpg)
+
 Teoria aplicada a la practica del libro:
 
 - [Building Production-Grade Web Applications with Supabase: A comprehensive guide to database design, security, real-time data, storage, multi-tenancy, and more by David Lorenz](https://www.amazon.com/Building-Production-Grade-Applications-Supabase-comprehensive/dp/1837630682)
