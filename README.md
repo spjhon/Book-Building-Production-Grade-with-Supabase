@@ -169,3 +169,113 @@ hacer backup completo del sistema local: pnpx supabase db dump --local > backup_
 ## Mejoras de rendimiento a futuro
 
 1. Utilizar una libreria llamada jose para captuar el jwt en el middlware y comprobar la info para los permisos en lugar de hacer un llamado a la base de datos por cada request que pase por el middleware.
+
+## Estructura del projecto (carpeta src)
+
+```js
+src                                        //   
+├─ app                                     //   
+│  ├─ favicon.ico                          //   
+│  ├─ globals.css                          //   Global ShadCN CSS
+│  ├─ layout.tsx                           //   -RootLayout (static SERVER LAYOUT COMPONENT)
+│  ├─ loading.tsx                          //   Loading (static SERVER COMPONENT)
+│  ├─ not-found                            //   
+│  │  └─ page.tsx                          //   PageNotFound (static SERVER COMPONENT)
+│  ├─ not-found.tsx                        //   NotFound (static SERVER COMPONENT)
+│  ├─ page.tsx                             //   Home (static SERVER COMPONENT) Landing page de listado de tenants disponibles
+│  └─ [tenant]                             //   [tenant] Esta es la ruta principal a donde redirige el proxy (next middleware) de acuerdo al host
+│     ├─ auth                              //   
+│     │  ├─ confirm                        //
+│     │  │  └─ route.ts                    //   GET (ROUTE HANDLER) Recibe las llamadas del magic link y de la confirmacion que son envidas por email
+│     │  ├─ forgot-password                //
+│     │  │  └─ page.tsx                    //   ForgotPasswordPage (static SERVER COMPONENT)
+│     │  ├─ login                          //
+│     │  │  ├─ api                         //
+│     │  │  │  └─ route.ts                 //   POST (ROUTE HANDLER) Procesa el inicio de session cuando javascript esta desactivado en el browser
+│     │  │  └─ page.tsx                    //   Login (dynamic SERVER COMPONENT) Utiliza un getclaims para verifcar usuario y cargar componentes
+│     │  ├─ login-magic-link               //
+│     │  │  └─ api                         //
+│     │  │     └─ route.ts                 //   GET (ROUTE HANDLER) No tiene uso por ahora solo devuelve un mensaje
+│     │  ├─ logout                         //
+│     │  │  └─ api                         //
+│     │  │     └─ route.ts                 //   POST (ROUTE HANDLER) Se encarga del logout cuando javascript esta desactiva en el browser
+│     │  ├─ magic-thanks                   //
+│     │  │  └─ page.tsx                    //   MagicLinkSuccessPage (ISR dynamic SERVER COMPONENT) Mensaje de que se envio el correo magicLink
+│     │  ├─ page.tsx                       //
+│     │  ├─ update-password                //
+│     │  │  └─ page.tsx                    //
+│     │  └─ verify-oauth                   //
+│     │     └─ api                         //
+│     │        └─ route.ts                 //
+│     ├─ cdn                               //
+│     │  └─ api                            //
+│     │     └─ route.ts                    //
+│     ├─ error                             //
+│     │  └─ page.tsx                       //
+│     ├─ layout.tsx                        //
+│     ├─ page.tsx                          //
+│     ├─ register                          //
+│     │  ├─ api                            //
+│     │  │  └─ route.ts                    //
+│     │  └─ page.tsx                       //
+│     └─ tickets                           //
+│        ├─ details                        //
+│        │  └─ [slugId]                    //
+│        │     └─ page.tsx                 //
+│        ├─ layout.tsx                     //
+│        ├─ new                            //
+│        │  └─ page.tsx                    //
+│        ├─ page.tsx                       //
+│        └─ users                          //
+│           └─ page.tsx                    //
+├─ components                              //
+│  └─ ui                                   //
+│     ├─ badge.tsx                         //
+│     ├─ button.tsx                        //
+│     ├─ card.tsx                          //
+│     ├─ drawer.tsx                        //
+│     ├─ input.tsx                         //
+│     ├─ label.tsx                         //
+│     ├─ navigation-menu.tsx               //
+│     └─ select.tsx                        //
+├─ features                                //
+│  ├─ auth                                 //
+│  │  └─ components                        //
+│  │     ├─ AuthListener.tsx               //
+│  │     ├─ forgot-password-form.tsx       //
+│  │     ├─ LoginForm.tsx                  //
+│  │     └─ update-password-form.tsx       //
+│  ├─ register                             //
+│  │  └─ components                        //
+│  │     └─ SignUpForm.tsx                 //
+│  └─ tickets                              //
+│     └─ components                        //
+│        ├─ AssigneeSelect.tsx             //
+│        ├─ AssigneeWrapper.tsx            //
+│        ├─ AvailabilitySelect.tsx         //
+│        ├─ CreateTicketForm.tsx           //
+│        ├─ DeleteButton.tsx               //
+│        ├─ LogoutButton.tsx               //
+│        ├─ NavBar                         //
+│        │  ├─ MobileMenu.tsx              //
+│        │  └─ Navbar.tsx                  //
+│        ├─ TenantName.tsx                 //
+│        ├─ ticketComment.tsx              //
+│        ├─ TicketList.tsx                 //
+│        ├─ TicketsFilter.tsx              //
+│        └─ TicketStatusSelect.tsx         //
+├─ lib                                     //
+│  ├─ dbFunctions                          //
+│  │  └─ fetch_tenant_domain_cached.ts     //
+│  ├─ supabase                             //
+│  │  ├─ admin.ts                          //
+│  │  ├─ client.ts                         //
+│  │  ├─ proxy.ts                          //
+│  │  └─ server.ts                         //
+│  └─ utils.ts                             //
+├─ proxy.ts                                //
+├─ types                                   //
+└─ utils                                   //
+   └─ url-helpers.ts                       //
+
+```
