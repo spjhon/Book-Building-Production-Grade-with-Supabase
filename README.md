@@ -12,6 +12,186 @@ Teoria aplicada a la practica del libro:
 
 ![cover del book](./book_cover.jpg)
 
+## Database Schema
+
+Aquí tienes un diagrama de relación de entidades (ERD) diseñado específicamente para el README de tu GitHub. He utilizado Mermaid.js, que es el estándar nativo de GitHub para renderizar diagramas directamente desde el código Markdown.
+
+### Diagrama de Relación de Base de Datos (Mermaid)
+
+```mermaid
+erDiagram
+    %% ==========================================
+    %% Entidad Principal Multi-tenant
+    %% ==========================================
+    tenants {
+        uuid id PK
+        text name
+        text domain "UNIQUE"
+        text slug "UNIQUE"
+        timestamptz created_at
+    }
+
+    %% ==========================================
+    %% Entidades de Usuario y Permisos
+    %% ==========================================
+    auth_users {
+        uuid id PK "Supabase Auth"
+    }
+
+    service_users {
+        uuid id PK
+        uuid auth_user_id FK "UNIQUE"
+        text full_name
+        boolean is_available
+    }
+
+    tenant_permissions {
+        uuid id PK
+        uuid tenant_id FK
+        uuid service_user_id FK
+        text role "owner,admin,member"
+    }
+
+    %% ==========================================
+    %% Entidades de Negocio (Tickets y Colaboración)
+    %% ==========================================
+    tickets {
+        uuid id PK "Composite with tenant_id"
+        bigint ticket_number "Secuencial por tenant"
+        uuid tenant_id PK, FK
+        uuid created_by FK
+        uuid assignee FK
+        text title
+        text status "open,in_progress,etc."
+        text assignee_name "cached"
+    }
+
+    comments {
+        uuid id PK
+        uuid ticket_id FK
+        uuid tenant_id FK
+        uuid created_by FK
+        text comment_text
+        text author_name "cached"
+    }
+
+    comment_attachments {
+        uuid id PK
+        uuid comment_id FK
+        uuid tenant_id FK
+        text file_path
+    }
+
+    %% ==========================================
+    %% Definición de Relaciones
+    %% ==========================================
+    
+    %% Relación con Supabase Auth
+    auth_users ||--|| service_users : "Mapea a (1:1)"
+
+    %% Relaciones de Multi-tenancy e Identidad
+    tenants ||--o{ tenant_permissions : "Tiene (1:N)"
+    service_users ||--o{ tenant_permissions : "Pertenece a (1:N)"
+
+    %% Relaciones de Tickets
+    tenants ||--o{ tickets : "Aísla (1:N)"
+    service_users ||--o{ tickets : "Crea (1:N)"
+    service_users ||--o{ tickets : "Es asignado (1:N)"
+
+    %% Relaciones de Comentarios y Adjuntos
+    %% Nota: La FK de comments a tickets es compuesta (id, tenant_id)
+    tickets ||--o{ comments : "Contiene (1:N)"
+    service_users ||--o{ comments : "Escribe (1:N)"
+    comments ||--o{ comment_attachments : "Adjunta (1:N)"
+    
+    %% Relaciones de auditoría/aislamiento directo (opcionales en diagrama, pero presentes en DDL)
+    tenants ||--o{ comments : "Aísla (1:N)"
+    tenants ||--o{ comment_attachments : "Aísla (1:N)"
+
+```
+
+---
+
+### Cómo usar esto en tu README.md
+
+Simplemente copia el siguiente bloque de código y pégalo directamente en tu archivo `README.md` de GitHub. GitHub detectará el bloque `mermaid` y renderizará el diagrama automáticamente.
+
+```markdown
+## Arquitectura de Base de Datos (Schema v1)
+
+Este proyecto utiliza una arquitectura de base de datos relacional robusta en PostgreSQL (vía Supabase), diseñada para soportar aislamiento multi-tenant estricto y colaboración en tiempo real.
+
+### Puntos Clave del Diseño:
+* **Aislamiento Multi-tenant:** La tabla `tenants` es la raíz. Las tablas críticas (`tickets`, `comments`, `comment_attachments`) incluyen `tenant_id` para garantizar el aislamiento de datos mediante políticas RLS (Row Level Security).
+* **Particionamiento de Tickets:** La tabla `tickets` está particionada por `LIST (tenant_id)`, lo que optimiza el rendimiento y la gestión de datos a gran escala. Su Clave Primaria es compuesta: `(id, tenant_id)`.
+* **Integridad Compuesta:** Los comentarios se relacionan con los tickets usando una clave foránea compuesta `(ticket_id, tenant_id)` para asegurar que un comentario no pueda pertenecer a un ticket de otro cliente.
+* **Desnormalización Estratégica:** Se utilizan campos caché como `author_name` en `comments` y `assignee_name` en `tickets` (gestionados vía triggers) para minimizar los JOINs costosos en las consultas de lectura del front-end.
+
+```mermaid
+erDiagram
+    %% Diagrama renderizado nativamente por GitHub
+    tenants {
+        uuid id PK
+        text name
+        text domain "UNIQUE"
+        text slug "UNIQUE"
+    }
+    auth_users {
+        uuid id PK "Supabase Auth"
+    }
+    service_users {
+        uuid id PK
+        uuid auth_user_id FK "UNIQUE"
+        text full_name
+        boolean is_available
+    }
+    tenant_permissions {
+        uuid id PK
+        uuid tenant_id FK
+        uuid service_user_id FK
+        text role "owner,admin,member"
+    }
+    tickets {
+        uuid id PK "Composite with tenant_id"
+        bigint ticket_number "Secuencial por tenant"
+        uuid tenant_id PK, FK
+        uuid created_by FK
+        uuid assignee FK
+        text title
+        text status "open,etc."
+    }
+    comments {
+        uuid id PK
+        uuid ticket_id FK
+        uuid tenant_id FK
+        uuid created_by FK
+        text comment_text
+        text author_name "cached"
+    }
+    comment_attachments {
+        uuid id PK
+        uuid comment_id FK
+        uuid tenant_id FK
+        text file_path
+    }
+    
+    auth_users ||--|| service_users : "Mapea a (1:1)"
+    tenants ||--o{ tenant_permissions : "Tiene (1:N)"
+    service_users ||--o{ tenant_permissions : "Pertenece a (1:N)"
+    tenants ||--o{ tickets : "Aísla (1:N)"
+    service_users ||--o{ tickets : "Crea (1:N)"
+    service_users ||--o{ tickets : "Es asignado (1:N)"
+    tickets ||--o{ comments : "Contiene (1:N)"
+    service_users ||--o{ comments : "Escribe (1:N)"
+    comments ||--o{ comment_attachments : "Adjunta (1:N)"
+    tenants ||--o{ comments : "Aísla (1:N)"
+    tenants ||--o{ comment_attachments : "Aísla (1:N)"
+```
+```
+
+
+
+
 ## Herramientas utilizadas
 
 - Framework: Next.js 15 (App Router).
