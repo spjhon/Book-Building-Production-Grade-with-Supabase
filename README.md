@@ -70,7 +70,7 @@ Los usuarios pueden registrarse en tenants específicos, crear tickets y gestion
 
 ## Database Schema
 
-Aquí tienes un diagrama de relación de entidades (ERD) diseñado específicamente para el README de tu GitHub. He utilizado Mermaid.js, que es el estándar nativo de GitHub para renderizar diagramas directamente desde el código Markdown.
+Diagrama ERD representando las tablas utilizadas, la tabla tickets tiene un particion por cada tenant para soportar grandes cantidades de datos, y este es un ejemplo de una estructura multi tenant donde el tenant es el orquestador de toda la app en cuanto a permisos RLS.
 
 ### Diagrama de Relación de Base de Datos (Mermaid)
 
