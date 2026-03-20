@@ -29,7 +29,7 @@ export default async function TicketsPage({ params, searchParams}: TicketsPagePr
     
     // 2.
     <div className="max-w-300 mx-auto">
-    <div className=" mt-20 space-y-8 border border-black rounded-xs p-5 mx-5 self">
+    <div className=" mt-20 space-y-8 border border-black rounded-xl p-5 mx-5 self">
       
       {/* Header & Actions */}
       <div className="flex items-center justify-between">

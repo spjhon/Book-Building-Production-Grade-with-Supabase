@@ -50,7 +50,7 @@ export default async function UserList({params}: Readonly<{ params: Promise<{ten
   return (
     // 1. Contenedor con scroll horizontal para dispositivos móviles
     <div className="max-w-xl mx-auto">
-    <div className="mt-20 mx-5 overflow-x-auto border border-black rounded-xs shadow-sm bg-white">
+    <div className="mt-20 mx-5 overflow-x-auto border border-black rounded-xl shadow-sm bg-white">
       <table className="w-full border-collapse text-left">
         <thead>
           <tr className="text-sm font-bold bg-gray-50 border-b border-gray-200">

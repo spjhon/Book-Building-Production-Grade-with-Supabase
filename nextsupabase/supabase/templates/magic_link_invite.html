@@ -1,19 +1,64 @@
+<!DOCTYPE html>
 <html>
-  <body>
-    <h2>Magic Link 12</h2>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Has sido invitado</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f9fafb; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+  <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 12px; border: 1px solid #e5e7eb; overflow: hidden; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);">
+    
+    <tr>
+      <td style="padding: 40px 40px 0 40px; text-align: center;">
+        <div style="display: inline-block; padding: 12px; background-color: #f3f4f6; border-radius: 50%; margin-bottom: 20px;">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <line x1="19" y1="8" x2="19" y2="14"></line>
+            <line x1="22" y1="11" x2="16" y2="11"></line>
+          </svg>
+        </div>
+        <h1 style="color: #111827; font-size: 26px; font-weight: 800; margin: 0; letter-spacing: -0.025em;">
+          ¡Te han invitado al equipo!
+        </h1>
+      </td>
+    </tr>
 
-    <p>Follow this link to login:</p>
-    <p>este es el redirect to: {{ .RedirectTo }}</p>
+    <tr>
+      <td style="padding: 30px 40px 40px 40px;">
+        <p style="color: #4b5563; font-size: 16px; line-height: 26px; margin: 0 0 30px 0; text-align: center;">
+          Se ha creado una cuenta para ti en la plataforma de tickets. Haz clic en el siguiente enlace para aceptar la invitación y configurar tu acceso.
+        </p>
+        
+        <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
+          <tr>
+            <td align="center">
+              <a href="{{ .RedirectTo }}&token_hash={{ .TokenHash }}&type=invite" target="_blank" style="background-color: #000000; color: #ffffff; padding: 14px 40px; font-size: 16px; font-weight: 600; text-decoration: none; border-radius: 8px; display: inline-block; transition: all 0.2s ease;">
+                Aceptar invitación
+              </a>
+            </td>
+          </tr>
+        </table>
 
-    <p>
-      <a
-        href="{{ .RedirectTo }}&token_hash={{ .TokenHash }}&type=invite"
-        >Log In 23, este es el siteURL: </a
-      >
+        <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #f3f4f6;">
+          <p style="color: #9ca3af; font-size: 12px; line-height: 18px; text-align: center; margin: 0;">
+            Si tienes problemas con el botón, usa este enlace:<br>
+            <a href="{{ .RedirectTo }}&token_hash={{ .TokenHash }}&type=invite" style="color: #2563eb; text-decoration: none; word-break: break-all;">{{ .ConfirmationURL }}</a>
+          </p>
+        </div>
+      </td>
+    </tr>
 
-      ESTE ES EL LINK PARA CONFIRMAR EL CORREO POR MEIDO DEL INVITE
-
-      Este es el confirmation link {{ .ConfirmationURL }}
-    </p>
-  </body>
+    <tr>
+      <td style="padding: 30px 40px; background-color: #fafafa; text-align: center;">
+        <p style="color: #6b7280; font-size: 12px; margin: 0 0 10px 0;">
+          Este enlace de invitación expirará pronto por seguridad.
+        </p>
+        <p style="color: #374151; font-size: 13px; font-weight: 700; margin: 0;">
+          Sistema de Soporte Multi-tenant
+        </p>
+      </td>
+    </tr>
+  </table>
+</body>
 </html>

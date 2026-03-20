@@ -342,7 +342,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 Para cualquier pregunta o recomendacion
 
-- **Email**: [spjhon@gmail.com)](spjhon@gmail.com)
+- **Email**: [spjhon@gmail.com](spjhon@gmail.com)
 - **GitHub**: [github.com/spjhon](https://github.com/spjhon)
 
 ---
@@ -359,6 +359,7 @@ hacer backup completo del sistema local: pnpx supabase db dump --local > backup_
 1. La funcion max() de una de las funciones rpc no es eficiente con grandes volumenes
 2. el middleware proxy esta haciendo un llamado a la base de datos por cada request, se puede cambiar pero no habria seguridad.
 3. Al iniciar sesion si se va a /update-password, deja cambiar el password al ponerle una constraseña nueva.
+4. Si se envia el link de invitacion despues del registro, si el magik link falla, no hay otra forma de volverlo a enviar y el usuario ya esta registrado, no quedaria activado.
 
 ---
 
