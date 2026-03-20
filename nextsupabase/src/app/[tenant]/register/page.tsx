@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 
 
 
-export default async function Page({params}: {params: Promise<{ tenant: string }>;}) {
+export default async function RegisterPage({params}: {params: Promise<{ tenant: string }>;}) {
   
   
   const { tenant } = await params;
