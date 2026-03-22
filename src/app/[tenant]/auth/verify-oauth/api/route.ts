@@ -3,29 +3,16 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { buildUrl } from "@/utils/url-helpers";
 import { NextRequest, NextResponse } from "next/server";
 
-/*** OAuth Callback Route Handler (Route Handler GET API)
- * ---------------------------------------
- * Este route handler es el punto de aterrizaje (callback) tras la autenticación con Google/OAuth:
- * - Intercambia el código de autorización (code) por una sesión de usuario real.
- * - Gestiona la redirección dinámica basada en el parámetro "next".
- * - Implementa un filtro de seguridad para asegurar que solo usuarios registrados en 'service_users' accedan.
- * @param request Objeto NextRequest que contiene el código de sesión en los searchParams.
- * @params tenant Slug del tenant obtenido de los parámetros dinámicos de la ruta para mantener el contexto.
- * @Flujo
- * 1. Extracción del tenant de los params y del código de autorización de la URL.
- * 2. Validación y saneamiento del parámetro de redirección "next".
- * 3. Verificación de existencia del código; si falta, redirige al flujo de error.
- * 4. Intercambio del código por sesión en Supabase Auth (Exchange Code for Session).
- * 5. Filtro de Seguridad: Verificación de existencia del usuario en la tabla 'service_users'.
- * 6. Gestión de salida (signOut) si el usuario no tiene perfil creado y redirección final.
- * @Return Redirecciones dinámicas al Dashboard (/tickets) o a páginas de error según el resultado.
- */ 
+
 export async function GET(request: NextRequest, { params }: { params: Promise<{ tenant: string }>}) {
   
   // 1.
   const { tenant } = await params;
   const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
+
+  console.log(code)
+  console.log(searchParams)
 
   // 2. 
   // if "next" is in param, use it as the redirect URL

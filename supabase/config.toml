@@ -333,7 +333,7 @@ email_optional = false
 [auth.external.google]
 enabled = true
 client_id = "144873284943-633apnaki0fceoufecaans7ggvprca97.apps.googleusercontent.com"
-secret = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_SECRET)"
+secret = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET)"
 skip_nonce_check = false
 redirect_uri = "http://127.0.0.1:54321/auth/v1/callback"
 

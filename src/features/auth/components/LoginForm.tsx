@@ -101,9 +101,9 @@ export const LoginForm = ({
           // Si no es un error de Supabase, es un error genérico (ej: error de red)
           setError("Ha ocurrido un error inesperado");
         }
-
-      } finally {
         setIsLoading(false);
+      } finally {
+        
       }
     }
 
@@ -139,8 +139,9 @@ export const LoginForm = ({
       }catch(err: unknown){
         const message = err instanceof Error ? "Error enviando el magic link: " + err.message : "Error enviando el magic link.";
         setError(message)
-      }finally{
         setIsLoading(false);
+      }finally{
+        
       }
       
       
