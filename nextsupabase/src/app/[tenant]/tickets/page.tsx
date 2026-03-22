@@ -37,7 +37,7 @@ export default async function TicketsPage({ params, searchParams}: TicketsPagePr
           Tickets
         </h1>
 
-        <Link href={"/tickets/new"} className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg shadow transition">
+        <Link prefetch={null} href={"/tickets/new"} className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg shadow transition">
           + Crear Ticket
         </Link>
       </div>

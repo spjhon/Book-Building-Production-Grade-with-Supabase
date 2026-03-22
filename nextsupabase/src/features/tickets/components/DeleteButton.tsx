@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 
-export default function DeleteButton({ ticketId, tenant }: { ticketId: string, tenant: string }) {
+export default function DeleteButton({ ticketId }: { ticketId: string}) {
   const router = useRouter();
   const supabase = createSupabaseBrowserClient()
 
@@ -11,8 +11,9 @@ export default function DeleteButton({ ticketId, tenant }: { ticketId: string, t
     const{data, error} = await supabase.from("tickets").delete().eq("id", ticketId);
      console.log(error||"no hubo error")
      
+     
     router.push(`/tickets`); // Redirige después de borrar
-    router.refresh(); // Opcional: fuerza a Next.js a re-renderizar la lista
+    // Opcional: fuerza a Next.js a re-renderizar la lista
 
   };
 

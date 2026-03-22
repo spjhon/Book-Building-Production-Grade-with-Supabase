@@ -5,7 +5,8 @@ import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { buildUrl } from "@/utils/url-helpers";
 import { NextRequest, NextResponse } from "next/server";
 
-
+import { Resend } from 'resend';
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 /*** Manual Registration Route Handler with Rollback (POST API)
  * ---------------------------------------
@@ -85,6 +86,7 @@ const supabaseAdmin = createSupabaseAdminClient();
 
 const { data: userData, error: userError } = await supabaseAdmin.auth.admin.createUser({
   email: emailLowered, 
+  email_confirm: false,
   password: passwordLowered,
   app_metadata: {tenants: [tenant]},
   user_metadata: { name:`${userNameTrimmed}`}
@@ -92,6 +94,14 @@ const { data: userData, error: userError } = await supabaseAdmin.auth.admin.crea
 
 
 if (userError) {
+  console.log("Error creando el nuevo usuario")
+  console.log({
+    code: userError.code,
+    status: userError.status,
+    message: userError.message,
+    name: userError.name,
+    cause: userError.cause
+  });
   return NextResponse.json(
         { message: "Error creando el registro: " + userError.message }, 
         { status: 400 } 
@@ -142,8 +152,43 @@ try{
   .insert({ tenant_id: tenantID.id, service_user_id: serviceUser.id});
 
   if (InsertNewTenantError){
+    console.log(InsertNewTenantError)
     throw new Error(InsertNewTenantError.message || "Algo salio mal al insertar un tenant");
   }
+
+
+
+  const { data: generateLinkData, error:errorGeneratinLink } = await supabaseAdmin.auth.admin.generateLink({email, type: "recovery"});
+
+  if (errorGeneratinLink){
+    //Se logea el error object
+    console.dir(errorGeneratinLink, { depth: null });
+    //se lanza el error personalizado.
+    throw new Error("Algo salio mal generando el magic link: " + errorGeneratinLink.message || "Algo salio mal generando el magic link.");
+  }
+
+  const { hashed_token } = generateLinkData.properties;
+
+  const { error: resendError } = await resend.emails.send({
+    from: 'Tu App <onboarding@tiendadelamujer.com>', // Usa tu dominio verificado aquí
+    to: [emailLowered],
+    subject: `Bienvenido a ${tenant} - Confirma tu acceso`,
+    html: `
+      <h1>¡Hola ${userNameTrimmed}!</h1>
+      <p>Has sido registrado en <strong>${tenant}</strong>.</p>
+      <p>Para comenzar a utilizar la plataforma, haz clic en el siguiente botón:</p>
+      <a href="http://${tenant}.miapp:3000/auth/confirm?tenant=${tenant}&token=${hashed_token}&type=recovery" style="background-color: #000; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+        Entrar a mi cuenta
+      </a>
+      <p>Este enlace expirará pronto.</p>
+    `,
+  });
+
+  if (resendError) {
+    console.error("Error de Resend:", resendError);
+    throw new Error("No pudimos enviarte el correo de bienvenida.");
+  }
+
 
 
   }catch(err: unknown){
@@ -158,15 +203,7 @@ try{
 
   }
 
-  //6.
-  const { error } = await supabaseAdmin.auth.signInWithOtp({email, options: { shouldCreateUser: false, emailRedirectTo: `http://${tenant}.miapp:3000/auth/confirm?tenant=${tenant}`}});
-
-
-  if (error) {
-  return NextResponse.redirect(buildUrl(`/auth/error?type=${error.code}`, tenant, request), 303);
-  };
-      
-
+  
 
   return NextResponse.json({
     message: "Usuario Registrado Correctamente API funcionando",

@@ -23,6 +23,7 @@ export default function Home() {
         <nav className="grid grid-cols-2 gap-4 w-full">
           {tenants.map((tenant) => (
             <Link
+              prefetch={null}
               key={tenant}
               href={`http://${tenant}.${rootDomain}/tickets`}
               className="flex items-center justify-center p-4 rounded-lg border border-zinc-200 bg-white hover:bg-zinc-50 hover:border-zinc-400 transition-all text-zinc-700 font-medium capitalize shadow-sm dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-700"

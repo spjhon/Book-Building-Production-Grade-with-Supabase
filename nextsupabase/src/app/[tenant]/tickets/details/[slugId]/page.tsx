@@ -7,6 +7,8 @@ import { fetchTenantDataCached } from "@/lib/dbFunctions/fetch_tenant_domain_cac
 import { redirect } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import TicketStatusSelect from "@/features/tickets/components/TicketStatusSelect";
+import { ServiceUser } from "@/features/tickets/components/CreateTicketForm";
+import { PostgrestError } from "@supabase/supabase-js";
 
 
   const statusStyles: Record<string, string> = {
@@ -109,12 +111,8 @@ export default async function TicketDetailPage({params}: Readonly<{ params: Prom
 
 
   //LLAMADA DB: SERVICE_USERS PARA EL SELECT, todos los service_users bajo el tenant
-  const { data: serviceUsersFromSpecificTenant, error: errorUsersFromSpecificTenant } = await supabaseServerClient.rpc("get_service_users_with_tenant", { target_tenant_id: tenantData.id });
-
-    // Manejo de error limpio
-    if (!serviceUsersFromSpecificTenant || errorUsersFromSpecificTenant){
-      redirect(`/error?type=Error trallendo informacion del tenant`);
-    }
+const usersPromise = supabaseServerClient.rpc("get_service_users_with_tenant", { target_tenant_id: tenantData.id }).then(res => res as { data: ServiceUser[] | null; error: PostgrestError });
+  
 
 
 
@@ -162,12 +160,12 @@ export default async function TicketDetailPage({params}: Readonly<{ params: Prom
             <div className="flex items-center gap-2">
               <AssigneeWrapper
                 ticketId={ticket.id} 
-                users={serviceUsersFromSpecificTenant}
+                usersPromise={usersPromise}
                 defaultValue={ticket.assignee}
               />
               {isAuthor && (
                 <div className="pl-2 border-l border-slate-200">
-                  <DeleteButton ticketId={ticket.id} tenant={tenantData.id} />
+                  <DeleteButton ticketId={ticket.id}  />
                 </div>
               )}
             </div>

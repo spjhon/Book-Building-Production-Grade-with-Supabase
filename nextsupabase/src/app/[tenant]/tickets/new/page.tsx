@@ -1,7 +1,8 @@
 
-import CreateTicketForm from "@/features/tickets/components/CreateTicketForm";
+import CreateTicketForm, { ServiceUser } from "@/features/tickets/components/CreateTicketForm";
 import { fetchTenantDataCached } from "@/lib/dbFunctions/fetch_tenant_domain_cached";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { PostgrestError } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
 
 interface TicketsProps {
@@ -13,7 +14,7 @@ interface TicketsProps {
 const CreateTicketPage = async ({params}: TicketsProps) => {
 
   const { tenant } = await params;
-const supabaseServer = await createSupabaseServerClient();
+  const supabaseServer = await createSupabaseServerClient();
 
   const {data: tenantData, error: fetchingTenantDataError} = await fetchTenantDataCached(tenant)
 
@@ -23,13 +24,20 @@ const supabaseServer = await createSupabaseServerClient();
       
     }
 
- 
+
+
+
+ /**
   const { data: serviceUsersFromSpecificTenant, error: errorUsersFromSpecificTenant } = await supabaseServer.rpc("get_service_users_with_tenant", { target_tenant_id: tenantData.id });
 
     // Manejo de error limpio
     if (!serviceUsersFromSpecificTenant || errorUsersFromSpecificTenant){
       redirect(`/error?type=Error trallendo informacion del tenant`);
     }
+ */
+
+
+const usersPromise = supabaseServer.rpc("get_service_users_with_tenant", { target_tenant_id: tenantData.id }).then(res => res as { data: ServiceUser[] | null; error: PostgrestError });
 
 
   return (
@@ -41,7 +49,9 @@ const supabaseServer = await createSupabaseServerClient();
       </h3>
 
       {/* Manejo del formulario */}
-      <CreateTicketForm tenant_id={tenantData.id} users={serviceUsersFromSpecificTenant}></CreateTicketForm>
+      
+      <CreateTicketForm tenant_id={tenantData.id} usersPromise={usersPromise}></CreateTicketForm>
+    
     </article>
     </div>
   );

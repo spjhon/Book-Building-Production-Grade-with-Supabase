@@ -1,6 +1,6 @@
 
 import { Navbar } from "@/features/tickets/components/NavBar/Navbar";
-import { ReactNode } from "react";
+import { ReactNode, Suspense } from "react";
 
 interface TicketsLayoutProps {
   children: ReactNode;
@@ -14,7 +14,9 @@ export default function TicketsLayout({ children }: TicketsLayoutProps) {
       </section>
 
       <section className="min-h-screen">
+        <Suspense fallback={<p className="py-10 text-center">Cargando tickets...</p>}>
         {children}
+        </Suspense>
       </section>
     </>
   );

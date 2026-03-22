@@ -33,7 +33,7 @@
         <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
           <tr>
             <td align="center">
-              <a href="{{ .RedirectTo }}&token_hash={{ .TokenHash }}&type=invite" target="_blank" style="background-color: #000000; color: #ffffff; padding: 14px 40px; font-size: 16px; font-weight: 600; text-decoration: none; border-radius: 8px; display: inline-block; transition: all 0.2s ease;">
+              <a href="{{ .RedirectTo }}&token={{ .TokenHash }}&type=invite" target="_blank" style="background-color: #000000; color: #ffffff; padding: 14px 40px; font-size: 16px; font-weight: 600; text-decoration: none; border-radius: 8px; display: inline-block; transition: all 0.2s ease;">
                 Aceptar invitación
               </a>
             </td>
@@ -43,7 +43,7 @@
         <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #f3f4f6;">
           <p style="color: #9ca3af; font-size: 12px; line-height: 18px; text-align: center; margin: 0;">
             Si tienes problemas con el botón, usa este enlace:<br>
-            <a href="{{ .RedirectTo }}&token_hash={{ .TokenHash }}&type=invite" style="color: #2563eb; text-decoration: none; word-break: break-all;">{{ .ConfirmationURL }}</a>
+            <a href="{{ .RedirectTo }}&token={{ .TokenHash }}&type=invite" style="color: #2563eb; text-decoration: none; word-break: break-all;">{{ .ConfirmationURL }}</a>
           </p>
         </div>
       </td>

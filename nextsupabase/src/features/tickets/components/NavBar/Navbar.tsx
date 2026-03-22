@@ -54,6 +54,7 @@ export const Navbar = () => {
       <div className="flex flex-row justify-between items-center mx-auto max-w-2/3">
 
         <Link
+          prefetch={null}
           rel="noreferrer noopener"
           href="/"
           className="font-bold text-xl"
@@ -70,6 +71,7 @@ export const Navbar = () => {
 
                 return (
                   <Link
+                    prefetch={null}
                     href={route.href}
                     key={i}
                     className={`${buttonVariants({

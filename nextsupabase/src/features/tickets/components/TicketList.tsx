@@ -135,6 +135,7 @@ const {data: tenantData, error: errorFetchingTenantData} = await fetchTenantData
               {/* Title */}
               <td className="py-3 px-2">
                 <Link
+                  prefetch={null}
                   href={`/tickets/details/${ticket.ticket_number}`}
                   className="text-blue-600 hover:underline font-semibold"
                 >
@@ -165,6 +166,7 @@ const {data: tenantData, error: errorFetchingTenantData} = await fetchTenantData
       <div className="flex mt-4 w-full">
         {pageSanitazed > 1 && (
           <Link 
+            prefetch={null}
             className="px-4 py-2 bg-gray-100 rounded hover:bg-gray-200" 
             href={getHref(pageSanitazed - 1)}
           >
@@ -174,6 +176,7 @@ const {data: tenantData, error: errorFetchingTenantData} = await fetchTenantData
 
         {moreRows && (
           <Link 
+            prefetch={null}
             className="ml-auto px-4 py-2 bg-gray-100 rounded hover:bg-gray-200" 
             href={getHref(pageSanitazed + 1)}
           >

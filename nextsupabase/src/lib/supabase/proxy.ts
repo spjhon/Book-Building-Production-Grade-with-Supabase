@@ -2,7 +2,8 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from 'next/server';
 import { Database } from "../../../supabase/types/database.types";
 import { buildUrl, getHostnameAndPort } from "@/utils/url-helpers";
-import {  fetchTenantData } from "../dbFunctions/fetch_tenant_domain_cached";
+//import {  fetchTenantData } from "../dbFunctions/fetch_tenant_domain_cached";
+//import { PostgrestError } from "@supabase/supabase-js";
 
 export async function updateSession(request: NextRequest) { //funcion proxy especial de supabase, no es el proxy de next js
   let supabaseResponse = NextResponse.next({ request });
@@ -38,6 +39,8 @@ export async function updateSession(request: NextRequest) { //funcion proxy espe
   const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN?.split(":")[0]; // "miapp" o "127.0.0.1" o "localhost"
   
 
+  
+
  //RUTAS PUBLICAS PERMITIDAS
 
 //si alguno de estos host o alguno de estos path se cumple, entonces retornar supabaseResponse sin hacer mas preguntas
@@ -55,14 +58,16 @@ export async function updateSession(request: NextRequest) { //funcion proxy espe
  //OBTENCION Y VERIFICACION DEL TENANT DESDE LA DB CON UN CACHE DE 1 MINUTO
 
   const tenantSlug = hostname.split(".")[0];
-  const {data: tenantData, error} = await fetchTenantData(tenantSlug);
-  const tenantName = tenantData?.domain
+  //const {data: tenantData, error} = await fetchTenantData(tenantSlug);
+  const tenantName = tenantSlug //tenantData?.domain
+
+  /** 
   if (!tenantName || error) {
-    return NextResponse.rewrite(new URL("/not-found", request.url));
+    console.log("Error proxy al buscar tenant")
+    console.dir(error, {depth: null})
+    return NextResponse.redirect(buildUrl(`/error?type=${error instanceof PostgrestError ? "Error proxy al buscar tenant: " + error.message : "Error proxy al buscar tenant."}`, tenantSlug, request), { status: 303 });
   } 
-
-  //return NextResponse.json({ tenantMatch: true });
-
+*/
 
  //PROTECCION DE RUTAS
 

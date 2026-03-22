@@ -1,12 +1,7 @@
 
 import { LoginForm } from "@/features/auth/components/LoginForm";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
-
-//import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-//import { useEffect } from "react";
-//import { useSearchParams } from "next/navigation";
-
+import { redirect } from "next/navigation"
 
 /**
  * Login Page Component (Server Page Component)
@@ -30,12 +25,6 @@ export default async function Login({searchParams, params}: {searchParams: Promi
   const {magicLink} = await searchParams
 
   
-    /**
-  useEffect(() => {
-  const supabase = createSupabaseBrowserClient();
-  supabase.storage.listBuckets().then((result) =>{console.log("Bucket List", result)});
-  }, []);
-  */
 
   //2.
   const wantsMagicLink = magicLink === "yes";

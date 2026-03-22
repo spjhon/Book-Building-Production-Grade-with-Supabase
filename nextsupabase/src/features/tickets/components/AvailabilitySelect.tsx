@@ -13,6 +13,7 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 
 
+
 export function AvailabilitySelect({ 
   user_id, 
   is_available 
@@ -28,23 +29,32 @@ export function AvailabilitySelect({
     setIsLoading(true);
     const newStatus = value === "available";
 
-    // Llamada DIRECTA a Supabase (Cuesta $0 en Vercel)
-    const {data: finaleUpdateStatus, error } = await supabase
-      .from("service_users")
-      .update({ is_available: newStatus })
-      .eq("id", user_id)
-      .select() // <--- OBLIGATORIO para recibir la fila actualizada
-      .single();
 
-      console.log(finaleUpdateStatus)
-    if (error) {
-      alert("Error: " + error?.message);
-    } else {
-      // Opcional: podrías usar router.refresh() para actualizar la tabla
-      console.log("Estado actualizado");
+    try{
+
+ // Llamada DIRECTA a Supabase (Cuesta $0 en Vercel)
+    const {data: finaleUpdateAvailability, error: errorUpdateAvailability } = await supabase
+    .from("service_users")
+    .update({ is_available: newStatus })
+    .eq("id", user_id)
+    .select() // <--- OBLIGATORIO para recibir la fila actualizada
+    .single();
+
+    if(errorUpdateAvailability || !finaleUpdateAvailability){
+      console.log("Error actualizando el status.")
+      throw new Error("Error actualizando el status.")
     }
-    setIsLoading(false);
-    router.refresh()
+
+    }catch(error){
+      const message = error instanceof Error? error.message : "Error actualizando el disponiblidad."
+      console.log(message)
+    }finally{
+      setIsLoading(false);
+      router.refresh()
+    }
+
+
+
   };
 
   return (

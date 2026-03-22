@@ -54,8 +54,11 @@ export default function TicketStatusSelect({
     setIsLoading(true);
     
 
-    // Llamada DIRECTA a Supabase (Cuesta $0 en Vercel)
-    const {data: finaleUpdateStatus, error } = await supabaseBrowser
+
+
+    try{
+
+const {data: finaleUpdateStatus, error: errorUpdatingStatus } = await supabaseBrowser
       .from("tickets")
       .update({ status: value })
       .eq("created_by", user_id)
@@ -63,18 +66,20 @@ export default function TicketStatusSelect({
       .select() // <--- OBLIGATORIO para recibir la fila actualizada
       .single();
 
-    if (error) {
-      
-      alert("No se puedo hacer el cambio en la base de datos, no eres el que creo este ticket. Supabase dice: " + error?.message);
+      if (!finaleUpdateStatus || errorUpdatingStatus){
+        throw new Error ("Error actualizando estatus: " + errorUpdatingStatus.message)
+      }
+
+      setCurrentStatus(finaleUpdateStatus.status)
+    }catch(error){
+    const message = error instanceof Error? error.message : "Error actualizando el status."
+      console.log(message)
+    }finally{
       setIsLoading(false);
-      return;
-    } else {
-      // Opcional: podrías usar router.refresh() para actualizar la tabla
-      console.log("Estado actualizado");
+      router.refresh()
     }
-    setIsLoading(false);
-    setCurrentStatus(value);
-    router.refresh()
+   
+  
   };
 
 

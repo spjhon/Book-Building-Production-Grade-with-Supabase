@@ -22,36 +22,36 @@ export async function GET(request: NextRequest) {
 
   //1.
   const { searchParams } = new URL(request.url);
-  const token_hash = searchParams.get("token_hash");
-  const type = searchParams.get("type") as EmailOtpType | null ;
+  const token = searchParams.get("token")
+  const type = searchParams.get("type") as EmailOtpType
+  const redirect = searchParams.get("redirect")
   
+const supabaseServerClient = await createSupabaseServerClient();
 
-  //2.
-  const [hostname] = getHostnameAndPort(request);
+ const [hostname] = getHostnameAndPort(request);
   
-  /* Nota: El libro sugiere que el 'tenant' se pase como argumento. 
-     Como estamos en un subdominio, el 'tenant' es el hostname mismo 
-     o el slug que sacamos del mapa.
-  */
- //3.
   const tenant = hostname;
 
-  //4.
-  if (token_hash && type) {
-    const supabase = await createSupabaseServerClient();
-    const { error } = await supabase.auth.verifyOtp({ type, token_hash });
+ 
+  if (token && type) {
+    
+    const { error } = await supabaseServerClient.auth.verifyOtp({ token_hash: token, type });
 
     if (!error) {
-      //5.
-      return NextResponse.redirect(buildUrl("/tickets", tenant, request), { status: 303 });
+      if (redirect === "newpassword"){
+        return NextResponse.redirect(buildUrl("/auth/update-password", tenant, request), { status: 303 });
+      }else{
+        return NextResponse.redirect(buildUrl("/tickets", tenant, request), { status: 303 });
+      }
+      
     } else {
       return NextResponse.redirect(buildUrl(`/error?type=${error.message ? "Error al verificar token: " + error.message : "Error al verificar token"}`, tenant, request), { status: 303 });
     }
   }
 
+
   return NextResponse.redirect(buildUrl("/error?type=No existe el tocken o el tipo de verificacion es incorrecto", tenant, request), { status: 303 });
 }
-
 
 
 

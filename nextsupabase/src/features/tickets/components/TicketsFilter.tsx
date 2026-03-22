@@ -27,7 +27,9 @@ const searchParams = useSearchParams();
 
         updatedParams.set("search", search);
         updatedParams.set("page", "1");
+       
         router.push(pathname + "?" + updatedParams.toString());
+       
     };
 
 

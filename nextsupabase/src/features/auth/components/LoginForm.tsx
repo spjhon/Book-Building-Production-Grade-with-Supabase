@@ -16,6 +16,8 @@ import { useState } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { AuthError } from "@supabase/supabase-js";
+import { enviarEmailMagicLink } from "@/lib/server_actions/emails";
+
 
 type LoginProps = React.ComponentPropsWithoutRef<"div"> & {
   isPasswordLogin?: boolean;
@@ -36,7 +38,7 @@ export const LoginForm = ({
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-
+  
   
 
   const passwordField = (
@@ -44,6 +46,7 @@ export const LoginForm = ({
       <div className="flex items-center">
         <Label htmlFor="password">Contraseña</Label>
         <Link
+          prefetch={null}
           href= {`/auth/forgot-password`}
           className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
         >
@@ -63,26 +66,27 @@ export const LoginForm = ({
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
+
+
 
     if (isPasswordLogin) {
       const supabase = createSupabaseBrowserClient();
-      setIsLoading(true);
+      
       setError(null);
 
-      const valorPromesa = await new Promise((resolve) =>
-        setTimeout(() => resolve("esto viene de la promesa"), 1000)
-      );
-
-      console.log("Tiempo de espera 1s, la promesa se resolvio con este valor: " + valorPromesa);
+      
       try {
+        const emailLowered = email.toLowerCase().trim()
         const { error } = await supabase.auth.signInWithPassword({
-          email,
+          email: emailLowered,
           password,
         });
         if (error) throw error;
         
         
         // Update this route to redirect to an authenticated route. The user already has an active session.
+       
         router.push(`/tickets`);
         
 
@@ -103,40 +107,45 @@ export const LoginForm = ({
       }
     }
 
+
+    
+
     if (!isPasswordLogin) {
       
-      // Validación real
-      if (typeof email !== "string") {
-        setError("Lo siento, el email no es un string.");
-      }
-
-      if (!email) {
-        setError("Lo siento, el email no existe");
-      }
-
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        setError("Lo siento, el email no cumple las condiciones");
-      }
-
-      email.trim();
-
-      
-
       try {
-        const supabase = createSupabaseBrowserClient();
+
+        if (typeof email !== "string") {
+          throw new Error ("Lo siento, el email no es un string.")
+        }
+
+        if (!email) {
+          throw new Error("Lo siento, el email no existe");
+        }
+
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          throw new Error("Lo siento, el email no cumple las condiciones");
+        }
+
+        const {data, error} = await enviarEmailMagicLink(email, tenant)
+      
+        if (!data || error){
+        throw new Error("Error al crear el link y enviarlo: " + error)
+        }
+
         
-        const { error } = await supabase.auth.signInWithOtp({email, options: { shouldCreateUser: false, emailRedirectTo: `http://${tenant}.miapp:3000/auth/confirm?tenant=${tenant}`}});
+        router.push("/auth/magic-thanks")
+        
 
-        if (error) throw error;
-
-       router.push(`/auth/magic-thanks`)
-
-
-      } catch (error: unknown) {
-        setError(error instanceof AuthError ? error.message : "An error occurred");
-      } finally {
+      }catch(err: unknown){
+        const message = err instanceof Error ? "Error enviando el magic link: " + err.message : "Error enviando el magic link.";
+        setError(message)
+      }finally{
         setIsLoading(false);
       }
+      
+      
+      
+
     }
   };
 
@@ -213,7 +222,7 @@ export const LoginForm = ({
 
 
 
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full" disabled={isLoading}>
                 {!isLoading
                   ? isPasswordLogin
                     ? "Ingresa con contraseña"
@@ -253,6 +262,7 @@ export const LoginForm = ({
               <p className="mt-4 text-center text-sm">
                 {isPasswordLogin ? (
                   <Link
+                    prefetch={null}
                     href={{
                       pathname: `/auth/login`,
                       query: { magicLink: "yes" },
@@ -262,6 +272,7 @@ export const LoginForm = ({
                   </Link>
                 ) : (
                   <Link
+                    prefetch={null}
                     href={{
                       pathname: `/auth/login`,
                       query: { magicLink: "no" },
@@ -276,6 +287,7 @@ export const LoginForm = ({
             <div className="mt-4 text-center text-sm">
               Todavia no tienes cuenta?{" "}
               <Link
+                prefetch={null}
                 href={`/register`}
                 className="underline underline-offset-4"
               >

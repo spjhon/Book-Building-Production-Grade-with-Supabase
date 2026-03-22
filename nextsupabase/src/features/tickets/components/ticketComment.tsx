@@ -110,9 +110,9 @@ const TicketComments = ({ticket_id, comments, tenant_id, tenantName}: TicketComm
     .subscribe((status) => console.log('connection status', status))
 
 
-    return () => {subscription.unsubscribe();} //supabaseBrowser.removeChannel(channel);
+    return () => {supabaseBrowser.removeChannel(subscription);} //supabaseBrowser.removeChannel(channel);
 
-  }, [supabaseBrowser, ticket_id])
+  }, [ticket_id])
 
 
 

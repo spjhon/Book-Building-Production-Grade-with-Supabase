@@ -1,7 +1,5 @@
 "use client";
 
-import { cn } from "@/lib/utils";
-import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,16 +12,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useState } from "react";
-import { AuthError } from "@supabase/supabase-js";
+import { enviarEmailRecuperacionContrasena } from "@/lib/server_actions/emails";
 
 
+interface ForgotPasswordFormProps {
+  tenant: string;
+}
 
 
-
-export function ForgotPasswordForm({
-  className,
-  //tenant,
-...props}: React.ComponentPropsWithoutRef<"div">) {
+export function ForgotPasswordForm({tenant}: ForgotPasswordFormProps ) {
 
 
 
@@ -38,31 +35,26 @@ export function ForgotPasswordForm({
     e.preventDefault();
 
     
-    const supabase = createSupabaseBrowserClient();
+    
     setIsLoading(true);
     setError(null);
 
     try {
-      // 3. The url which will be included in the email. This URL needs to be configured in your redirect URLs in the Supabase dashboard at https://supabase.com/dashboard/project/_/auth/url-configuration
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {redirectTo: `${window.location.origin}/auth/update-password`});
 
-      if (error) throw error
-      
+
+      const {data, error} = await enviarEmailRecuperacionContrasena(email, tenant)
+            
+      if (!data || error){
+      throw new Error("Error al crear el link y enviarlo: " + error)
+      }
+
       setSuccess(true);
-
       
     } catch (error: unknown) {
         
 
-        if (error instanceof AuthError) {
-        // Aquí TypeScript ya sabe que 'error' tiene .message, .code, .status, etc.
-        setError(error.message);
-        console.dir(error)
-      } else {
-        // Si no es un error de Supabase, es un error genérico (ej: error de red)
-        setError("Ha ocurrido un error inesperado");
-      }
-  
+      const message = error instanceof Error ? error.message: "Error enviando el link de recuperacin de contraseña";
+      setError(message);
       
     } finally {
       setIsLoading(false);
@@ -73,7 +65,7 @@ export function ForgotPasswordForm({
   return (
 
     //6.
-    <div className={cn("flex flex-col gap-6 border border-black rounded-xs", className)} {...props}>
+    <div className="flex flex-col gap-6 border border-black rounded-xs">
       {success ? (
         <Card>
           <CardHeader>
@@ -116,6 +108,7 @@ export function ForgotPasswordForm({
               <div className="mt-4 text-center text-sm">
                 Ya tiene una cuenta?{" "}
                 <Link
+                  prefetch={null}
                   href={`/auth/login`}
                   className="underline underline-offset-4"
                 >
@@ -129,3 +122,7 @@ export function ForgotPasswordForm({
     </div>
   );
 }
+
+
+
+// `${window.location.origin}/auth/update-password`}

@@ -9,7 +9,7 @@ Los usuarios pueden registrarse en tenants específicos, crear tickets y gestion
 ## 🛠️ Herramientas utilizadas
 
 - **🚀 Framework:** Next.js 16 (App Router) para un renderizado híbrido de alto rendimiento.
-- **🐘 Base de Datos:** PostgreSQL en **Supabase** con estrategias de particionamiento lógico para escalabilidad.
+- **🐘 Base de Datos:** PostgreSQL en **Supabase** con estrategias de particionamiento lógico para escalabilidad, migraciones por medio del CLI.
 - **🌐 Infraestructura:** **Cloudflare Workers** para el despliegue del Middleware y el Proxy de subdominios en el *Edge*.
 - **🛡️ Seguridad:** Auth (SSR), **JWT Claims** personalizados y políticas **RLS** (Row Level Security) para aislamiento total.
 - **⚡ Real-time:** WebSockets vía **Supabase Realtime** para la actualización instantánea de comentarios.
@@ -44,6 +44,7 @@ Los usuarios pueden registrarse en tenants específicos, crear tickets y gestion
 - **🛡️ Seguridad a Nivel de Fila (RLS):** Políticas de base de datos que aseguran que un usuario **solo** pueda ver y editar lo que le pertenece según su Tenant y su Rol.
 - **🔑 Autenticación SSR Segura:** Manejo de sesiones del lado del servidor (Server-Side Rendering) para evitar brechas de seguridad y mejorar el SEO.
 - **🔄 Registro con Rollback Manual:** Proceso de "Sign Up" robusto que asegura la integridad de los datos, revirtiendo cambios si ocurre un fallo en la creación del perfil o el tenant.
+- **🛠️Infraestructura como Código (IaC):** Utilizo el flujo de migraciones de Supabase CLI para asegurar que el esquema de producción sea una copia exacta del entorno de desarrollo, facilitando despliegues predecibles y seguros.
 
 ### 🎨 UX/UI & Rendimiento
 
@@ -195,7 +196,7 @@ src                                        //
 │     │  ├─ confirm                        //
 │     │  │  └─ route.ts                    //   GET (ROUTE HANDLER) Recibe las llamadas del magic link y de la confirmacion que son envidas por email
 │     │  ├─ forgot-password                //
-│     │  │  └─ page.tsx                    //   ForgotPasswordPage (static SERVER COMPONENT)
+│     │  │  └─ page.tsx                    //   ForgotPasswordPage (dynamic SERVER COMPONENT)
 │     │  ├─ login                          //
 │     │  │  ├─ api                         //
 │     │  │  │  └─ route.ts                 //   POST (ROUTE HANDLER) Procesa el inicio de session cuando javascript esta desactivado en el browser
@@ -273,7 +274,9 @@ src                                        //
 │        └─ TicketStatusSelect.tsx         //   TicketStatusSelect (CLIENT COMPONENT) Select que se encarga de cambiar el status del ticket, solo lo puede cambiar el usuario que lo creo
 ├─ lib                                     //   CAPA DE INFRAESTRUCTURA (Core Services)
 │  ├─ dbFunctions                          //
-│  │  └─ fetch_tenant_domain_cached.ts     //   fetchTenantDataCached (SERVER ACTION) Ejemplo de cache request y request memoization manual ya que no se utiliza el fetch
+│  │  └─ fetch_tenant_domain_cached.ts     //   fetchTenantDataCached (SERVER ACTION) Ejemplo de cache request y request memoization
+│  ├─ server_actions                       //
+│  │  └─ emails.ts                         //   Aqui estan las funciones de resend
 │  ├─ supabase                             //
 │  │  ├─ admin.ts                          //   createSupabaseAdminClient (SUPABASE SERVICE KEY CLIENT) Cliente supabase que EXPONE la service key.
 │  │  ├─ client.ts                         //   createSupabaseBrowserClient (SUPABASE BROWSER) Cliente supabase para utilizar en componentes clientes
@@ -360,6 +363,10 @@ hacer backup completo del sistema local: pnpx supabase db dump --local > backup_
 2. el middleware proxy esta haciendo un llamado a la base de datos por cada request, se puede cambiar pero no habria seguridad.
 3. Al iniciar sesion si se va a /update-password, deja cambiar el password al ponerle una constraseña nueva.
 4. Si se envia el link de invitacion despues del registro, si el magik link falla, no hay otra forma de volverlo a enviar y el usuario ya esta registrado, no quedaria activado.
+5. en los tickets al cmbiar el status, no hay una carga adecuada mientras se carga el nuevo status
+6. un mensaje de advertencia antes de borrar el ticket por que si se borra, se va comentarios y attachments
+7. cuadrar la url al utilizar la opcion de buscar
+8. en modo start, al hacer login y no hay credenciales, si se colocan las credenciales que son, no pasa nada.
 
 ---
 

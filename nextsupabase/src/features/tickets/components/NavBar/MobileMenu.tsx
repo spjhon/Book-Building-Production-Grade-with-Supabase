@@ -55,6 +55,7 @@ export function MobileMenu({routes}: MobileMenuProps) {
                   {routes.map((route, i) => (
                     <DrawerClose asChild key={i}>
                       <Link
+                        prefetch={null}
                         rel="noreferrer noopener"
                         href={route.href}
                         className={`text-[17px] ${buttonVariants({

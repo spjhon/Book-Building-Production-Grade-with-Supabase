@@ -28,7 +28,7 @@ export default async function TenantLayout({children, params,}: Readonly<{childr
       <div className="w-[80%] mx-auto">
         
       <Button asChild variant="outline" className="font-bold mt-5">
-        <Link href="http://127.0.0.1:3000/">
+        <Link prefetch={null} href="http://127.0.0.1:3000/" >
           Menu Tenants
         </Link>
       </Button>

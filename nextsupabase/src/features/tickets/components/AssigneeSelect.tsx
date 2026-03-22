@@ -1,4 +1,4 @@
-
+"use client"
 
 import {
   Select,
@@ -9,13 +9,19 @@ import {
   SelectGroup,
 } from "@/components/ui/select"; // Ajusta el path según tu estructura
 
-import { ServiceUser } from "./CreateTicketForm";
+import { ServiceUser } from './CreateTicketForm';
+import { PostgrestError } from "@supabase/supabase-js";
+import { use } from "react";
 
-export function AssigneeSelect({ onValueChanged, ServiceUsers, defaultValue }: { 
+export function AssigneeSelect({ onValueChanged, usersPromise, defaultValue }: { 
   onValueChanged: (val: string | null) => void;
-  ServiceUsers: ServiceUser[];
+  usersPromise: PromiseLike<{ data: ServiceUser[] | null; error: PostgrestError }>;
   defaultValue?: string | null; 
 }) {
+
+
+  const {data: ServiceUsers, error} = use(usersPromise)
+
 
 
   return (

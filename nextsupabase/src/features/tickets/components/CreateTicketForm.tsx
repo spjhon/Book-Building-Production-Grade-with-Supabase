@@ -4,21 +4,26 @@
 
 import { AssigneeSelect } from "@/features/tickets/components/AssigneeSelect";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-import { useRef, useState } from "react";
+import { Suspense, useRef, useState } from "react";
 import { Database } from "../../../../supabase/types/database.types";
+import { PostgrestError } from "@supabase/supabase-js";
 
 export type ServiceUser = Database['public']['Tables']['service_users']['Row'];
 
 
 interface TicketsProps {
   tenant_id: string;
-  users: ServiceUser[];
+  usersPromise: PromiseLike<{ data: ServiceUser[] | null; error: PostgrestError }>;
 }
 
 
 
 
-export default function CreateTicketForm({tenant_id, users}:TicketsProps) {
+export default function CreateTicketForm({tenant_id, usersPromise}:TicketsProps) {
+
+
+
+
 
 
 
@@ -33,11 +38,9 @@ export default function CreateTicketForm({tenant_id, users}:TicketsProps) {
 
 
 
-
-
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>){
 
-
+    
     event.preventDefault();
   
 
@@ -71,7 +74,7 @@ export default function CreateTicketForm({tenant_id, users}:TicketsProps) {
         if (ticketDescriptionRef.current) ticketDescriptionRef.current.value = "";
         setAssignee(null); // Resetear el select
         setIsLoading(false);
-    
+      
     }else{
       
       alert("A title must have at least 5 chars and a description must at least contain 10");
@@ -117,7 +120,9 @@ export default function CreateTicketForm({tenant_id, users}:TicketsProps) {
         {/* Botón de Envío */}
         <div className="flex flex-col space-y-2">
           <label className="">Asignar Usuario</label>
-          <AssigneeSelect ServiceUsers={users} onValueChanged={(val) => setAssignee(val)}></AssigneeSelect>
+          <Suspense fallback={<p className=" text-center">Cargando formulario...</p>}>
+          <AssigneeSelect usersPromise={usersPromise} onValueChanged={(val) => setAssignee(val)}></AssigneeSelect>
+          </Suspense>
         </div>
 
 
