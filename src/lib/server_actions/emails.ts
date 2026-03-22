@@ -40,7 +40,7 @@ export async function enviarEmailMagicLink(email: string, tenant: string ) {
           <p>Este es tu enlace mágico para ingresar a: <strong>${tenant}</strong>.</p>
           <p>Para ingresar a la plataforma, haz clic en el siguiente botón:</p>
           <div style="margin: 30px 0;">
-            <a href="http://${tenant}.miapp:3000/auth/confirm?tenant=${tenant}&token=${hashed_token}&type=recovery" 
+            <a href="http://${tenant}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/auth/confirm?tenant=${tenant}&token=${hashed_token}&type=recovery" 
                style="background-color: #000; color: #fff; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;">
               Entrar a mi cuenta
             </a>
@@ -98,7 +98,7 @@ export async function enviarEmailRecuperacionContrasena(email: string, tenant: s
           <p>Este es tu enlace mágico para recuperar la contraseña en : <strong>${tenant}</strong>.</p>
           <p>Ingresa al siguiente link para ingresas una nueva contraseña:</p>
           <div style="margin: 30px 0;">
-            <a href="http://${tenant}.miapp:3000/auth/confirm?tenant=${tenant}&token=${hashed_token}&type=recovery&redirect=newpassword" 
+            <a href="http://${tenant}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/auth/confirm?tenant=${tenant}&token=${hashed_token}&type=recovery&redirect=newpassword" 
                style="background-color: #000; color: #fff; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;">
               Recuperar contraseña
             </a>

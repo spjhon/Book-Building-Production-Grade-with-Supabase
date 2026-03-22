@@ -48,6 +48,7 @@ export async function updateSession(request: NextRequest) { //funcion proxy espe
     hostname === rootDomain ||
     hostname === "127.0.0.1" ||
     hostname === "miapp" ||
+    hostname === "tiendadelamjuer" ||
     applicationPath.startsWith("/_next") || 
     applicationPath.startsWith("/api") ||
     applicationPath.includes(".") 

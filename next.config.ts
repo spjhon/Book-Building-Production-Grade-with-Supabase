@@ -19,6 +19,22 @@ const nextConfig: NextConfig = {
         hostname: '**.miapp', // Esto permite cualquier subdominio de miapp
         port: '3000',
       },
+      // 2. Para Producción: Permite CUALQUIER subdominio de tu dominio real
+      {
+        protocol: 'https',
+        hostname: '**.tiendadelamujer.com',
+      },
+      // 3. PARA SUPABASE (Muy importante para que carguen tus PDFs/Images)
+      {
+        protocol: 'https',
+        hostname: 'hborskybnjzxsazqhhex.supabase.co',
+        pathname: '/storage/v1/object/public/**',
+      },
+      // 4. Si usas Google Auth, necesitas permitir sus fotos de perfil
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+      },
     ],
   },
   

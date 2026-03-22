@@ -177,7 +177,7 @@ try{
       <h1>¡Hola ${userNameTrimmed}!</h1>
       <p>Has sido registrado en <strong>${tenant}</strong>.</p>
       <p>Para comenzar a utilizar la plataforma, haz clic en el siguiente botón:</p>
-      <a href="http://${tenant}.miapp:3000/auth/confirm?tenant=${tenant}&token=${hashed_token}&type=recovery" style="background-color: #000; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+      <a href="http://${tenant}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/auth/confirm?tenant=${tenant}&token=${hashed_token}&type=recovery" style="background-color: #000; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
         Entrar a mi cuenta
       </a>
       <p>Este enlace expirará pronto.</p>
