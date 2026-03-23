@@ -78,7 +78,7 @@ using (
     select tenant_id 
     from public.tenant_permissions 
     where service_user_id in (
-      select id from public.service_users where auth_user_id = auth.uid()
+      select id from public.service_users where auth_user_id = (select auth.uid())
     )
   )
 );
@@ -93,7 +93,7 @@ with check (
     select tenant_id 
     from public.tenant_permissions 
     where service_user_id in (
-      select id from public.service_users where auth_user_id = auth.uid()
+      select id from public.service_users where auth_user_id = (select auth.uid())
     )
   )
 );
@@ -119,12 +119,12 @@ for update
 to authenticated
 using (
   created_by in (
-    select id from public.service_users where auth_user_id = auth.uid()
+    select id from public.service_users where auth_user_id = (select auth.uid())
   )
 )
 with check (
   created_by in (
-    select id from public.service_users where auth_user_id = auth.uid()
+    select id from public.service_users where auth_user_id = (select auth.uid())
   )
 );
 
@@ -139,7 +139,7 @@ using (
     select 1 
     from public.service_users su
     join public.tenant_permissions tp on tp.service_user_id = su.id
-    where su.auth_user_id = auth.uid()
+    where su.auth_user_id = (select auth.uid())
     and public.tickets.created_by = su.id
     and public.tickets.tenant_id = tp.tenant_id
   )

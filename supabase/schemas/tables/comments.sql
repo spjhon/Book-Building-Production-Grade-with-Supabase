@@ -29,11 +29,14 @@ create table public.comments (
 -- Índices para rendimiento (crucial para RLS y carga de listas)
 -- ==========================================
 
--- Índice para filtrar comentarios por ticket (la consulta principal: "ver comentarios del ticket X")
-create index comments_ticket_id_idx on public.comments (ticket_id);
+-- Índice para el autor (Opcional pero recomendado)
+-- Si vas a mostrar "Comentarios de X usuario", este te servirá mucho
+create index comments_created_by_idx on public.comments (created_by);
 
--- Índice para el RLS (búsquedas por tenant)
-create index comments_tenant_id_idx on public.comments (tenant_id);
+
+-- Índice compuesto para consultas de tickets dentro de un tenant y para la FK
+-- Primero ticket_id, luego tenant_id
+create index comments_ticket_tenant_idx on public.comments (ticket_id, tenant_id);
 
 
 -- ==========================================
@@ -63,7 +66,7 @@ using (
     select tenant_id 
     from public.tenant_permissions 
     where service_user_id in (
-      select id from public.service_users where auth_user_id = auth.uid()
+      select id from public.service_users where auth_user_id = (select auth.uid())
     )
   )
 );
@@ -78,7 +81,7 @@ with check (
     select tenant_id 
     from public.tenant_permissions 
     where service_user_id in (
-      select id from public.service_users where auth_user_id = auth.uid()
+      select id from public.service_users where auth_user_id = (select auth.uid())
     )
   )
 );
@@ -91,7 +94,7 @@ to authenticated
 using (
 
   created_by = (
-    select id from public.service_users where auth_user_id = auth.uid()
+    select id from public.service_users where auth_user_id = (select auth.uid())
   )
 
   OR
@@ -100,7 +103,7 @@ using (
     select tenant_id 
     from public.tenant_permissions 
     where service_user_id in (
-      select id from public.service_users where auth_user_id = auth.uid()
+      select id from public.service_users where auth_user_id = (select auth.uid())
     )
   )
 );

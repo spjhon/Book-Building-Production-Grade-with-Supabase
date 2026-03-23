@@ -29,7 +29,7 @@ export function LogoutButton() {
     event.preventDefault();
 
     const supabase = createSupabaseBrowserClient();
-    await supabase.auth.signOut();
+    await supabase.auth.signOut({ scope: 'global' });;
 
     
     router.push(`/tickets`);

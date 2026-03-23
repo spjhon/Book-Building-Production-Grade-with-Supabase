@@ -31,6 +31,8 @@ export async function updateSession(request: NextRequest) { //funcion proxy espe
   const { data } = await supabase.auth.getClaims(); //se obtiene el claims osea el usuario
   const sessionUser = data?.claims; //se obtiene el usuario si es que existe y esta autenticado
   
+const { data: { user }, error: userError } = await supabase.auth.getUser();
+
 
 
   // 1. EXTRAER INFORMACIÓN BÁSICA
@@ -70,16 +72,34 @@ export async function updateSession(request: NextRequest) { //funcion proxy espe
   } 
 */
 
+
+
+
  //PROTECCION DE RUTAS
 
   if (applicationPath.startsWith("/tickets")) {
     
+  
     
+    if (!user && sessionUser) {
+      const loginUrlExpulsion = buildUrl('/error?type="Ha sido expulsado ya que alguien mas inicio session con sus credenciales"', tenantName, request);
+      const response = NextResponse.redirect(loginUrlExpulsion);
+    
+      // Limpiamos las cookies para que no entre en bucle
+      request.cookies.getAll().forEach(c => {
+      if (c.name.includes('auth-token')) response.cookies.delete(c.name);
+    });
+
+
+      return response;
+    }
+
 
     if (!sessionUser) {
       // 1. Mandamos explícitamente a la ruta de LOGIN, no a la raíz
       const loginUrl = buildUrl('/auth/login', tenantName, request);
       return NextResponse.redirect(loginUrl);
+      
     }
 
     // Si hay usuario, pero el tenant no está en su lista de acceso (app_metadata)
@@ -89,15 +109,10 @@ export async function updateSession(request: NextRequest) { //funcion proxy espe
 
       
       const loginUrl = buildUrl('/auth/login', tenantName, request);
-  const response = NextResponse.redirect(loginUrl);
- response.cookies.delete('sb-access-token'); 
-  response.cookies.delete('sb-refresh-token');
-  // Borramos las cookies de Supabase directamente desde el Middleware
-  // Reemplaza 'sb-xyz-auth-token' por el nombre real de tu cookie de supabase
- 
+        const response = NextResponse.redirect(loginUrl);
 
-  return response;
-    }
+        return response;
+      }
 
 
   } 

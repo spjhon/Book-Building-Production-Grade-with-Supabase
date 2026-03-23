@@ -50,7 +50,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   // 6.
   if (profileError || !profile) {
     // Primero cerramos la sesión en el cliente actual
-    await supabase.auth.signOut(); 
+    await supabase.auth.signOut({ scope: 'global' });; 
 
     // Usamos el cliente Admin para eliminar al usuario de la tabla auth.users
     const supabaseAdmin = createSupabaseAdminClient();

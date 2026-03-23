@@ -43,7 +43,7 @@ export default function AuthListener({tenant}: AuthListenerProps) {
       if (event === "SIGNED_IN") {
         console.log("el useEffect dice que el usuario esta signed INNNN")
         if (!session?.user.app_metadata.tenants?.includes(tenant)) {
-          supabase.auth.signOut();
+          supabase.auth.signOut({ scope: 'global' });;
           alert("No se puede ingresar, el tenant no concuerda");
         }
       }

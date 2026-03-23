@@ -50,7 +50,7 @@ using (
     select tenant_id 
     from public.tenant_permissions 
     where service_user_id in (
-      select id from public.service_users where auth_user_id = auth.uid()
+      select id from public.service_users where auth_user_id = (select auth.uid())
     )
   )
 );
@@ -66,7 +66,7 @@ with check (
     select tenant_id 
     from public.tenant_permissions 
     where service_user_id in (
-      select id from public.service_users where auth_user_id = auth.uid()
+      select id from public.service_users where auth_user_id = (select auth.uid())
     )
   )
 );

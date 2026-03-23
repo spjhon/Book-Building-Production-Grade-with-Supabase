@@ -77,7 +77,7 @@ to authenticated
 using (
   -- 1. Filtro de primera línea (JWT)
   -- Buscamos el slug de la fila actual dentro del array de tenants del JWT
-  ((auth.jwt() -> 'app_metadata' -> 'tenants') ? tenants.slug)
+  (((select auth.jwt()) -> 'app_metadata' -> 'tenants') ? tenants.slug)
   
   AND 
   
@@ -87,7 +87,7 @@ using (
     from public.tenant_permissions tp
     inner join public.service_users su on tp.service_user_id = su.id
     where tp.tenant_id = tenants.id  -- Referencia a la fila evaluada
-    and su.auth_user_id = auth.uid() -- Filtro por el usuario actual
+    and su.auth_user_id = (select auth.uid()) -- Filtro por el usuario actual
   )
 );
 

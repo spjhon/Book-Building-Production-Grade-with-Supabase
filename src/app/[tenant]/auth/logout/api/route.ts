@@ -12,7 +12,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   // 2. Creamos el cliente y cerramos sesión
   // Esto limpiará las cookies en el servidor
   const supabase = await createSupabaseServerClient();
-  const { error } = await supabase.auth.signOut();
+  const { error } = await supabase.auth.signOut({ scope: 'global' });;
 
   if (error){
     return NextResponse.redirect(buildUrl(`/error?type=Logout Error`, tenant, request), { status: 303 });

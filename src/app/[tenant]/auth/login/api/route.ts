@@ -48,7 +48,7 @@ export async function POST(request: NextRequest, {params}: { params: Promise<{ t
   if (error || !userData || !userData.app_metadata?.tenants?.includes(tenant)) {
     
     // 5.
-    await supabase.auth.signOut();
+    await supabase.auth.signOut({ scope: 'global' });
     return NextResponse.redirect(buildUrl(`/error?type=${error?.message ?? "Error al intentar hacer login por medio de route handler"}`, tenant, request), { status: 303 });
   }
 

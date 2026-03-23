@@ -54,7 +54,7 @@ using (
   service_user_id in (
     select id
     from public.service_users
-    where auth_user_id = auth.uid()
+    where auth_user_id = (select auth.uid())
   )
 );
 
