@@ -52,7 +52,7 @@ export default function AuthListener({tenant}: AuthListenerProps) {
       // Redirige a la página de login del tenant.
       if (event === "SIGNED_OUT") {
         console.log("El useEffect dice que el usuario esta singed out")
-        router.push("/auth/login")
+        router.refresh()
       }
       
     });
