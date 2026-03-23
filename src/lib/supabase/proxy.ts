@@ -85,9 +85,18 @@ export async function updateSession(request: NextRequest) { //funcion proxy espe
     // Si hay usuario, pero el tenant no está en su lista de acceso (app_metadata)
     // Nota: Esto asume que en Supabase guardas un array de 'tenants' en el metadata del usuario
     else if (!sessionUser.app_metadata?.tenants?.includes(tenantName)) {
-      // Si no tiene acceso a este cliente, lo mandamos a Not Found o a una página de "Acceso Denegado"
-    const loginUrl = buildUrl('/auth/logout/api', tenantName, request);
-      return NextResponse.redirect(loginUrl);
+
+
+      
+      const loginUrl = buildUrl('/auth/login', tenantName, request);
+  const response = NextResponse.redirect(loginUrl);
+ response.cookies.delete('sb-access-token'); 
+  response.cookies.delete('sb-refresh-token');
+  // Borramos las cookies de Supabase directamente desde el Middleware
+  // Reemplaza 'sb-xyz-auth-token' por el nombre real de tu cookie de supabase
+ 
+
+  return response;
     }
 
 
