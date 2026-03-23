@@ -3,6 +3,7 @@ import Link from "next/link";
 import { fetchTenantDataCached } from "@/lib/dbFunctions/fetch_tenant_domain_cached";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { Badge } from "@/components/ui/badge";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 interface TicketListProps {
  page: string,
@@ -40,6 +41,7 @@ const startingPoint = (pageSanitazed - 1) * pageSize;
 
 
 const supabaseServer = await createSupabaseServerClient()
+const supabaseAdmin = createSupabaseAdminClient()
 
 
 
@@ -57,10 +59,10 @@ const {data: tenantData, error: errorFetchingTenantData} = await fetchTenantData
   // Crea las variables de consulta, pero NO las esperes con 'await'
   let countStatement = supabaseServer
     .from("tickets")
-    .select("*", { count: 'exact', head: true })
+    .select("id", { count: 'exact', head: true })
     .eq("tenant_id", tenantData.id);
 
-  let ticketsStatement = supabaseServer
+  let ticketsStatement = supabaseAdmin
     .from("tickets")
     .select(`*,creator:service_users!created_by (full_name)`)
     .eq("tenant_id", tenantData.id);

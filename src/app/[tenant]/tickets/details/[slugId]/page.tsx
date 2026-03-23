@@ -143,14 +143,14 @@ const usersPromise = supabaseServerClient.rpc("get_service_users_with_tenant", {
               </Badge>
 
 
-
+              {isAuthor && (
               <TicketStatusSelect
               user_id={ticket.created_by}
               ticket_status={ticket.status}
               ticket_id={ticket.id}
               >
               </TicketStatusSelect>
-
+              )}
 
               <time className="text-xs font-medium text-slate-400 uppercase tracking-wider">
                 {dateString}
