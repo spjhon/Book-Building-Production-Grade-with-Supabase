@@ -28,7 +28,7 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'hborskybnjzxsazqhhex.supabase.co',
-        pathname: '/storage/v1/object/public/**',
+        pathname: '/storage/v1/object/**',
       },
       // 4. Si usas Google Auth, necesitas permitir sus fotos de perfil
       {
