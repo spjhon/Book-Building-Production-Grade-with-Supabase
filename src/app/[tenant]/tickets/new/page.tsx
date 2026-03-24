@@ -1,8 +1,10 @@
 
+
 import CreateTicketForm, { ServiceUser } from "@/features/tickets/components/CreateTicketForm";
 import { fetchTenantDataCached } from "@/lib/dbFunctions/fetch_tenant_domain_cached";
 import { fetchServiceUsersCached } from "@/lib/dbFunctions/get_service_users_with_tenant_cached";
 import { PostgrestError } from "@supabase/supabase-js";
+
 import { redirect } from "next/navigation";
 
 interface TicketsProps {
@@ -12,6 +14,8 @@ interface TicketsProps {
 
 
 const CreateTicketPage = async ({params}: TicketsProps) => {
+
+
 
   const { tenant } = await params;
   

@@ -2,12 +2,12 @@ import { AvailabilitySelect } from "@/features/tickets/components/AvailabilitySe
 import { fetchTenantDataCached } from "@/lib/dbFunctions/fetch_tenant_domain_cached";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { Check, UserX } from "lucide-react";
+
 import { redirect } from 'next/navigation'
 
 
 
 export default async function UserList({params}: Readonly<{ params: Promise<{tenant: string }>}>) {
-
 
 
 

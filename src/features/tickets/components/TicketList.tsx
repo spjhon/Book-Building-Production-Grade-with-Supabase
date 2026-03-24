@@ -137,7 +137,7 @@ const {data: tenantData, error: errorFetchingTenantData} = await fetchTenantData
               {/* Title */}
               <td className="py-3 px-2">
                 <Link
-                  prefetch={null}
+                  prefetch={true}
                   href={`/tickets/details/${ticket.ticket_number}`}
                   className="text-blue-600 hover:underline font-semibold"
                 >
