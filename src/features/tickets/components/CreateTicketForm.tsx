@@ -7,6 +7,7 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { Suspense, useRef, useState } from "react";
 import { Database } from "../../../../supabase/types/database.types";
 import { PostgrestError } from "@supabase/supabase-js";
+import { refreshData } from "@/lib/server_actions/revalidatePath";
 
 export type ServiceUser = Database['public']['Tables']['service_users']['Row'];
 
@@ -72,6 +73,7 @@ export default function CreateTicketForm({tenant_id, usersPromise}:TicketsProps)
       // Limpiar referencias manualmente
         if (ticketTitleRef.current) ticketTitleRef.current.value = "";
         if (ticketDescriptionRef.current) ticketDescriptionRef.current.value = "";
+        await refreshData('/tickets')
         setAssignee(null); // Resetear el select
         setIsLoading(false);
       

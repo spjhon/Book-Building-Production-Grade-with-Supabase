@@ -1,13 +1,10 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { AuthChangeEvent, Session } from "@supabase/supabase-js";
 
-interface AuthListenerProps {
-  tenant: string;
-}
 
 
 /**
@@ -26,9 +23,12 @@ interface AuthListenerProps {
  * * @return null - No renderiza contenido visual, actúa como un proveedor de efectos secundarios.
  */
 
-export default function AuthListener({tenant}: AuthListenerProps) {
+export default function AuthListener() {
   // 1. Herramienta de enrutamiento de Next.js.
   const router = useRouter();
+
+  const params = useParams();
+  const tenant = params.tenant as string; // Captura el tenant de la URL automáticamente
 
   useEffect(() => {
     

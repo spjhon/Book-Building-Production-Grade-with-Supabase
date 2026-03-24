@@ -1,7 +1,7 @@
 
 import CreateTicketForm, { ServiceUser } from "@/features/tickets/components/CreateTicketForm";
 import { fetchTenantDataCached } from "@/lib/dbFunctions/fetch_tenant_domain_cached";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { fetchServiceUsersCached } from "@/lib/dbFunctions/get_service_users_with_tenant_cached";
 import { PostgrestError } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
 
@@ -14,7 +14,7 @@ interface TicketsProps {
 const CreateTicketPage = async ({params}: TicketsProps) => {
 
   const { tenant } = await params;
-  const supabaseServer = await createSupabaseServerClient();
+  
 
   const {data: tenantData, error: fetchingTenantDataError} = await fetchTenantDataCached(tenant)
 
@@ -37,7 +37,8 @@ const CreateTicketPage = async ({params}: TicketsProps) => {
  */
 
 
-const usersPromise = supabaseServer.rpc("get_service_users_with_tenant", { target_tenant_id: tenantData.id }).then(res => res as { data: ServiceUser[] | null; error: PostgrestError });
+const usersPromise = fetchServiceUsersCached(tenantData.id).then(res => res as { data: ServiceUser[] | null; error: PostgrestError });
+
 
 
   return (

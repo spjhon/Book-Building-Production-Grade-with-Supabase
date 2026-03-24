@@ -13,7 +13,9 @@ export async function enviarEmailMagicLink(email: string, tenant: string ) {
   const resend = new Resend(process.env.RESEND_API_KEY);
   const supabaseAdmin = createSupabaseAdminClient();
 
-
+  //aqui falta arreglar un hueco de seguridad: 
+  // El atacante podría intentar generar links para cualquier email en cualquier tenant
+  //await enviarEmailMagicLink("victima@gmail.com", "tenant-que-no-le-pertenece");
 
   const { data: generateLinkData, error: errorGeneratinLink } = await supabaseAdmin.auth.admin.generateLink({ email, type: "recovery" });
 
