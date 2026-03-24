@@ -122,9 +122,18 @@ export default function CreateTicketForm({tenant_id, usersPromise}:TicketsProps)
         {/* Botón de Envío */}
         <div className="flex flex-col space-y-2">
           <label className="">Asignar Usuario</label>
-          <Suspense fallback={<p className=" text-center">Cargando formulario...</p>}>
-          <AssigneeSelect usersPromise={usersPromise} onValueChanged={(val) => setAssignee(val)}></AssigneeSelect>
+          
+          <Suspense fallback={
+            <div className="h-10 w-full animate-pulse bg-gray-100 rounded-lg border border-gray-300 flex items-center px-4 text-sm text-gray-400">
+              Cargando usuarios...
+            </div>
+          }>
+            <AssigneeSelect 
+              usersPromise={usersPromise} 
+              onValueChanged={(val) => setAssignee(val)} 
+            />
           </Suspense>
+          
         </div>
 
 
