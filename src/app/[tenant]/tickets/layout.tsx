@@ -1,7 +1,7 @@
 
 
 import { Navbar } from "@/features/tickets/components/NavBar/Navbar";
-import { BackgroundValidator} from "@/features/tickets/components/PollComponent";
+
 import { ReactNode, Suspense } from "react";
 
 interface TicketsLayoutProps {
@@ -22,7 +22,7 @@ export default function TicketsLayout({ children}: TicketsLayoutProps) {
       </section>
 
       <section className="min-h-screen">
-        <BackgroundValidator></BackgroundValidator>
+        
         <Suspense fallback={<p className="py-10 text-center">Cargando tickets...</p>}>
         {children}
         </Suspense>
