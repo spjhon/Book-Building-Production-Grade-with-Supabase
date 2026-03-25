@@ -8,22 +8,23 @@ import { useEffect, useRef, useState } from "react";
 import { Database } from "../../../../supabase/types/database.types";
 
 import { refreshData } from "@/lib/server_actions/revalidatePath";
-import { useParams } from "next/navigation";
+//import { useParams } from "next/navigation";
 import router from "next/router";
 import { fetchServiceUsersCached } from "@/lib/dbFunctions/get_service_users_with_tenant_cached";
 import { fetchTenantDataCached } from "@/lib/dbFunctions/fetch_tenant_domain_cached";
+
 
 export type ServiceUser = Database['public']['Tables']['service_users']['Row'];
 
 
 
 
-export default function CreateTicketForm() {
+export default function CreateTicketForm({tenant}: {tenant: string}) {
 
 
 
 
-const { tenant } = useParams();
+//const { tenant } = useParams();
 
 const [tenantData, setTenantData] = useState<any>(null);
 const [usersData, setUsersData] = useState<any>(null);

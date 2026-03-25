@@ -1,22 +1,29 @@
-"use cache"
 
 
 import CreateTicketForm from "@/features/tickets/components/CreateTicketForm";
-import { cacheLife } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
+
 
 
 
 
 
 export async function generateStaticParams() {
-  "use cache"
+  
   return [{ tenant: 'acme' }, { tenant: 'globex' }];
 }
 
 
-const CreateTicketPage = async() => {
+export default async function CreateTicketPage({ 
+  params 
+}: { 
+  params: Promise<{ tenant: string }> 
+}){
+"use cache";
+  const { tenant } = await params;
 
-cacheLife('max')
+cacheTag(`create-ticket-page:${tenant}`);
+cacheLife("max")
 
  /**
   const { data: serviceUsersFromSpecificTenant, error: errorUsersFromSpecificTenant } = await supabaseServer.rpc("get_service_users_with_tenant", { target_tenant_id: tenantData.id });
@@ -42,11 +49,10 @@ cacheLife('max')
 
       {/* Manejo del formulario */}
       
-      <CreateTicketForm></CreateTicketForm>
+      <CreateTicketForm tenant={tenant}></CreateTicketForm>
     
     </article>
     </div>
   );
 }
 
-export default CreateTicketPage;
