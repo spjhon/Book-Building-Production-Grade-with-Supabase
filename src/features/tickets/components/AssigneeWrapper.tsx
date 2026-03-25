@@ -3,12 +3,11 @@
 import { AssigneeSelect } from "@/features/tickets/components/AssigneeSelect";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { ServiceUser } from "./CreateTicketForm";
-import { PostgrestError } from "@supabase/supabase-js";
 
-export default function AssigneeWrapper({ ticketId, usersPromise, defaultValue }: { 
+export default function AssigneeWrapper({ ticketId, usersData, defaultValue }: { 
   ticketId: string; 
   defaultValue?: string | null; 
-  usersPromise: PromiseLike<{ data: ServiceUser[] | null; error: PostgrestError }>;
+  usersData: ServiceUser[];
 }) {
   const supabase = createSupabaseBrowserClient();
 
@@ -25,7 +24,7 @@ export default function AssigneeWrapper({ ticketId, usersPromise, defaultValue }
 
   return (
     <AssigneeSelect
-      usersPromise={usersPromise}
+      users={usersData}
       onValueChanged={handleUpdate}
       defaultValue={defaultValue}
     />

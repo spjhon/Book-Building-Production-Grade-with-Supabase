@@ -10,17 +10,16 @@ import {
 } from "@/components/ui/select"; // Ajusta el path según tu estructura
 
 import { ServiceUser } from './CreateTicketForm';
-import { PostgrestError } from "@supabase/supabase-js";
-import { use } from "react";
 
-export function AssigneeSelect({ onValueChanged, usersPromise, defaultValue }: { 
+
+export function AssigneeSelect({ onValueChanged, users, defaultValue }: { 
   onValueChanged: (val: string | null) => void;
-  usersPromise: PromiseLike<{ data: ServiceUser[] | null; error: PostgrestError }>;
+  users: ServiceUser[];
   defaultValue?: string | null; 
 }) {
 
 
-  const {data: ServiceUsers, error} = use(usersPromise)
+
 
   
 
@@ -28,18 +27,18 @@ export function AssigneeSelect({ onValueChanged, usersPromise, defaultValue }: {
   return (
     <Select 
       onValueChange={(val) => onValueChanged(val === "none" ? null : val)}
-      disabled={ServiceUsers === null}
+      disabled={users === null}
       defaultValue={defaultValue?defaultValue:undefined }
     >
 
       <SelectTrigger className="w-full">
-        <SelectValue placeholder={ServiceUsers === null ? "Cargando..." : "Sin asignar"} />
+        <SelectValue placeholder={users === null ? "Cargando..." : "Sin asignar"} />
       </SelectTrigger>
 
       <SelectContent>
         <SelectGroup>
           <SelectItem value="none">Sin asignar</SelectItem>
-          {ServiceUsers?.map((user) => (
+          {users?.map((user) => (
             <SelectItem key={user.id} value={user.id}>
               {user.full_name}
             </SelectItem>

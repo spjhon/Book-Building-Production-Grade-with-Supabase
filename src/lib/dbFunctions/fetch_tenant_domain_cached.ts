@@ -1,6 +1,5 @@
+"use server"
 
-
-import "server-only";
 import { unstable_cache } from "next/cache";
 import { createSupabaseAdminClient } from "../supabase/admin";
 import { cache } from "react";

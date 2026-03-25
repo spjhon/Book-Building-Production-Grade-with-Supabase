@@ -2,30 +2,23 @@
 
 
 
-
-
-
-
-
 'use client'
-import { useRouter } from 'next/navigation';
-import { useEffect, useTransition } from 'react';
+
+import { refreshData } from '@/lib/server_actions/revalidatePath';
+import { usePathname } from 'next/navigation'; // Importa usePathname
+import { useEffect } from 'react';
 
 export function BackgroundValidator() {
-  const router = useRouter();
-  const [isPending, startTransition] = useTransition();
+  const pathname = usePathname(); // Obtenemos la ruta actual
 
   useEffect(() => {
-    // Chequea cada 20 segundos
-    const interval = setInterval(() => {
-      startTransition(() => {
-        router.refresh(); 
-      });
-    }, 5000);
+    // Ahora esto se activará cada vez que la URL cambie
+    console.log("Se activó el useEffect porque cambiaste a la página:", pathname);
+    refreshData("/tickets/users")
+    
+    // Aquí podrías poner tu lógica de validación o refresh
+    
+  }, [pathname]); // Dependemos de pathname, no de router
 
-    return () => clearInterval(interval);
-  }, [router]);
-
-  return null; // Componente invisible
+  return null;
 }
-  

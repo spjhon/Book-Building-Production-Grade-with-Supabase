@@ -111,9 +111,13 @@ export default async function TicketDetailPage({params}: Readonly<{ params: Prom
 
 
   //LLAMADA DB: SERVICE_USERS PARA EL SELECT, todos los service_users bajo el tenant
-const usersPromise = supabaseServerClient.rpc("get_service_users_with_tenant", { target_tenant_id: tenantData.id }).then(res => res as { data: ServiceUser[] | null; error: PostgrestError });
+const {data: usersData, error: usersDataError} = await  supabaseServerClient.rpc("get_service_users_with_tenant", { target_tenant_id: tenantData.id }).then(res => res as { data: ServiceUser[] | null; error: PostgrestError });
   
-
+if (usersDataError || !usersData) {
+          console.error("Error al traer información del tenant:", usersDataError.message);
+          
+          return;
+        }
 
 
   return (
@@ -160,7 +164,7 @@ const usersPromise = supabaseServerClient.rpc("get_service_users_with_tenant", {
             <div className="flex items-center gap-2">
               <AssigneeWrapper
                 ticketId={ticket.id} 
-                usersPromise={usersPromise}
+                usersData={usersData}
                 defaultValue={ticket.assignee}
               />
               {isAuthor && (

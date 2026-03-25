@@ -4,23 +4,75 @@
 
 import { AssigneeSelect } from "@/features/tickets/components/AssigneeSelect";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-import { Suspense, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Database } from "../../../../supabase/types/database.types";
-import { PostgrestError } from "@supabase/supabase-js";
+
 import { refreshData } from "@/lib/server_actions/revalidatePath";
+import { useParams } from "next/navigation";
+import router from "next/router";
+import { fetchServiceUsersCached } from "@/lib/dbFunctions/get_service_users_with_tenant_cached";
+import { fetchTenantDataCached } from "@/lib/dbFunctions/fetch_tenant_domain_cached";
 
 export type ServiceUser = Database['public']['Tables']['service_users']['Row'];
 
 
-interface TicketsProps {
-  tenant_id: string;
-  usersPromise: PromiseLike<{ data: ServiceUser[] | null; error: PostgrestError }>;
-}
+
+
+export default function CreateTicketForm() {
 
 
 
 
-export default function CreateTicketForm({tenant_id, usersPromise}:TicketsProps) {
+const { tenant } = useParams();
+
+const [tenantData, setTenantData] = useState<any>(null);
+const [usersData, setUsersData] = useState<any>(null);
+  const [isLoading2, setIsLoading2] = useState(true);
+
+
+useEffect(() => {
+    async function loadTenantData() {
+      try {
+        console.log("Cargando información del tenant para:", tenant);
+        
+        // Llamada a la promesa desde el cliente
+        const { data: tenantData, error: errorTenantData } = await fetchTenantDataCached(tenant as string);
+
+        if (errorTenantData || !tenantData) {
+          console.error("Error al traer información del tenant:", errorTenantData);
+          router.push(`/error?type=Error trayendo informacion del tenant`);
+          return;
+        }
+
+        setTenantData(tenantData)
+
+        const {data: usersData, error: usersError} = await fetchServiceUsersCached(tenantData.id)
+
+        if (usersError || !usersData) {
+          console.error("Error al traer información del tenant:", usersError.message);
+          router.push(`/error?type=Error trayendo informacion del tenant`);
+          return;
+        }
+
+
+       
+        setUsersData(usersData);
+
+      } catch (err) {
+
+        console.error("Error inesperado:", err);
+        router.push(`/error?type=Error inesperado en el cliente`);
+
+      } finally {
+        setIsLoading(false);
+      }
+
+
+    }
+
+    loadTenantData();
+  }, [tenant]); // Solo se ejecuta al montar o si el tenant cambia
+
 
 
 
@@ -55,7 +107,7 @@ export default function CreateTicketForm({tenant_id, usersPromise}:TicketsProps)
       const {error } = await supabase
       .from("tickets")
       //ojo, aqui se presenta el error debito a que created_by se va a insertar por medio de un trigger
-      .insert({title, description, tenant_id: tenant_id, assignee } as never)
+      .insert({title, description, tenant_id: tenantData.id, assignee } as never)
       .select()
       .single();
 
@@ -123,16 +175,12 @@ export default function CreateTicketForm({tenant_id, usersPromise}:TicketsProps)
         <div className="flex flex-col space-y-2">
           <label className="">Asignar Usuario</label>
           
-          <Suspense fallback={
-            <div className="h-10 w-full animate-pulse bg-gray-100 rounded-lg border border-gray-300 flex items-center px-4 text-sm text-gray-400">
-              Cargando usuarios...
-            </div>
-          }>
+          
             <AssigneeSelect 
-              usersPromise={usersPromise} 
+              users={usersData} 
               onValueChanged={(val) => setAssignee(val)} 
             />
-          </Suspense>
+       
           
         </div>
 
@@ -150,3 +198,5 @@ export default function CreateTicketForm({tenant_id, usersPromise}:TicketsProps)
       </form>
   )
 }
+
+

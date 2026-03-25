@@ -1,33 +1,15 @@
 
 
-import CreateTicketForm, { ServiceUser } from "@/features/tickets/components/CreateTicketForm";
-import { fetchTenantDataCached } from "@/lib/dbFunctions/fetch_tenant_domain_cached";
-import { fetchServiceUsersCached } from "@/lib/dbFunctions/get_service_users_with_tenant_cached";
-import { PostgrestError } from "@supabase/supabase-js";
+import CreateTicketForm from "@/features/tickets/components/CreateTicketForm";
 
-import { redirect } from "next/navigation";
 
-interface TicketsProps {
-  params: Promise<{ tenant: string }>;
+export async function generateStaticParams() {
+  // Aquí deberías traer la lista de tus tenants de la DB
+  return [{ tenant: 'acme' }, { tenant: 'globex' }];
 }
 
 
-
-const CreateTicketPage = async ({params}: TicketsProps) => {
-
-
-
-  const { tenant } = await params;
-  
-
-  const {data: tenantData, error: fetchingTenantDataError} = await fetchTenantDataCached(tenant)
-
-    // Manejo de error limpio
-    if (!tenantData || fetchingTenantDataError){
-      redirect(`/error?type=Error trallendo informacion del tenant`);
-      
-    }
-
+const CreateTicketPage = () => {
 
 
 
@@ -41,7 +23,7 @@ const CreateTicketPage = async ({params}: TicketsProps) => {
  */
 
 
-const usersPromise = fetchServiceUsersCached(tenantData.id).then(res => res as { data: ServiceUser[] | null; error: PostgrestError });
+
 
 
 
@@ -55,7 +37,7 @@ const usersPromise = fetchServiceUsersCached(tenantData.id).then(res => res as {
 
       {/* Manejo del formulario */}
       
-      <CreateTicketForm tenant_id={tenantData.id} usersPromise={usersPromise}></CreateTicketForm>
+      <CreateTicketForm></CreateTicketForm>
     
     </article>
     </div>

@@ -1,6 +1,6 @@
 // lib/dbFunctions/get_service_users_cached.ts
-import "server-only";
-import { cacheLife, cacheTag } from 'next/cache';
+"use server"
+
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { PostgrestError } from "@supabase/supabase-js";
 
@@ -16,14 +16,8 @@ export type ServiceUser = {
  * 3. Al ser una función exportada, React la memoiza durante el render.
  */
 export async function fetchServiceUsersCached(tenantId: string) {
-  'use cache'; // Habilita Cache Components para esta función
   
-  // Capa de Revalidación: Definimos el tiempo de vida (equivalente a revalidate: 30)
-  // Usamos una frase descriptiva o una configuración personalizada
-  cacheLife('minutes'); 
   
-  // Capa de Organización: Tag para invalidación manual (updateTag)
-  cacheTag(`users-${tenantId}`);
 
   const supabaseAdmin = createSupabaseAdminClient();
 
