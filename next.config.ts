@@ -12,7 +12,7 @@ const nextConfig: NextConfig = {
       permanent: true,
     },
   ],
-  cacheComponents: true,
+  
   images: {
     remotePatterns: [
       {
