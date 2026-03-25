@@ -1,19 +1,22 @@
+"use cache"
 
 
 import CreateTicketForm from "@/features/tickets/components/CreateTicketForm";
+import { cacheLife } from "next/cache";
 
 
-export const revalidate = 3600;
+
+
 
 export async function generateStaticParams() {
-  // Aquí deberías traer la lista de tus tenants de la DB
+  "use cache"
   return [{ tenant: 'acme' }, { tenant: 'globex' }];
 }
 
 
-const CreateTicketPage = () => {
+const CreateTicketPage = async() => {
 
-
+cacheLife('max')
 
  /**
   const { data: serviceUsersFromSpecificTenant, error: errorUsersFromSpecificTenant } = await supabaseServer.rpc("get_service_users_with_tenant", { target_tenant_id: tenantData.id });
