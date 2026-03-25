@@ -3,6 +3,8 @@
 import CreateTicketForm from "@/features/tickets/components/CreateTicketForm";
 
 
+export const revalidate = 3600;
+
 export async function generateStaticParams() {
   // Aquí deberías traer la lista de tus tenants de la DB
   return [{ tenant: 'acme' }, { tenant: 'globex' }];
