@@ -1,12 +1,11 @@
 
 
 import CreateTicketForm from "@/features/tickets/components/CreateTicketForm";
-import { cacheLife, cacheTag } from "next/cache";
 
 
 
 
-
+export const revalidate = 31536000;
 
 export async function generateStaticParams() {
   
@@ -14,16 +13,10 @@ export async function generateStaticParams() {
 }
 
 
-export default async function CreateTicketPage({ 
-  params 
-}: { 
-  params: Promise<{ tenant: string }> 
-}){
-"use cache";
-  const { tenant } = await params;
+export default function CreateTicketPage(){
 
-cacheTag(`create-ticket-page:${tenant}`);
-cacheLife("max")
+
+
 
  /**
   const { data: serviceUsersFromSpecificTenant, error: errorUsersFromSpecificTenant } = await supabaseServer.rpc("get_service_users_with_tenant", { target_tenant_id: tenantData.id });
@@ -49,7 +42,7 @@ cacheLife("max")
 
       {/* Manejo del formulario */}
       
-      <CreateTicketForm tenant={tenant}></CreateTicketForm>
+      <CreateTicketForm></CreateTicketForm>
     
     </article>
     </div>
