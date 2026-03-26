@@ -8,12 +8,14 @@ import CreateTicketForm from "@/features/tickets/components/CreateTicketForm";
 
 
 
-/** 
+
+
+
 export const revalidate = 31536000;
 
-*/
+
 export async function generateStaticParams() {
- 
+  //el cache component sirve solo si se saben todos los params, si no se saben hay que dejar la pagina completamente estatica
   return [{ tenant: 'acme' }, { tenant: 'globex' }];
 }
 
