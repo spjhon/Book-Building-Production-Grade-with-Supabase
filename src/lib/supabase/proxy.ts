@@ -31,7 +31,7 @@ export async function updateSession(request: NextRequest) { //funcion proxy espe
   const { data } = await supabase.auth.getClaims(); //se obtiene el claims osea el usuario
   const sessionUser = data?.claims; //se obtiene el usuario si es que existe y esta autenticado
   
-const { data: { user }, error: userError } = await supabase.auth.getUser();
+
 
 
 
@@ -78,7 +78,7 @@ const { data: { user }, error: userError } = await supabase.auth.getUser();
  //PROTECCION DE RUTAS
 
   if (applicationPath.startsWith("/tickets")) {
-    
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
   
     
     if (!user && sessionUser) {

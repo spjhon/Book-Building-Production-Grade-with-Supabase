@@ -1,5 +1,8 @@
 import Link from "next/link";
 
+export const dynamic = 'force-static' 
+
+
 export default function Home() {
   // Definimos los tenants para iterarlos fácilmente
   const tenants = ["acme", "globex", "initech", "umbrella"];
@@ -7,6 +10,9 @@ export default function Home() {
   // En local usamos nuestro dominio base con el puerto
   // En producción podrías cambiar esto por process.env.NEXT_PUBLIC_ROOT_DOMAIN
   const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN; 
+
+  
+
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">

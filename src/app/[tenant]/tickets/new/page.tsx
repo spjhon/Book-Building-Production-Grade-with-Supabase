@@ -27,8 +27,12 @@ export async function generateStaticParams() {
 
 export default function CreateTicketPage(){
 
+  /**
+'use cache'
+  cacheLife('max')
+  */
 
- 
+
   /**
   const { data: serviceUsersFromSpecificTenant, error: errorUsersFromSpecificTenant } = await supabaseServer.rpc("get_service_users_with_tenant", { target_tenant_id: tenantData.id });
 
