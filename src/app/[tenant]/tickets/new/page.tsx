@@ -1,27 +1,35 @@
 
 
+
 import CreateTicketForm from "@/features/tickets/components/CreateTicketForm";
+import { cacheLife } from "next/cache";
 
 
 
-
-
-
-
-
-
-
+/** 
 export const revalidate = 31536000;
-
 
 export async function generateStaticParams() {
   //el cache component sirve solo si se saben todos los params, si no se saben hay que dejar la pagina completamente estatica
   return [{ tenant: 'acme' }, { tenant: 'globex' }];
 }
+*/
 
-export default function CreateTicketPage(){
+//export const dynamic = 'force-static' 
 
 
+/**
+export async function generateStaticParams() {
+  //el cache component sirve solo si se saben todos los params, si no se saben hay que dejar la pagina completamente estatica
+  return [];
+}
+ */
+
+
+export default async function CreateTicketPage(){
+
+'use cache'
+  cacheLife('max')
  
   /**
   const { data: serviceUsersFromSpecificTenant, error: errorUsersFromSpecificTenant } = await supabaseServer.rpc("get_service_users_with_tenant", { target_tenant_id: tenantData.id });
