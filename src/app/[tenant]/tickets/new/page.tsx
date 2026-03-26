@@ -2,7 +2,6 @@
 
 
 import CreateTicketForm from "@/features/tickets/components/CreateTicketForm";
-import { cacheLife } from "next/cache";
 
 
 
@@ -15,7 +14,7 @@ export async function generateStaticParams() {
 }
 */
 
-//export const dynamic = 'force-static' 
+export const dynamic = 'force-static' 
 
 
 /**
@@ -26,10 +25,9 @@ export async function generateStaticParams() {
  */
 
 
-export default async function CreateTicketPage(){
+export default function CreateTicketPage(){
 
-'use cache'
-  cacheLife('max')
+
  
   /**
   const { data: serviceUsersFromSpecificTenant, error: errorUsersFromSpecificTenant } = await supabaseServer.rpc("get_service_users_with_tenant", { target_tenant_id: tenantData.id });
