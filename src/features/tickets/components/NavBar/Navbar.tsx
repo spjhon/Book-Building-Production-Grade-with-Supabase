@@ -71,7 +71,7 @@ export const Navbar = () => {
 
                 return (
                   <Link
-                    prefetch={null}
+                    prefetch={true}
                     href={route.href}
                     key={i}
                     className={`${buttonVariants({

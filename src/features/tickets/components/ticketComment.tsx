@@ -34,7 +34,7 @@ type Comment_Attachment = {
 }
 
 
-type TicketComment = {
+export type TicketComment = {
   
     id: string,
     tenant_id: string,

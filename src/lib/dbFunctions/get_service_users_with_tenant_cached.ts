@@ -1,13 +1,11 @@
 // lib/dbFunctions/get_service_users_cached.ts
 "use server"
 
+import { ServiceUser } from "@/features/tickets/components/CreateTicketForm";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { PostgrestError } from "@supabase/supabase-js";
 
-export type ServiceUser = {
-  id: string;
-  full_name: string;
-};
+
 
 /**
  * Función cacheada con el nuevo modelo de Next.js

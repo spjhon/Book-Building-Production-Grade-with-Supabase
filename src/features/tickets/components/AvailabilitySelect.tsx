@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import {  useState } from "react";
 import {
   Select,
   SelectContent,
@@ -10,20 +10,33 @@ import {
   SelectGroup,
 } from "@/components/ui/select";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
+import {  useRouter } from "next/navigation";
+import { ServiceUser } from "./CreateTicketForm";
+
+
 
 
 
 export function AvailabilitySelect({ 
   user_id, 
-  is_available 
+  is_available,
+  setUsersData
 }: { 
   user_id: string;
   is_available: boolean;
+  setUsersData: React.Dispatch<React.SetStateAction<ServiceUser[]>>
 }) {
-  const [isLoading, setIsLoading] = useState(false);
+  
   const supabase = createSupabaseBrowserClient();
   const router = useRouter()
+
+
+
+const [isLoading, setIsLoading] = useState(false);
+
+
+
+
 
   const handleStatusChange = async (value: string) => {
     setIsLoading(true);
@@ -45,12 +58,25 @@ export function AvailabilitySelect({
       throw new Error("Error actualizando el status.")
     }
 
+
+      setUsersData((prevUsers) => 
+        prevUsers.map((user) => 
+          user.id === user_id 
+            ? { ...user, is_available: newStatus } // Si es el ID, cambiamos el status
+            : user // Si no, lo dejamos igual
+        )
+      );
+
+
+
+
+
     }catch(error){
       const message = error instanceof Error? error.message : "Error actualizando el disponiblidad."
       console.log(message)
     }finally{
       setIsLoading(false);
-      router.refresh()
+     
     }
 
 

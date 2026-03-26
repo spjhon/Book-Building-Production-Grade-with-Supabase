@@ -8,8 +8,8 @@ import { useEffect, useRef, useState } from "react";
 import { Database } from "../../../../supabase/types/database.types";
 
 import { refreshData } from "@/lib/server_actions/revalidatePath";
-import { useParams } from "next/navigation";
-import router from "next/router";
+import { useParams, useRouter } from "next/navigation";
+
 import { fetchServiceUsersCached } from "@/lib/dbFunctions/get_service_users_with_tenant_cached";
 import { fetchTenantDataCached } from "@/lib/dbFunctions/fetch_tenant_domain_cached";
 
@@ -21,7 +21,7 @@ export type ServiceUser = Database['public']['Tables']['service_users']['Row'];
 export default function CreateTicketForm() {
 
 
-
+ const router = useRouter()
 
 const { tenant } = useParams();
 
@@ -46,17 +46,17 @@ useEffect(() => {
 
         setTenantData(tenantData)
 
-        const {data: usersData, error: usersError} = await fetchServiceUsersCached(tenantData.id)
+        const {data: usersFetched, error: usersError} = await fetchServiceUsersCached(tenantData.id)
 
-        if (usersError || !usersData) {
-          console.error("Error al traer información del tenant:", usersError.message);
+        if (usersError || !usersFetched) {
+          console.error("Error al traer información del tenant:", usersError?.message);
           router.push(`/error?type=Error trayendo informacion del tenant`);
           return;
         }
 
 
        
-        setUsersData(usersData);
+        setUsersData(usersFetched);
 
       } catch (err) {
 
