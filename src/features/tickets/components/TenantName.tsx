@@ -1,10 +1,12 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useState, useEffect } from "react";
+//import { useState, useEffect } from "react";
 
 export default function TenantName() {
   const { tenant } = useParams();
+
+  /** 
   // 1. Estado para controlar cuándo mostrar el spinner/cargando
   const [isLoading, setIsLoading] = useState(true);
 
@@ -22,6 +24,7 @@ export default function TenantName() {
   if (isLoading) {
     return <span>Cargando...</span>;
   }
+    */
 
-  return <strong>{" " + tenant}</strong>;
+  return <strong>{tenant}</strong>;
 }

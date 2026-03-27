@@ -16,7 +16,7 @@ export default function TicketsPage() {
     
     // 2.
     <div className="max-w-300 mx-auto">
-    <div className=" mt-20 space-y-8 border border-black rounded-xl p-5 mx-5 self">
+    <div className=" mt-20 space-y-8 border border-black rounded-xs p-5 mx-5 self">
       
       {/* Header & Actions */}
       <div className="flex items-center justify-between">
@@ -24,7 +24,7 @@ export default function TicketsPage() {
           Tickets
         </h1>
 
-        <Link prefetch={null} href={"/tickets/new"} className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg shadow transition">
+        <Link prefetch={null} href={"/tickets/new"} className="px-4 py-2 bg-primary hover:primary text-white text-sm font-medium rounded-lg shadow transition">
           + Crear Ticket
         </Link>
       </div>

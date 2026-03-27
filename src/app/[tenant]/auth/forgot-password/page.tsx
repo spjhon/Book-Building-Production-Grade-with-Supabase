@@ -1,6 +1,7 @@
 
 import { ForgotPasswordForm } from "../../../../features/auth/components/forgot-password-form";
 
+export const dynamic = 'force-static' 
 
 export default async function ForgotPasswordPage({params}: {params: Promise<{ tenant: string }>}) {
 

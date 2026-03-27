@@ -116,7 +116,7 @@ export function TicketList() {
                 <tr key={ticket.id} className="border-b border-gray-100 hover:bg-gray-50 transition">
                   <td className="py-3 px-4 text-gray-500 font-medium">#{ticket.ticket_number}</td>
                   <td className="py-3 px-4">
-                    <Link href={`/tickets/details/${ticket.ticket_number}`} className="text-blue-600 hover:underline font-semibold block">
+                    <Link prefetch={true} href={`/tickets/details/${ticket.ticket_number}`} className="text-blue-600 hover:underline font-semibold block">
                       {ticket.title}
                     </Link>
                     <span className="text-xs text-gray-400">por {ticket.creator?.full_name}</span>

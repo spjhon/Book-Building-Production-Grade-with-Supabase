@@ -33,18 +33,20 @@ const statusStyles: Record<string, string> = {
 
 export default function TicketStatusSelect({ 
   user_id, 
-  ticket_status,
-  ticket_id
+  currentStatus,
+  ticket_id,
+  setCurrentStatus
 }: { 
   user_id: string;
-  ticket_status: string;
+  currentStatus: string;
   ticket_id: string;
+  setCurrentStatus: React.Dispatch<React.SetStateAction<string>>
 }) {
 
 
 
   const [isLoading, setIsLoading] = useState(false);
-  const [currentStatus, setCurrentStatus] = useState(ticket_status);
+  
   const supabaseBrowser = createSupabaseBrowserClient();
   const router = useRouter()
 

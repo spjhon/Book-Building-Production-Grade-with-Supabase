@@ -12,6 +12,8 @@ import { useParams, useRouter } from "next/navigation";
 
 import { fetchServiceUsersCached } from "@/lib/dbFunctions/get_service_users_with_tenant_cached";
 import { fetchTenantDataCached } from "@/lib/dbFunctions/fetch_tenant_domain_cached";
+import { Button } from "@/components/ui/button";
+import { Loader2, TicketPlus } from "lucide-react";
 
 export type ServiceUser = Database['public']['Tables']['service_users']['Row'];
 
@@ -27,7 +29,7 @@ const { tenant } = useParams();
 
 const [tenantData, setTenantData] = useState<any>(null);
 const [usersData, setUsersData] = useState<any>(null);
-  const [isLoading2, setIsLoading2] = useState(true);
+  
 
 
 useEffect(() => {
@@ -187,14 +189,26 @@ useEffect(() => {
 
 
         {/* Botón de Envío */}
-        <button
-          type="submit"
-          disabled={isLoading}
-          aria-busy={isLoading}
-          className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200"
-        >
-          Crear el ticket ahora
-        </button>
+        <Button
+      type="submit"
+      disabled={isLoading}
+      // Usamos "default" para que tome el color primario del tema actual
+      variant="default" 
+      size="lg"
+      className="w-full mt-4 font-semibold py-6 rounded-xl transition-all duration-200 active:scale-[0.98] shadow-sm hover:shadow-md"
+    >
+      {isLoading ? (
+        <div className="flex items-center justify-center gap-2">
+          <Loader2 className="h-5 w-5 animate-spin" />
+          <span>Creando ticket...</span>
+        </div>
+      ) : (
+        <div className="flex items-center justify-center gap-2">
+          <TicketPlus className="h-5 w-5" />
+          <span>Crear el ticket ahora</span>
+        </div>
+      )}
+    </Button>
       </form>
   )
 }

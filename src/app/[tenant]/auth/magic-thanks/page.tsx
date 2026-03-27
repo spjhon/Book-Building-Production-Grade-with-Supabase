@@ -2,6 +2,8 @@ import { urlPath } from "@/utils/url-helpers";
 import Link from "next/link";
 import { Mail, CheckCircle2 } from "lucide-react";
 
+export const dynamic = 'force-static' 
+
 export default async function MagicLinkSuccessPage({params}: {params: Promise<{ tenant: string }>}) {
  
   const { tenant } = await params;

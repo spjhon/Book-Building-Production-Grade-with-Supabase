@@ -2,6 +2,9 @@ import { urlPath } from "@/utils/url-helpers";
 import Link from "next/link";
 import { AlertCircle } from "lucide-react"; // Shadcn usa mucho esta librería de iconos
 
+
+
+
 export default async function ErrorPage({
   searchParams,
   params,

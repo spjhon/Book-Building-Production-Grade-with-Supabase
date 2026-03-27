@@ -53,7 +53,7 @@ interface PageData {
 
 
 
-
+export const dynamic = 'force-static'
 
 export default function TicketDetailPage() {
 
@@ -66,7 +66,7 @@ export default function TicketDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<PageData | null>(null);
-
+  const [currentStatus, setCurrentStatus] = useState("");
 
 
 
@@ -132,8 +132,10 @@ export default function TicketDetailPage() {
           autorName: autorRes.data || { full_name: "Usuario del Sistema" }, // Fallback si falla
           serviceUserId: sUser?.id || "",
           usersData: usersRes.data || [],
-});
+        });
 
+
+        setCurrentStatus(ticket.status)
 
       } catch (err: any) {
         setError(err.message || "Ocurrió un error inesperado");
@@ -189,14 +191,15 @@ export default function TicketDetailPage() {
         <header className="p-8 pb-6 space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <Badge variant="outline" className={`px-3 py-1 rounded-full text-xs font-bold border-2 ${statusStyles[ticket.status] || "bg-slate-100"}`}>
+              <Badge variant="outline" className={`px-3 py-1 rounded-full text-xs font-bold border-2 ${statusStyles[currentStatus] || "bg-slate-100"}`}>
                 {ticket.status.replace('_', ' ')}
               </Badge>
 
               {isAuthor && (
                 <TicketStatusSelect
                   user_id={ticket.created_by}
-                  ticket_status={ticket.status}
+                  currentStatus={currentStatus}
+                  setCurrentStatus={setCurrentStatus}
                   ticket_id={ticket.id}
                 />
               )}
