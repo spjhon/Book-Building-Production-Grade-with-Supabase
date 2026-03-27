@@ -56,7 +56,7 @@ export default async function RegisterPage({ params }: { params: Promise<{ tenan
                     Back to Landing Page
                 </Link>
 
-                <div className="sm:mx-auto sm:w-full sm:max-w-md">
+                <div className="">
                     {/* Texto en negro sólido */}
                     <h2 className="text-center text-3xl font-bold tracking-tight text-black">
                         {"SupaSass"}
@@ -66,7 +66,7 @@ export default async function RegisterPage({ params }: { params: Promise<{ tenan
                     </p>
                 </div>
 
-                <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+                <div className="w-[25rem] self-center my-5">
                     <SignUpForm tenant={tenantDomain} />
                 </div>
             </div>

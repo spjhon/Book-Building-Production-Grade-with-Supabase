@@ -62,32 +62,34 @@ export default async function Login({searchParams, params}: {searchParams: Promi
 
 
     {/* SECCIÓN LOGIN: Arriba en móvil (flex-col), Izquierda en Desktop (lg:w-1/2) */}
-    <div className="w-full lg:w-1/2 flex flex-col justify-center min-h-[100dvh] py-12 px-4 sm:px-6 lg:px-8 bg-white relative">
+    <div className="w-full lg:w-1/2 flex flex-col justify-center   py-12 px-4 bg-white relative">
+
         
-<Link
+        <Link
           href="https://tiendadelamujer.com/"
           className="absolute left-8 top-[1.6rem] flex items-center text-sm text-black hover:opacity-70 transition-colors font-medium z-20"
-      >
+        >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to Landing Page
-      </Link>
+        </Link>
 
 
-        <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="">
             {/* Texto en negro sólido */}
             <h2 className="text-center text-3xl font-bold tracking-tight text-black">
                 {"SupaSass"}
             </h2>
         </div>
 
-        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="w-[25rem] self-center my-5">
             {/* El formulario centrado verticalmente gracias al justify-center del padre */}
             <LoginForm isPasswordLogin={!wantsMagicLink} tenant={tenant}></LoginForm>
         </div>
+
     </div>
 
     {/* SECCIÓN TESTIMONIOS: Abajo en móvil, Derecha en Desktop (lg:flex) */}
-    <div className="flex w-full lg:w-1/2 bg-gradient-to-br from-primary-600 to-primary-800">
+    <div className="flex w-full lg:w-1/2 bg-gradient-to-br from-primary-600 to-primary-800  justify-center ">
         <div className="w-full flex items-center justify-center p-8 sm:p-12">
             <div className="space-y-6 max-w-lg">
                 <h3 className=" text-2xl font-bold mb-8">
