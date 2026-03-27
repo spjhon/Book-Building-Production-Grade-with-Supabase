@@ -46,7 +46,7 @@ export default async function RegisterPage({ params }: { params: Promise<{ tenan
         <div className="flex flex-col lg:flex-row min-h-screen">
 
             {/* SECCIÓN REGISTRO: Arriba en móvil, Izquierda en Desktop */}
-            <div className="w-full lg:w-1/2 flex flex-col justify-center min-h-[100dvh] py-12 px-4 sm:px-6 lg:px-8 bg-white relative">
+            <div className="w-full lg:w-1/2 flex flex-col justify-center py-12 px-4 bg-white relative">
                 
                 <Link
                     href="https://tiendadelamujer.com/"
@@ -66,7 +66,7 @@ export default async function RegisterPage({ params }: { params: Promise<{ tenan
                     </p>
                 </div>
 
-                <div className="w-[25rem] self-center my-5">
+                <div className="w-100 self-center my-5">
                     <SignUpForm tenant={tenantDomain} />
                 </div>
             </div>

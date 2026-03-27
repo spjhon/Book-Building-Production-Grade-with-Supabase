@@ -122,11 +122,11 @@ const ReviewCard = ({
 
 export function LogoMarquee() {
   return (
-    <section className="my-15">
+    <section className="my-15" id="stack">
       <h2 className="text-center text-3xl md:text-4xl font-bold py-10  ">
-        Atendemos todas las{" "}
+        Herramientas modernas y {" "}
         <span className="bg-gradient-to-b from-primary/60 to-primary text-transparent bg-clip-text">
-          MARCAS{" "}
+          CONFIABLES{" "}
         </span>
         
       </h2>

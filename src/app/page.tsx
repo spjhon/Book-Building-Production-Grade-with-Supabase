@@ -1,17 +1,39 @@
 import { LogoMarquee } from "@/features/LandingPage/LogoMarquee";
 import {
   
+  AlertTriangle,
   ArrowRight,
+  Boxes,
   Clock,
+  Cloud,
   Database,
+  DatabaseZap,
+  FileCode2,
+  Github,
   Globe,
   Key,
+  LayoutTemplate,
+  Linkedin,
+  LucideIcon,
+  Search,
+  Server,
   Shield,
   Users,
+  Zap,
 } from "lucide-react";
 import Link from "next/link";
 
 export const dynamic = "force-static";
+
+
+interface Feature {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+  color: string;
+}
+
+
 
 export default function Home() {
   // Definimos los tenants para iterarlos fácilmente
@@ -21,56 +43,88 @@ export default function Home() {
   // En producción podrías cambiar esto por process.env.NEXT_PUBLIC_ROOT_DOMAIN
   const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN;
 
-  const features = [
-    {
-      icon: Shield,
-      title: "Robust Authentication",
-      description:
-        "Secure login with email/password, Multi-Factor Authentication, and SSO providers",
-      color: "text-green-600",
-    },
-    {
-      icon: Database,
-      title: "File Management",
-      description:
-        "Built-in file storage with secure sharing, downloads, and granular permissions",
-      color: "text-orange-600",
-    },
-    {
-      icon: Users,
-      title: "User Settings",
-      description:
-        "Complete user management with password updates, MFA setup, and profile controls",
-      color: "text-red-600",
-    },
-    {
-      icon: Clock,
-      title: "Task Management",
-      description:
-        "Built-in todo system with real-time updates and priority management",
-      color: "text-teal-600",
-    },
-    {
-      icon: Globe,
-      title: "Legal Documents",
-      description:
-        "Pre-configured privacy policy, terms of service, and refund policy pages",
-      color: "text-purple-600",
-    },
-    {
-      icon: Key,
-      title: "Cookie Consent",
-      description:
-        "GDPR-compliant cookie consent system with customizable preferences",
-      color: "text-blue-600",
-    },
-  ];
+
+  const features: Feature[] = [
+  // --- Tus originales traducidos ---
+  {
+    icon: Shield,
+    title: "Autenticación Robusta",
+    description: "Inicio de sesión seguro con email/contraseña y proveedores como Google.",
+    color: "text-green-600",
+  },
+  {
+    icon: Database,
+    title: "Gestión de Archivos",
+    description: "Almacenamiento integrado con Supabase Storage, descargas seguras y permisos.",
+    color: "text-orange-600",
+  },
+
+  {
+    icon: Clock,
+    title: "Gestión de Tickets",
+    description: "Sistema de tickets con comentarios en tiempo real",
+    color: "text-teal-600",
+  },
+  
+  
+  {
+    icon: Boxes,
+    title: "Arquitectura Multi-Tenant",
+    description: "Aislamiento total por organización mediante subdominios o rutas dinámicas.",
+    color: "text-fuchsia-600",
+  },
+  {
+    icon: LayoutTemplate,
+    title: "Layout Responsivo Pro",
+    description: "Se adapta a mobiles y pantallas de escritorio",
+    color: "text-cyan-600",
+  },
+  {
+    icon: FileCode2,
+    title: "Menú Móvil Animado",
+    description: "Drawer de shadcn con trigger de hamburguesa animado mediante CSS.",
+    color: "text-orange-500",
+  },
+  
+  {
+    icon: AlertTriangle,
+    title: "Manejo de Errores 404",
+    description: "Páginas de error personalizadas y estilizadas con el sistema de temas de shadcn.",
+    color: "text-red-700",
+  },
+  {
+    icon: Zap, // Importa 'Zap' de lucide-react
+    title: "Arquitectura RPC-First",
+    description: "Comunicación eficiente entre cliente y servidor mediante llamadas a procedimientos remotos, centralizando la lógica de negocio.",
+    color: "text-yellow-600",
+  },
+  {
+    icon: Server, // Importa 'Server' de lucide-react
+    title: "Renderizado SSR Optimizado",
+    description: "Uso avanzado de Server-Side Rendering con Next.js para garantizar velocidad de carga y SEO superior en rutas dinámicas.",
+    color: "text-indigo-500",
+  },
+  {
+    icon: DatabaseZap, // Importa 'DatabaseZap' o 'Table2' de lucide-react
+    title: "Esquema SQL Profesional",
+    description: "Arquitectura de base de datos relacional en PostgreSQL con políticas de seguridad RLS y tipado estricto mediante esquemas.",
+    color: "text-blue-700",
+  },
+  {
+    icon: Cloud, // Importa 'Cloud' de lucide-react
+    title: "Despliegue en Netlify",
+    description: "Infraestructura escalable desplegada globalmente con soporte nativo para funciones Edge y tiempos de respuesta mínimos.",
+    color: "text-cyan-500",
+  },
+  
+
+];
 
   const stats = [
-    { label: "Active Users", value: "10K+" },
-    { label: "Organizations", value: "2K+" },
-    { label: "Countries", value: "50+" },
-    { label: "Uptime", value: "99.9%" },
+    { label: "Maxima Velcidad", value: "SSR - SSG" },
+    { label: "Solo un viaje al servidor", value: "RCP" },
+    { label: "Login Sin Contraseña", value: "Google Auth" },
+    { label: "Un dominio, muchas organizaciones", value: "Multi-Tenant" },
   ];
 
   return (
@@ -91,21 +145,20 @@ export default function Home() {
       {/* Lado Derecho: Links comprimibles */}
       <div className="flex items-center gap-3 sm:gap-6 md:gap-8 overflow-hidden">
         <Link href="#features" className="text-sm font-medium text-gray-600 hover:text-gray-900 whitespace-nowrap transition-colors">
-          Features
+          Especificaciones
         </Link>
 
-        <Link href="#pricing" className="text-sm font-medium text-gray-600 hover:text-gray-900 whitespace-nowrap transition-colors">
-          Pricing
-        </Link>
+       
         
         <Link
-          href="https://github.com/Razikus/supabase-nextjs-template"
-          className="text-sm font-medium text-gray-600 hover:text-gray-900 whitespace-nowrap transition-colors"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Grab Template
-        </Link>
+  href="https://github.com/spjhon/Book-Building-Production-Grade-with-Supabase"
+  className="inline-flex items-center gap-2 text-sm font-medium text-black hover:opacity-70 transition-all whitespace-nowrap"
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  <Github className="w-4 h-4" />
+  <span>GitHub</span>
+</Link>
       </div>
 
     </div>
@@ -113,16 +166,17 @@ export default function Home() {
 </nav>
 
 
-      <section className="relative pt-32 pb-24 overflow-hidden">
+      <section className="relative mt-40 mb-20 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-5xl md:text-6xl font-bold tracking-tight">
-              Bootstrap Your SaaS
-              <span className="block text-primary-600">In 5 minutes</span>
+              Next js - Supabase
+              <span className="block text-primary-600">DEMO</span>
             </h1>
             <p className="mt-6 text-xl text-gray-600 max-w-3xl mx-auto">
-              Launch your SaaS product in days, not months. Complete with
-              authentication and enterprise-grade security built right in.
+              Projecto multi-tenant por subdominios utilizando las capacidades de Supabase. 
+              Database, Auth, Storage, Real Time.
+              Web Apps Robustas y Seguras
             </p>
             <div className="mt-10 flex gap-4 justify-center"></div>
           </div>
@@ -130,7 +184,7 @@ export default function Home() {
       </section>
 
       {/* Sección de Selección de Organización */}
-      <section className="py-20 bg-white">
+      <section className="my-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
@@ -140,7 +194,7 @@ export default function Home() {
               </span>
             </h2>
             <p className="mt-4 text-gray-500">
-              Accede directamente al portal de tu empresa
+              Accede directamente al portal de la empresa, cada organizacion tiene un espacio de trabajo propio.
             </p>
           </div>
 
@@ -175,7 +229,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-16 bg-gradient-to-b from-white to-gray-50">
+      <section className="my-20 bg-gradient-to-b from-white to-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
@@ -194,9 +248,9 @@ export default function Home() {
       <section id="features" className="py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold">Everything You Need</h2>
+            <h2 className="text-3xl font-bold">Todo lo necesario para robustes en multi organización</h2>
             <p className="mt-4 text-xl text-gray-600">
-              Built with modern technologies for reliability and speed
+              Una Web App segura. Desde un sistema de autenticacion robusto hasta seguridad  a nivel de base de datos RLS.
             </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -216,87 +270,93 @@ export default function Home() {
 
       <LogoMarquee></LogoMarquee>
 
-      <section className="py-24 bg-primary-600">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-white">
-            Ready to Transform Your Idea into Reality?
-          </h2>
-          <p className="mt-4 text-xl text-primary-100">
-            Join thousands of developers building their SaaS with {"Alguito"}
-          </p>
-          <Link
-            href="/auth/register"
-            className="mt-8 inline-flex items-center px-6 py-3 rounded-lg bg-white text-primary-600 font-medium hover:bg-primary-50 transition-colors"
-          >
-            Get Started Now
-            <ArrowRight className="ml-2 h-5 w-5" />
-          </Link>
-        </div>
-      </section>
+      <section className="py-24 bg-primary text-primary-foreground">
+  <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
+      ¿Listo para escalar tu próximo proyecto SaaS?
+    </h2>
+    <p className="mt-4 text-xl opacity-90">
+      Actualmente estoy abierto a nuevas oportunidades y retos técnicos. 
+      Si buscas a alguien que entienda el Full-Stack de verdad, hablemos.
+    </p>
+    
+    <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+      <Link
+        href="https://www.linkedin.com/in/aristizabaljuan/"
+        target="_blank"
+        className="px-8 py-4 rounded-xl bg-background text-foreground font-bold hover:bg-secondary transition-all shadow-xl hover:-translate-y-1 active:scale-95"
+      >
+        Ver Perfil de LinkedIn
+      </Link>
+      
+      <Link
+        href="https://github.com/spjhon"
+        target="_blank"
+        className="px-8 py-4 rounded-xl border-2 border-primary-foreground text-primary-foreground font-bold hover:bg-primary-foreground/10 transition-all active:scale-95"
+      >
+        Explorar GitHub
+      </Link>
+    </div>
+  </div>
+</section>
 
       <footer className="bg-gray-50 border-t border-gray-200">
         <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div>
-              <h4 className="text-sm font-semibold text-gray-900">Product</h4>
+              <h4 className="text-sm font-semibold text-gray-900">Prodcuto</h4>
               <ul className="mt-4 space-y-2">
                 <li>
                   <Link
                     href="#features"
                     className="text-gray-600 hover:text-gray-900"
                   >
-                    Features
+                    Especificaciones
                   </Link>
                 </li>
                 <li>
                   <Link
-                    href="#pricing"
-                    className="text-gray-600 hover:text-gray-900"
-                  >
-                    Pricing
-                  </Link>
+  href="https://github.com/spjhon/Book-Building-Production-Grade-with-Supabase"
+  className="inline-flex items-center gap-2 text-sm font-medium text-black hover:opacity-70 transition-all whitespace-nowrap"
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  <Github className="w-4 h-4" />
+  <span>GitHub</span>
+</Link>
                 </li>
               </ul>
             </div>
             <div>
-              <h4 className="text-sm font-semibold text-gray-900">Resources</h4>
+              <h4 className="text-sm font-semibold text-gray-900">Recursos</h4>
               <ul className="mt-4 space-y-2">
                 <li>
                   <Link
                     href="https://github.com/Razikus/supabase-nextjs-template"
                     className="text-gray-600 hover:text-gray-900"
                   >
-                    Documentation
+                    Documentación
                   </Link>
                 </li>
               </ul>
             </div>
-            <div>
-              <h4 className="text-sm font-semibold text-gray-900">Legal</h4>
-              <ul className="mt-4 space-y-2">
-                <li>
-                  <Link
-                    href="/legal/privacy"
-                    className="text-gray-600 hover:text-gray-900"
-                  >
-                    Privacy
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/legal/terms"
-                    className="text-gray-600 hover:text-gray-900"
-                  >
-                    Terms
-                  </Link>
-                </li>
-              </ul>
-            </div>
+            
           </div>
           <div className="mt-8 pt-8 border-t border-gray-200">
-            <p className="text-center text-gray-600">
-              © {new Date().getFullYear()} {"Alguito"}. All rights reserved.
-            </p>
+
+
+          <Link
+            href="https://www.linkedin.com/in/aristizabaljuan/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mx-auto inline-flex items-center gap-2 text-sm font-medium text-black hover:opacity-70 transition-all group"
+          >
+            <Linkedin className="w-4 h-4 text-[#0A66C2] group-hover:scale-110 transition-transform" />
+            <span> {new Date().getFullYear()} {"Juan Camilo Patiño Aristizabal"}. Código de libre uso.</span>
+          </Link>
+
+
+            
           </div>
         </div>
       </footer>

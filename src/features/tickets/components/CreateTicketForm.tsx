@@ -46,18 +46,18 @@ useEffect(() => {
           return;
         }
 
-        setTenantData(tenantData)
+        
 
         const {data: usersFetched, error: usersError} = await fetchServiceUsersCached(tenantData.id)
 
         if (usersError || !usersFetched) {
-          console.error("Error al traer información del tenant:", usersError?.message);
+          console.error("Error trallendo informacion de los usuarios", usersError?.message);
           router.push(`/error?type=Error trayendo informacion del tenant`);
           return;
         }
 
 
-       
+       setTenantData(tenantData)
         setUsersData(usersFetched);
 
       } catch (err) {
