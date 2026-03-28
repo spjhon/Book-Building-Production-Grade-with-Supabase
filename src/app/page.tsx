@@ -22,6 +22,7 @@ import {
   Zap,
 } from "lucide-react";
 import Link from "next/link";
+import { Suspense } from "react";
 
 export const dynamic = "force-static";
 
@@ -122,7 +123,7 @@ export default function Home() {
 
   const stats = [
     { label: "Maxima Velcidad", value: "SSR - SSG" },
-    { label: "Solo un viaje al servidor", value: "RCP" },
+    { label: "Solo un viaje al servidor", value: "RPC" },
     { label: "Login Sin Contraseña", value: "Google Auth" },
     { label: "Un dominio, muchas organizaciones", value: "Multi-Tenant" },
   ];
@@ -200,6 +201,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {tenants.map((tenant) => (
+              <Suspense key={tenant} fallback={"Cargando..."}>
               <Link
                 prefetch={null}
                 key={tenant}
@@ -224,6 +226,7 @@ export default function Home() {
                   </div>
                 </div>
               </Link>
+              </Suspense>
             ))}
           </div>
         </div>
@@ -316,14 +319,14 @@ export default function Home() {
                 </li>
                 <li>
                   <Link
-  href="https://github.com/spjhon/Book-Building-Production-Grade-with-Supabase"
-  className="inline-flex items-center gap-2 text-sm font-medium text-black hover:opacity-70 transition-all whitespace-nowrap"
-  target="_blank"
-  rel="noopener noreferrer"
->
-  <Github className="w-4 h-4" />
-  <span>GitHub</span>
-</Link>
+                    href="https://github.com/spjhon/Book-Building-Production-Grade-with-Supabase"
+                    className="inline-flex items-center gap-2 text-sm font-medium text-black hover:opacity-70 transition-all whitespace-nowrap"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Github className="w-4 h-4" />
+                    <span>GitHub</span>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -332,7 +335,7 @@ export default function Home() {
               <ul className="mt-4 space-y-2">
                 <li>
                   <Link
-                    href="https://github.com/Razikus/supabase-nextjs-template"
+                    href="https://github.com/spjhon/Book-Building-Production-Grade-with-Supabase"
                     className="text-gray-600 hover:text-gray-900"
                   >
                     Documentación

@@ -139,12 +139,12 @@ export function TicketList() {
           Total: {fetchedTicketsState?.count || 0}
         </div>
         <div className="flex gap-2">
-          {pageSanitazed > 1 && (
+          {pageSanitazed > 1 && !isLoading &&(
             <Link href={getHref(pageSanitazed - 1)} className="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition text-sm">
               ← Anterior
             </Link>
           )}
-          {fetchedTicketsState?.hasMore && (
+          {fetchedTicketsState?.hasMore && !isLoading &&(
             <Link href={getHref(pageSanitazed + 1)} className="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition text-sm">
               Siguiente →
             </Link>

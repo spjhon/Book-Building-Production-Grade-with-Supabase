@@ -31,22 +31,22 @@ export default async function Login({searchParams, params}: {searchParams: Promi
 
   const testimonials = [
         {
-            quote: "This template helped us launch our SaaS product in just two weeks. The authentication and multi-tenancy features are rock solid.",
-            author: "Sarah Chen",
-            role: "CTO, TechStart",
-            avatar: "SC"
+            quote: "Este login posee un robusto sistema de autenticación por medio de un proxy que procesa la seguridad de cada solicitud al servidor.",
+            author: "Alta Seguridad",
+            role: "Middleware - Proxy",
+            avatar: "01"
         },
         {
-            quote: "The best part is how well thought out the organization management is. It saved us months of development time.",
-            author: "Michael Roberts",
-            role: "Founder, DataFlow",
-            avatar: "MR"
+            quote: "Si alguien mas entra con tu usuario y contraseña, te saldra un mensaje de error para darte aviso que alguien mas tiene tus credenciales.",
+            author: "Sellado se sesión.",
+            role: "Un usuario, una sesión.",
+            avatar: "02"
         },
         {
-            quote: "Clean code, great documentation, and excellent support. Exactly what we needed to get our MVP off the ground.",
-            author: "Jessica Kim",
-            role: "Lead Developer, CloudScale",
-            avatar: "JK"
+            quote: "Contraseña cifrada gracias al sistema de auth de Supabase que otorga una capa obligatoria en seguridad de cuentas reales",
+            author: "Seguridad Supabase",
+            role: "Cifrado",
+            avatar: "03"
         }
     ];
 
@@ -70,7 +70,7 @@ export default async function Login({searchParams, params}: {searchParams: Promi
           className="absolute left-8 top-[1.6rem] flex items-center text-sm text-black hover:opacity-70 transition-colors font-medium z-20"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Landing Page
+          Regresar a la Landing Page
         </Link>
 
 
@@ -93,7 +93,7 @@ export default async function Login({searchParams, params}: {searchParams: Promi
         <div className="w-full flex items-center justify-center p-8 sm:p-12">
             <div className="space-y-6 max-w-lg">
                 <h3 className=" text-2xl font-bold mb-8">
-                    Trusted by developers worldwide
+                    Sistema de Login Completo
                 </h3>
                 {testimonials.map((testimonial, index) => (
                     <div
@@ -102,7 +102,7 @@ export default async function Login({searchParams, params}: {searchParams: Promi
                     >
                         <div className="flex items-start space-x-4">
                             <div className="flex-shrink-0">
-                                <div className="w-10 h-10 rounded-full bg-primary-400/30 flex items-center justify-center text-white font-semibold">
+                                <div className="w-10 h-10 rounded-full bg-primary-400/30 flex items-center justify-center  font-semibold">
                                     {testimonial.avatar}
                                 </div>
                             </div>
@@ -124,7 +124,7 @@ export default async function Login({searchParams, params}: {searchParams: Promi
                 ))}
                 <div className="mt-8 text-center">
                     <p className="text-primary-100 text-sm">
-                        Join thousands of developers building with {"SupaSass"}
+                        Utiliza la cuenta demo o registra un email en la sección de registro.
                     </p>
                 </div>
             </div>

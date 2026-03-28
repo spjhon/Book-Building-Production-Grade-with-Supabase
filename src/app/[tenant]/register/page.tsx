@@ -23,22 +23,22 @@ export default async function RegisterPage({ params }: { params: Promise<{ tenan
 
     const testimonials = [
         {
-            quote: "This template helped us launch our SaaS product in just two weeks. The authentication and multi-tenancy features are rock solid.",
-            author: "Sarah Chen",
-            role: "CTO, TechStart",
-            avatar: "SC"
+            quote: "El sistema de registro envia un correo por medio del servicio RESEND, si no se verifica el email no se puede hacer login.",
+            author: "Requerimiento de validacion de correo electrónico.",
+            role: "Anti Spam",
+            avatar: "01"
         },
         {
-            quote: "The best part is how well thought out the organization management is. It saved us months of development time.",
-            author: "Michael Roberts",
-            role: "Founder, DataFlow",
-            avatar: "MR"
+            quote: "Gracias al servicio de Supabase cloud, tu correo esta seguro contra filtración de información.",
+            author: "Supabase Cloud",
+            role: "Tu correo seguro",
+            avatar: "02"
         },
         {
-            quote: "Clean code, great documentation, and excellent support. Exactly what we needed to get our MVP off the ground.",
-            author: "Jessica Kim",
-            role: "Lead Developer, CloudScale",
-            avatar: "JK"
+            quote: "El sistema actual como esta configurado, solo permite un correo electrónico por organización.",
+            author: "Independencia por tenant",
+            role: "Una cuenta por organización",
+            avatar: "03"
         }
     ];
 
@@ -53,7 +53,7 @@ export default async function RegisterPage({ params }: { params: Promise<{ tenan
                     className="absolute left-8 top-[1.6rem] flex items-center text-sm text-black hover:opacity-70 transition-colors font-medium z-20"
                 >
                     <ArrowLeft className="w-4 h-4 mr-2" />
-                    Back to Landing Page
+                    Regresar al Landing Page
                 </Link>
 
                 <div className="">
@@ -62,7 +62,7 @@ export default async function RegisterPage({ params }: { params: Promise<{ tenan
                         {"SupaSass"}
                     </h2>
                     <p className="mt-2 text-center text-sm text-black/60">
-                        Create your account for {tenantData.name || "your organization"}
+                        Crear cuenta para la organización: {" "} {tenantData.name || "your organization"}
                     </p>
                 </div>
 
@@ -76,7 +76,7 @@ export default async function RegisterPage({ params }: { params: Promise<{ tenan
                 <div className="w-full flex items-center justify-center p-8 sm:p-12">
                     <div className="space-y-6 max-w-lg">
                         <h3 className="text-2xl font-bold mb-8 ">
-                            Trusted by developers worldwide
+                            Registra un email valido si deseas probar el sistema de activacion de correo.
                         </h3>
                         
                         {testimonials.map((testimonial, index) => (

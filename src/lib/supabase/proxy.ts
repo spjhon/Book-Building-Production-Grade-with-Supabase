@@ -8,6 +8,37 @@ import { buildUrl, getHostnameAndPort } from "@/utils/url-helpers";
 export async function updateSession(request: NextRequest) { //funcion proxy especial de supabase, no es el proxy de next js
   let supabaseResponse = NextResponse.next({ request });
 
+ const [hostname, port] = getHostnameAndPort(request); //Se obtiene el hostname desde una funcion en utils, "acme.miapp" o "globex.miapp"
+  const applicationPath = request.nextUrl.pathname; // puede ser "/" o "/auth" o "/auth/login"
+  const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN?.split(":")[0]; // "miapp" o "127.0.0.1" o "localhost"
+
+
+//RUTAS PUBLICAS PERMITIDAS
+
+//si alguno de estos host o alguno de estos path se cumple, entonces retornar supabaseResponse sin hacer mas preguntas
+  if (
+    
+    applicationPath.startsWith("/_next") || 
+    applicationPath.startsWith("/api") ||
+    applicationPath.includes(".") 
+  ) {
+    return supabaseResponse;
+  }
+
+
+if (
+    hostname === rootDomain ||
+    hostname === "127.0.0.1" ||
+     hostname === "miapp" ||
+    hostname === "tiendadelamjuer" 
+) {
+    return supabaseResponse;
+  }
+
+
+   
+
+
   // 1. CLIENTE SUPABASE
   const supabase = createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -31,32 +62,6 @@ export async function updateSession(request: NextRequest) { //funcion proxy espe
   const { data } = await supabase.auth.getClaims(); //se obtiene el claims osea el usuario
   const sessionUser = data?.claims; //se obtiene el usuario si es que existe y esta autenticado
   
-
-
-
-
-  // 1. EXTRAER INFORMACIÓN BÁSICA
-  const [hostname, port] = getHostnameAndPort(request); //Se obtiene el hostname desde una funcion en utils, "acme.miapp" o "globex.miapp"
-  const applicationPath = request.nextUrl.pathname; // puede ser "/" o "/auth" o "/auth/login"
-  const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN?.split(":")[0]; // "miapp" o "127.0.0.1" o "localhost"
-  
-
-  
-
- //RUTAS PUBLICAS PERMITIDAS
-
-//si alguno de estos host o alguno de estos path se cumple, entonces retornar supabaseResponse sin hacer mas preguntas
-  if (
-    hostname === rootDomain ||
-    hostname === "127.0.0.1" ||
-    hostname === "miapp" ||
-    hostname === "tiendadelamjuer" ||
-    applicationPath.startsWith("/_next") || 
-    applicationPath.startsWith("/api") ||
-    applicationPath.includes(".") 
-  ) {
-    return supabaseResponse;
-  }
 
  //OBTENCION Y VERIFICACION DEL TENANT DESDE LA DB CON UN CACHE DE 1 MINUTO
 

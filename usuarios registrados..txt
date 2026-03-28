@@ -1,0 +1,13 @@
+usuarios registrados.
+
+user01@acme.com
+Manolo
+
+user01@globex.com
+Manolo
+
+user01@initech.com
+Manolo
+
+user01@umbrella.com
+Manolo

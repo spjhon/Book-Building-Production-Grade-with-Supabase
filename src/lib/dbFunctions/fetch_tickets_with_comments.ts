@@ -46,7 +46,7 @@ export async function getTicketsAction({
     // Paginación y orden
     const { data, count, error } = await query
       .range(startingPoint, startingPoint + (pageSize - 1))
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: true });
 
     if (error) {
       return { data: null, error: error };
