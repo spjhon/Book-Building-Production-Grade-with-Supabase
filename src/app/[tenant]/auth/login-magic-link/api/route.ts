@@ -41,7 +41,9 @@ export async function POST(request: Request) {
 
 */
 
-/**Este codigo de route handler esta incompleto, solo muestra un mensaje al entrar a esta api desde un login sin javascript el cual redirigio al route handler */
+/**
+ * This route handler code is incomplete; it only displays a message when accessing this API from a login without JavaScript, which redirects to this route handler.
+ */
 import { NextResponse } from "next/server";
 export async function GET(request: Request) {
 return NextResponse.json({ message: "Si vez este mensaje llama al +57 3215224583" });

@@ -3,25 +3,30 @@ import { buildUrl } from "@/utils/url-helpers";
 import { NextRequest, NextResponse } from "next/server";
 
 
-
+/**
+ * Route handler that performs a logout through this API if JavaScript is not enabled in the login at the time of login.
+ * @param request The request that requests the execution of this route handler
+ * @param param1 The tenants. (acme, initech, globex, umbrella)
+ * @returns Redirections according to the URL structure in the request
+ */
 export async function POST(request: NextRequest, { params }: { params: Promise<{ tenant: string }> }) {
 
-  // 1. Obtenemos el tenant de los parámetros
+  // We obtain the tenant from the parameters
   const { tenant } = await params;
 
-  // 2. Creamos el cliente y cerramos sesión
-  // Esto limpiará las cookies en el servidor
+  // We created the client and logged out.
+  // This will clear the cookies on the server
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.auth.signOut({ scope: 'global' });;
 
   if (error){
-    return NextResponse.redirect(buildUrl(`/error?type=Logout Error`, tenant, request), { status: 303 });
+    return NextResponse.redirect(buildUrl(`/error?type=Error al intentar hace logout por medio de api`, tenant, request), { status: 303 });
   }
 
-  // 3. Construimos la URL absoluta usando el helper
-  // Esto asegura que el usuario se quede en acme.miapp.com/auth/login
+  // We construct the absolute URL using the helper
+  // This ensures that the user remains on acme.miapp.com/auth/login
   const redirectUrl = buildUrl("/auth/login", tenant, request);
 
-  // 4. Redirigimos con estatus 303 (estándar para después de un POST)
+  // We redirected with status 303 (standard for after a POST)
   return NextResponse.redirect(redirectUrl, { status: 303 });
 }

@@ -2,40 +2,48 @@ import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { buildUrl } from "@/utils/url-helpers";
 
-
+/**
+ *This is a route handler that handles login via API when JavaScript is disabled in the browser.
+ * @param request The request that requests the execution of this route handler
+ * @param param1 The tenants. (acme, initech, globex, umbrella)
+ * @returns Redirections according to the URL structure in the request
+ */
 export async function POST(request: NextRequest, {params}: { params: Promise<{ tenant: string }>}) {
 
-  // 1.
-  const { tenant } = await params;
-  const supabase = await createSupabaseServerClient();
-
-  // 2.
+  //Extracting data from the URL
   const formData = await request.formData();
   const email = formData.get("email");
   const password = formData.get("password");
+  const { tenant } = await params;
 
+
+
+  const supabaseServer = await createSupabaseServerClient();
+
+
+ //Checking the data types of email and password to ensure that they are at least strings.
   if (typeof email !== "string" || typeof password !== "string") {
-      return NextResponse.redirect(buildUrl(`/error?type=invalid-form`, tenant, request), { status: 303 });
+    return NextResponse.redirect(buildUrl(`/error?type=invalid-form`, tenant, request), { status: 303 });
   }
 
-  // 3.
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  //The data is passed to the supabase function to perform the login
+  const { data, error } = await supabaseServer.auth.signInWithPassword({ email, password });
 
-  // 4.
+  // We extract the user's information after they log in.
   const userData = data?.user;
   
-  /* Nota de seguridad: No basta con que el password sea correcto. 
-     Debemos confirmar que el usuario tiene acceso explícito a este subdominio/tenant
-     verificando la propiedad 'tenants' dentro de su app_metadata.
+  /* Security note: A correct password is not enough.
+    We must confirm that the user has explicit access to this subdomain/tenant 
+    by verifying the 'tenants' property within their app_metadata
   */
   if (error || !userData || !userData.app_metadata?.tenants?.includes(tenant)) {
     
-    // 5.
-    await supabase.auth.signOut({ scope: 'global' });
+    // If there is no tenant, a logout is executed and the user is redirected to the error page.
+    await supabaseServer.auth.signOut({ scope: 'global' });
     return NextResponse.redirect(buildUrl(`/error?type=${error?.message ?? "Error al intentar hacer login por medio de route handler"}`, tenant, request), { status: 303 });
   }
 
-  // 6.
+  //If everything goes well, you will be redirected to the protected area.
   return NextResponse.redirect(buildUrl("/tickets", tenant, request), { status: 303 });
 }
 

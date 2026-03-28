@@ -3,6 +3,10 @@ import { UpdatePasswordForm } from "../../../../features/auth/components/update-
 
 export const dynamic = 'force-static' 
 
+/**
+ * 
+ * @returns Page that renders the component to update the password
+ */
 export default function UpdatePasswordFormPage() {
 
   

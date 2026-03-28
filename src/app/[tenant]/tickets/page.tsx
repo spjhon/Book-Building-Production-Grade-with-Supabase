@@ -30,7 +30,7 @@ export default function TicketsPage() {
       </div>
 
       <p className="text-gray-600">
-        Tickes creados
+        Tabla de tickets creados, se presenta paginación despues del sexto ticket
       </p>
 
       {/* 3. & 4. Ticket List Container */}

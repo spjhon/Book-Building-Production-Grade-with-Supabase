@@ -42,7 +42,7 @@ export const Navbar = () => {
           className="fixed left-8 top-[1.6rem] flex items-center text-sm text-black hover:opacity-70 transition-colors font-medium z-20"
       >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Landing Page
+          Regresar al Landign Page
       </Link>
 
 

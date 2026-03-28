@@ -354,7 +354,7 @@ Para cualquier pregunta o recomendacion
 
 Local Types Generation: pnpx supabase gen types typescript --local > supabase/types/database.types.ts
 hacer backup completo del sistema local: pnpx supabase db dump --local > backup_completo.sql
-para hacer link con los env establecidos: pnpx supabase link --project-ref hborskybnjzxsazqhhex
+para hacer link con los env establecidos: pnpx supabase link --project-ref hborskybnjzxsazqhhex -- pnpx supabase link --project-ref qwtpfbwovcvybtfzdbcd
 
 ---
 

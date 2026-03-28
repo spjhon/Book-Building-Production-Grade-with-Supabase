@@ -4,17 +4,22 @@ import { Mail, CheckCircle2 } from "lucide-react";
 
 export const dynamic = 'force-static' 
 
+/**
+ * 
+ * @param param0 The tenants. (acme, initech, globex, umbrella)
+ * @returns A confirmation message for sending the magic link
+ */
 export default async function MagicLinkSuccessPage({params}: {params: Promise<{ tenant: string }>}) {
  
   const { tenant } = await params;
-  
   
 
   return (
     <div className="flex items-center justify-center h-screen">
       <div className="mx-auto flex w-full max-w-sm flex-col items-center space-y-6 text-center border border-black rounded-xs p-5 sm:p-20">
         
-        {/* Icono decorativo de éxito */}
+        
+        {/* success decorative icon*/}
         <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
           <Mail className="h-10 w-10 text-primary" />
           <div className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full bg-background border-4 border-background">
@@ -22,7 +27,7 @@ export default async function MagicLinkSuccessPage({params}: {params: Promise<{ 
           </div>
         </div>
 
-        {/* Título y Mensaje */}
+        {/* Title and Message */}
         <div className="space-y-2">
           <h1 className="text-3xl font-bold tracking-tight">
             Magia en camino
@@ -32,7 +37,7 @@ export default async function MagicLinkSuccessPage({params}: {params: Promise<{ 
           </p>
         </div>
 
-        {/* Botón de acción */}
+        {/* action button */}
         <Link
           prefetch={null}
           href={urlPath("/auth/login", tenant)}
@@ -44,6 +49,8 @@ export default async function MagicLinkSuccessPage({params}: {params: Promise<{ 
         <p className="text-xs text-muted-foreground">
           ¿No recibiste el correo? Revisa tu carpeta de spam.
         </p>
+
+
       </div>
     </div>
   );

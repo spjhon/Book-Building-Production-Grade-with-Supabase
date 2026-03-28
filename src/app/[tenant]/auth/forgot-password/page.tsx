@@ -1,8 +1,13 @@
 
-import { ForgotPasswordForm } from "../../../../features/auth/components/forgot-password-form";
+import { ForgotPasswordForm } from "@/features/auth/components/forgot-password-form";
 
 export const dynamic = 'force-static' 
 
+/**
+ * 
+ * @param param0 The tenants. (acme, initech, globex, umbrella)
+ * @returns Only the recovery password form
+ */
 export default async function ForgotPasswordPage({params}: {params: Promise<{ tenant: string }>}) {
 
 const { tenant } = await params;

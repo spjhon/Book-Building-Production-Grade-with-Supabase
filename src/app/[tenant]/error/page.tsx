@@ -4,7 +4,13 @@ import { AlertCircle } from "lucide-react"; // Shadcn usa mucho esta librería d
 
 
 
-
+/**
+ * This page is important; this is where almost all errors that occur in the app are redirected. 
+ * Since the console.log on the server is not easily visible, the messages shown in this error provide a good 
+ * idea not only of the error itself but also of its location.
+ * @param param0 The tenants (acme, initech, globex, umbrella)
+ * @returns Error message page.
+ */
 export default async function ErrorPage({
   searchParams,
   params,
@@ -20,7 +26,7 @@ export default async function ErrorPage({
 
       <div className="mx-5 border border-black p-5 sm:p-20 rounded-xs bg-white">
         
-        {/* Card al estilo shadcn */}
+        {/* Shadcn-style card */}
         <div className="flex flex-col space-y-2 text-center">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-destructive/15 text-destructive ">
             <AlertCircle className="h-6 w-6" />
@@ -33,14 +39,14 @@ export default async function ErrorPage({
           </p>
         </div>
 
-        {/* Error box - estilo "code" de shadcn */}
+        {/* Error box - shadcn "code" style */}
         {type && (
           <div className="rounded-md border bg-muted p-4 font-mono text-xs text-muted-foreground break-all">
             {decodeURIComponent(type)}
           </div>
         )}
 
-        {/* Botón estilo shadcn (variante outline o default) */}
+        {/* Shadcn style button (outline or default variant) */}
         <Link
           prefetch={null}
           href={urlPath("/", tenant)}

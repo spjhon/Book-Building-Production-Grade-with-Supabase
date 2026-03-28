@@ -3,41 +3,33 @@ import { buildUrl, getHostnameAndPort } from "@/utils/url-helpers";
 import { type EmailOtpType } from "@supabase/supabase-js";
 import { type NextRequest, NextResponse } from 'next/server';
 
-/*** Email confirms route handlers (Route Handler POST API)
- * ---------------------------------------
- * Este route handler se encarga de recibir los llamados desde:
- * - El magic link que llega al correo del usuario
- * - El link de confirmacion del nuevo usuario creado en /register
- * Con el fin de confirmar el token, el tenant y el type para otorgar acceso a quien lo pida
- * @param request El request pero mejorado gracias a next js. Request de los links magicos y de login.
- * @Flujo
- * 1. Extraccion de datos del reques y los seach params
- * 2. Extraemos el hostname para identificar el tenatn, el domain que esta en la url
- * 3. Asignamos el hostname a la variable tenant para mayor entendimiento
- * 4. Si el token y el type estan bien entonces se pasa a verificar el token y dar autorizacion de login al usuario
- * 5. Redirección absoluta para asegurar que el usuario permanezca en el subdominio correcto tras validar el correo.
- * @Return Diferentes redirects dadas diferentes concidiones de llegada correcta de datos y erroes presentados
-*/ 
+/**
+ * This is a route handler that receives the links that arrive in emails for account verification, magic link login, and password recovery.
+ * @param request The request that is making this api request
+ * @returns Redirections according to the URL structure in the request
+ */
 export async function GET(request: NextRequest) {
 
-  //1.
+  // Extraction of request parameters.
   const { searchParams } = new URL(request.url);
   const token = searchParams.get("token")
   const type = searchParams.get("type") as EmailOtpType
   const redirect = searchParams.get("redirect")
   
-const supabaseServerClient = await createSupabaseServerClient();
+  const supabaseServerClient = await createSupabaseServerClient();
 
- const [hostname] = getHostnameAndPort(request);
+  //host from the url, (acme, initech, umbrella, globex)
+  const [hostname] = getHostnameAndPort(request);
   
   const tenant = hostname;
 
- 
+  //if there is a token and a type from the redirect link form the email, do this logic
   if (token && type) {
     
     const { error } = await supabaseServerClient.auth.verifyOtp({ token_hash: token, type });
 
     if (!error) {
+      // This redirect come from the email to create a new password, the user is loged in at this point
       if (redirect === "newpassword"){
         return NextResponse.redirect(buildUrl("/auth/update-password", tenant, request), { status: 303 });
       }else{
@@ -49,7 +41,7 @@ const supabaseServerClient = await createSupabaseServerClient();
     }
   }
 
-
+  //If there is neither a token nor a type, the user is redirected to the error page
   return NextResponse.redirect(buildUrl("/error?type=No existe el tocken o el tipo de verificacion es incorrecto", tenant, request), { status: 303 });
 }
 

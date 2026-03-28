@@ -8,24 +8,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { Resend } from 'resend';
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-/*** Manual Registration Route Handler with Rollback (POST API)
- * ---------------------------------------
- * Este route handler gestiona la creación integral de un nuevo usuario en un entorno multi-tenant:
- * - Valida la existencia del tenant antes de proceder.
- * - Crea la identidad en Supabase Auth mediante privilegios de Admin.
- * - Sincroniza los datos en tablas públicas (service_users y tenant_permissions) mediante un bloque try/catch.
- * - Implementa un mecanismo de "Rollback": si falla cualquier operación de DB, se elimina el usuario de Auth 
- * para evitar registros huérfanos y asegurar la atomicidad del proceso.
- * @param request Objeto NextRequest con FormData (userName, email, password).
- * @params tenant Slug del tenant extraído de los parámetros de la URL.
- * @Flujo
- * 1. Extracción y validación rigurosa de tipos y contenido del formulario.
- * 2. Validación de seguridad: Comprobación de que el tenant existe en la DB (vía caché).
- * 3. Creación del usuario en el esquema 'auth' con metadatos específicos del tenant.
- * 4. Bloque Transaccional (try): Inserción de perfil en 'service_users' y vinculación de permisos.
- * 5. Bloque de Reversión (catch): Borrado preventivo del usuario en 'auth' ante cualquier fallo de DB.
- * 6. Disparo de Magic Link (OTP) para validación final de correo electrónico.
- * @Return JSON de éxito o redirecciones de error dinámicas con mensajes técnicos codificados.
+/**
+ * This route handler is responsible for registering a new user. The supabase function only creates the user in the auth schema; 
+ * it is our responsibility to register the new user in the other tables, in service_users, and assign the respective tenant with which it was registered.
+ * @param request The request that is making this API request, the way in which errors are returned from this API is done in such a way that the page.tsx
+ * file that is making the request receives an error and can render it on screen.
+ * @param param1 The request that is making this api request
+ * @returns JSON message with the error or success of the new user registration
  */
 export async function POST(request: NextRequest, {params}: { params: Promise<{ tenant: string }>}) {
 
@@ -41,7 +30,7 @@ export async function POST(request: NextRequest, {params}: { params: Promise<{ t
 
   
   if (typeof email !== "string" || typeof password !== "string" || typeof userName !== "string" || typeof profecion !== "string"){
-      // Ahora buildUrl no protestará porque request ya tiene las propiedades necesarias
+      
       return NextResponse.json(
         { message: "Los datos del formulario son inválidos." }, 
         { status: 400 } 
