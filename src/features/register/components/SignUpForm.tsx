@@ -181,7 +181,7 @@ async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
 
             <div className="mt-4 text-center text-sm">
               Ya tiene una cuenta?{" "}
-              <Link prefetch={null} href="/auth/login" className="underline underline-offset-4">
+              <Link   prefetch={false} href="/auth/login" className="underline underline-offset-4">
                 Ingresar
               </Link>
             </div>

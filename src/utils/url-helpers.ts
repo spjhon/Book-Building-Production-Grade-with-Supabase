@@ -1,16 +1,29 @@
 import { NextRequest } from "next/server";
 
+
+
+
 //Identificar al Cliente (Tenant), Manejo del Puerto (Entorno de Desarrollo), vitar el "Hardcoding"
 export function getHostnameAndPort(request: NextRequest) {
+  
   const hostnameWithPort = request.headers.get("host") ?? "";
   const [hostname, port] = hostnameWithPort.split(":");
   return [hostname, port];
 }
 
+
+
+
+
+
+
+
+
 export function urlPath(applicationPath: string, tenant: string) {
   // Ya no incluimos /${tenant} porque el subdominio ya nos dice quién es el cliente
   return applicationPath; 
 }
+
 
 /**
  * entonces buildUrl me entrega la ruta absoluta para devolver al navegador, luego el navegador entra a esa url 

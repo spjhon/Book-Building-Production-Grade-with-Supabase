@@ -53,7 +53,7 @@ interface PageData {
 
 
 
-export const dynamic = 'force-static'
+
 
 export default function TicketDetailPage() {
 
@@ -192,7 +192,7 @@ export default function TicketDetailPage() {
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <Badge variant="outline" className={`px-3 py-1 rounded-full text-xs font-bold border-2 ${statusStyles[currentStatus] || "bg-slate-100"}`}>
-                {ticket.status.replace('_', ' ')}
+                {currentStatus.replace('_', ' ')}
               </Badge>
 
               {isAuthor && (

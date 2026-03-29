@@ -11,3 +11,14 @@ Manolo
 
 user01@umbrella.com
 Manolo
+
+
+
+
+https://qwtpfbwovcvybtfzdbcd.supabase.co
+
+
+http://127.0.0.1:54321
+
+
+http://127.0.0.1:54321/auth/v1/callback

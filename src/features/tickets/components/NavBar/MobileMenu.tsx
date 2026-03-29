@@ -74,7 +74,7 @@ export function MobileMenu({ routes }: MobileMenuProps) {
           <DrawerHeader>
             <DrawerTitle>
               <Link
-                prefetch={true}
+                 prefetch={false}
                 href="/"
                 onClick={() => setIsOpen(false)}
               >
@@ -94,6 +94,7 @@ export function MobileMenu({ routes }: MobileMenuProps) {
                     return (
                       <DrawerClose asChild key={i}>
                         <Link
+                         prefetch={false}
                           href={route.href}
                           className={cn(
                             // 👇 Dimensiones fijas SIEMPRE

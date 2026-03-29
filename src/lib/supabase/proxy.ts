@@ -8,35 +8,35 @@ import { buildUrl, getHostnameAndPort } from "@/utils/url-helpers";
 export async function updateSession(request: NextRequest) { //funcion proxy especial de supabase, no es el proxy de next js
   let supabaseResponse = NextResponse.next({ request });
 
- const [hostname, port] = getHostnameAndPort(request); //Se obtiene el hostname desde una funcion en utils, "acme.miapp" o "globex.miapp"
+
+    const [hostname, port] = getHostnameAndPort(request); //Se obtiene el hostname desde una funcion en utils, "acme.miapp" o "globex.miapp"
   const applicationPath = request.nextUrl.pathname; // puede ser "/" o "/auth" o "/auth/login"
   const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN?.split(":")[0]; // "miapp" o "127.0.0.1" o "localhost"
+ const tenantSlug = hostname.split(".")[0];
+
 
 
 //RUTAS PUBLICAS PERMITIDAS
 
+// Al principio del middleware
+console.log("se ejecuto el proxy")
 //si alguno de estos host o alguno de estos path se cumple, entonces retornar supabaseResponse sin hacer mas preguntas
   if (
     
     applicationPath.startsWith("/_next") || 
     applicationPath.startsWith("/api") ||
-    applicationPath.includes(".") 
-  ) {
-    return supabaseResponse;
-  }
-
-
-if (
+    applicationPath.includes(".") ||
     hostname === rootDomain ||
     hostname === "127.0.0.1" ||
      hostname === "miapp" ||
-    hostname === "tiendadelamjuer" 
-) {
+    hostname === "tiendadelamujer"
+  ) {
+    console.log("se toco el landign")
     return supabaseResponse;
   }
 
 
-   
+
 
 
   // 1. CLIENTE SUPABASE
@@ -63,9 +63,19 @@ if (
   const sessionUser = data?.claims; //se obtiene el usuario si es que existe y esta autenticado
   
 
+
+
+
+
+
+
+
+
+
+
  //OBTENCION Y VERIFICACION DEL TENANT DESDE LA DB CON UN CACHE DE 1 MINUTO
 
-  const tenantSlug = hostname.split(".")[0];
+ 
   //const {data: tenantData, error} = await fetchTenantData(tenantSlug);
   const tenantName = tenantSlug //tenantData?.domain
 
@@ -83,10 +93,14 @@ if (
  //PROTECCION DE RUTAS
 
   if (applicationPath.startsWith("/tickets")) {
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-  
     
-    if (!user && sessionUser) {
+  
+
+  
+  
+    /**
+    if (!sessionUser) {
+
       const loginUrlExpulsion = buildUrl('/error?type="Ha sido expulsado ya que alguien mas inicio session con sus credenciales"', tenantName, request);
       const response = NextResponse.redirect(loginUrlExpulsion);
     
@@ -98,7 +112,7 @@ if (
 
       return response;
     }
-
+  */
 
     if (!sessionUser) {
       // 1. Mandamos explícitamente a la ruta de LOGIN, no a la raíz
@@ -138,6 +152,7 @@ if (
     //Cuando haces el rewrite, Next.js ignora el dominio para la búsqueda del archivo. Solo le importa el Path que es lo que manda al interior
     //al exterior manda la base que seria en este caso el request.url
     new URL(`/${tenantName}${applicationPath}${searchParams}`, request.url),
+
     {
       request: {
         headers: requestHeaders, // Pasamos los nuevos headers
@@ -145,6 +160,8 @@ if (
     }
   );
 
+
+  
   // Sincronización de cookies (Para que el login de Supabase funcione) el rewrite es una "operación silenciosa" 
   // que ocurre solo dentro del servidor, y eso crea un riesgo de desincronización.
   supabaseResponse.cookies.getAll().forEach((cookie) => {

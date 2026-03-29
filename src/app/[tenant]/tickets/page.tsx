@@ -24,7 +24,7 @@ export default function TicketsPage() {
           Tickets
         </h1>
 
-        <Link prefetch={null} href={"/tickets/new"} className="px-4 py-2 bg-primary hover:primary text-white text-sm font-medium rounded-lg shadow transition">
+        <Link  prefetch={false} href={"/tickets/new"} className="px-4 py-2 bg-primary hover:primary text-white text-sm font-medium rounded-lg shadow transition">
           + Crear Ticket
         </Link>
       </div>
