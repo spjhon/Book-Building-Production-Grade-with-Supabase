@@ -39,7 +39,8 @@ export async function POST(request: NextRequest, {params}: { params: Promise<{ t
   if (error || !userData || !userData.app_metadata?.tenants?.includes(tenant)) {
     
     // If there is no tenant, a logout is executed and the user is redirected to the error page.
-    await supabaseServer.auth.signOut({ scope: 'global' });
+    await supabaseServer.auth.signOut();
+    
     return NextResponse.redirect(buildUrl(`/error?type=${error?.message ?? "Error al intentar hacer login por medio de route handler"}`, tenant, request), { status: 303 });
   }
 

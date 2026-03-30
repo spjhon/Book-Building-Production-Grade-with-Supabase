@@ -137,8 +137,8 @@ export default function Home() {
       
 
       {/* Lado Izquierdo: Logo */}
-      <div className="flex-shrink-0 min-w-fit">
-        <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-blue-600 to-primary-500 bg-clip-text text-transparent whitespace-nowrap">
+      <div className="shrink-0 min-w-fit">
+        <span className="text-xl md:text-2xl font-bold bg-linear-to-r from-blue-600 to-primary-500 bg-clip-text text-transparent whitespace-nowrap">
           SupaSass
         </span>
       </div>
@@ -191,7 +191,7 @@ export default function Home() {
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
               Escoge una{" "}
-              <span className="bg-gradient-to-b from-primary/60 to-primary text-transparent bg-clip-text">
+              <span className="bg-linear-to-b from-primary/60 to-primary text-transparent bg-clip-text">
                 ORGANIZACIÓN
               </span>
             </h2>
@@ -233,7 +233,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="my-20 bg-gradient-to-b from-white to-gray-50">
+      <section className="my-20 bg-linear-to-b from-white to-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, index) => (

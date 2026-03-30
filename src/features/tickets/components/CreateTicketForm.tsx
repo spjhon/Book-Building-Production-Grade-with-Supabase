@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, TicketPlus } from "lucide-react";
 
 export type ServiceUser = Database['public']['Tables']['service_users']['Row'];
-
+export type TenantSummary = Pick<Database['public']['Tables']['tenants']['Row'], 'id' | 'name' | 'domain'>;
 
 
 
@@ -27,8 +27,8 @@ export default function CreateTicketForm() {
 
 const { tenant } = useParams();
 
-const [tenantData, setTenantData] = useState<any>(null);
-const [usersData, setUsersData] = useState<any>(null);
+const [tenantData, setTenantData] = useState<TenantSummary | null>(null);
+const [usersData, setUsersData] = useState<ServiceUser[]>([]);
   
 
 
@@ -73,7 +73,7 @@ useEffect(() => {
     }
 
     loadTenantData();
-  }, [tenant]); // Solo se ejecuta al montar o si el tenant cambia
+  }, [tenant, router]); // Solo se ejecuta al montar o si el tenant cambia
 
 
 
@@ -109,21 +109,21 @@ useEffect(() => {
       const {error } = await supabase
       .from("tickets")
       //ojo, aqui se presenta el error debito a que created_by se va a insertar por medio de un trigger
-      .insert({title, description, tenant_id: tenantData.id, assignee } as never)
+      .insert({title, description, tenant_id: tenantData?.id, assignee } as never)
       .select()
       .single();
 
       // Manejo de error limpio
       if (error) {
         setIsLoading(false);
-        alert("Could not create ticket " + error.message + " "+ error.code);
+        alert("No se puedo crear el ticket " + error.message + " "+ error.code);
         console.error("Error detallado:", error.message);
         return; // Detenemos la ejecución aquí
       }
 
 
       // Éxito (Si llegamos aquí, es porque no hubo error)
-      alert("Successfully created ticket");
+      alert("Ticket creado correctamente");
       // Limpiar referencias manualmente
         if (ticketTitleRef.current) ticketTitleRef.current.value = "";
         if (ticketDescriptionRef.current) ticketDescriptionRef.current.value = "";
@@ -133,7 +133,7 @@ useEffect(() => {
       
     }else{
       
-      alert("A title must have at least 5 chars and a description must at least contain 10");
+      alert("Un título debe tener al menos 5 caracteres y una descripción debe contener al menos 10");
     }
 
 

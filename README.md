@@ -361,11 +361,11 @@ para hacer link con los env establecidos: pnpx supabase link --project-ref hbors
 ## bugs que organizar
 
 1. La funcion max() de una de las funciones rpc no es eficiente con grandes volumenes
-2. el middleware proxy esta haciendo un llamado a la base de datos por cada request, se puede cambiar pero no habria seguridad.
-3. Al iniciar sesion si se va a /update-password, deja cambiar el password al ponerle una constraseña nueva.
+2.
+3.
 4. Si se envia el link de invitacion despues del registro, si el magik link falla, no hay otra forma de volverlo a enviar y el usuario ya esta registrado, no quedaria activado.
-5. en los tickets al cmbiar el status, no hay una carga adecuada mientras se carga el nuevo status
-6. un mensaje de advertencia antes de borrar el ticket por que si se borra, se va comentarios y attachments
+5.
+6.
 7. cuadrar la url al utilizar la opcion de buscar
 8. en modo start, al hacer login y no hay credenciales, si se colocan las credenciales que son, no pasa nada.
 9. cuadrar para que el cambio de contraseña pida confirmacion del correo para que si alguien optiene la contraseña, no logre cambiar la contraseña al menos que haya una confirmacio con el correo
@@ -396,7 +396,7 @@ para hacer link con los env establecidos: pnpx supabase link --project-ref hbors
 19. validacion de json con la extencion pj_jsonschema, muy util en las validaciones de las rpc
 20. deshabilitar graphql y otras cosas cuando no se necesita.
 21. -
-22. en el componente de CreateTicketForm agregar un try catch ya que no esta agarrando todos los errores
+22. -
 23. cambiar los alert por toats
 
 24. Agregar el tour

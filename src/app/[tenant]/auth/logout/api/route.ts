@@ -17,7 +17,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   // We created the client and logged out.
   // This will clear the cookies on the server
   const supabase = await createSupabaseServerClient();
-  const { error } = await supabase.auth.signOut({ scope: 'global' });;
+  const { error } = await supabase.auth.signOut();;
 
   if (error){
     return NextResponse.redirect(buildUrl(`/error?type=Error al intentar hace logout por medio de api`, tenant, request), { status: 303 });

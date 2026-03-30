@@ -6,6 +6,7 @@ import { Check, UserX, Loader2 } from "lucide-react"; // Importamos un icono de 
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AvailabilitySelect } from "./AvailabilitySelect";
+import { ServiceUser } from "./CreateTicketForm";
 
 export default function UsersTable() {
   const { tenant } = useParams();
@@ -13,8 +14,8 @@ export default function UsersTable() {
 
   // 1. Empezamos en true porque el useEffect corre de inmediato
   const [isLoading, setIsLoading] = useState(true);
-  const [usersData, setUsersData] = useState<any[]>([]); // Inicializa como array vacío para evitar errores de .map
-  const [currentAuthId, setCurrentAuthId] = useState<any>(null);
+  const [usersData, setUsersData] = useState<ServiceUser[]>([]); // Inicializa como array vacío para evitar errores de .map
+  const [currentAuthId, setCurrentAuthId] = useState<string | undefined>("");
 
   useEffect(() => {
     async function loadTenantData() {
@@ -57,7 +58,7 @@ export default function UsersTable() {
     }
 
     loadTenantData();
-  }, []);
+  }, [router, tenant]);
 
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">

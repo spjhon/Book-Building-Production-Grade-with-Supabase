@@ -54,7 +54,10 @@ interface PageData {
 
 
 
-
+/**
+ * 
+ * @returns The table tickets
+ */
 export default function TicketDetailPage() {
 
 
@@ -137,15 +140,25 @@ export default function TicketDetailPage() {
 
         setCurrentStatus(ticket.status)
 
-      } catch (err: any) {
-        setError(err.message || "Ocurrió un error inesperado");
+      } catch (err: unknown) {
+        // We check if it is an instance of Error (most common)
+        if (err instanceof Error) {
+          console.error("Error detectado:", err.message);
+          setError(err.message);
+        } 
+        //Handling for cases where it is not an object Error (e.g., throw "string")
+        else {
+          const defaultMessage = "Error desconocido extrayendo datos para la tabla tickets";
+          console.error(defaultMessage, err);
+          setError(defaultMessage);
+        }
       } finally {
         setIsLoading(false);
       }
     }
 
     loadAllData();
-  }, [params.slugId, params.tenant]);
+  }, [params.slugId, params.tenant, supabase]);
 
   // Pantalla de Carga
   if (isLoading) {

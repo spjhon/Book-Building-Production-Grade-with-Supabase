@@ -145,13 +145,13 @@ async function onClickHandlerButtonDownload (path: string){
   async function handleSubmit (event: React.FormEvent<HTMLFormElement>) {
 
     event.preventDefault();
-    alert("TODO: Add comment");
+    alert("Se ha agregado el comentario");
 
     let uploadedFiles: { path: string }[] = [];
     let commentIDforDeleteInCaseOfError;
 
     const comment_text = textareaRef.current?.value.trim();
-    if (!comment_text) return alert("Please enter a comment");
+    if (!comment_text) return alert("Por favor insertar un comentario");
 
     setIsSubmitting(true);
 

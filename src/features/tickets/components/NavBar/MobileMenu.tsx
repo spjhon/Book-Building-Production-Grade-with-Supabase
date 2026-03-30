@@ -81,7 +81,7 @@ export function MobileMenu({ routes }: MobileMenuProps) {
                 <TenantName />
               </Link>
             </DrawerTitle>
-            <DrawerDescription>Client menu</DrawerDescription>
+            <DrawerDescription>Menu</DrawerDescription>
           </DrawerHeader>
 
           <div className="flex justify-center">

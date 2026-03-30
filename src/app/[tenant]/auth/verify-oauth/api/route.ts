@@ -55,7 +55,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   // If the user does not exist in the service_users table, then the session is closed and the user is deleted.
   if (profileError || !profile) {
     // First, we log out of the current client.
-    await supabase.auth.signOut({ scope: 'global' });; 
+    await supabase.auth.signOut();; 
 
     // We used the Admin client to remove the user from the auth.users table
     const supabaseAdmin = createSupabaseAdminClient();

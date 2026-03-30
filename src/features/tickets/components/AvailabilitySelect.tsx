@@ -10,7 +10,7 @@ import {
   SelectGroup,
 } from "@/components/ui/select";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-import {  useRouter } from "next/navigation";
+
 import { ServiceUser } from "./CreateTicketForm";
 
 
@@ -28,7 +28,7 @@ export function AvailabilitySelect({
 }) {
   
   const supabase = createSupabaseBrowserClient();
-  const router = useRouter()
+  
 
 
 

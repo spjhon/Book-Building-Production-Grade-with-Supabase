@@ -18,9 +18,8 @@ const resend = new Resend(process.env.RESEND_API_KEY);
  */
 export async function POST(request: NextRequest, {params}: { params: Promise<{ tenant: string }>}) {
 
-  //1.
+  //Extraction of request parameters.
   const { tenant } = await params;
-
   const formData = await request.formData();
   const userName = formData.get("userName");
   const email = formData.get("email");
@@ -28,7 +27,7 @@ export async function POST(request: NextRequest, {params}: { params: Promise<{ t
   const profecion = formData.get("profecion");
 
 
-  
+  //Extracción de parámetros de la solicitud.
   if (typeof email !== "string" || typeof password !== "string" || typeof userName !== "string" || typeof profecion !== "string"){
       
       return NextResponse.json(
@@ -54,17 +53,17 @@ export async function POST(request: NextRequest, {params}: { params: Promise<{ t
       );
     }
 
-//VALIDACION QUE EL TENANT QUE LLEGA POR MEDIO DE PARAMS SE ENCUENTRA EN LA BASE DE DATOS PARA PODER SER PROCESADO
-//2.
+//VALIDATION THAT THE TENANT ARRIVING VIA PARAMS IS IN THE DATABASE IN ORDER TO BE PROCESSED
   const {data: tenantData, error: errorFetchingTenantData} = await fetchTenantDataCached(tenant);
   const tenantDomainValidatedInDb = tenantData?.domain
-
 
   if (!tenantDomainValidatedInDb || errorFetchingTenantData ) {
     return NextResponse.redirect(buildUrl("/not-found", tenant, request), { status: 303 });
   } 
 
-  //3.
+
+
+  //Spaces are adjusted and the email address is converted to lowercase so that it is saved in the correct format.
   const emailLowered = email.toLowerCase()
   const passwordLowered = password
   const userNameTrimmed = userName.trim()
@@ -73,6 +72,8 @@ export async function POST(request: NextRequest, {params}: { params: Promise<{ t
 
 const supabaseAdmin = createSupabaseAdminClient();
 
+//The user is created through the supabase system, which only registers it in the auth schema; 
+// to register it in our schema table which is service_users, it has to be done manually.
 const { data: userData, error: userError } = await supabaseAdmin.auth.admin.createUser({
   email: emailLowered, 
   email_confirm: false,
@@ -81,7 +82,7 @@ const { data: userData, error: userError } = await supabaseAdmin.auth.admin.crea
   user_metadata: { name:`${userNameTrimmed}`}
 });
 
-
+//This is a way to display a complete error in the log; keep in mind that in production this log is the one located on the hosting server.
 if (userError) {
   console.log("Error creando el nuevo usuario")
   console.log({
@@ -99,7 +100,9 @@ if (userError) {
 
 
 
-//4.
+//This code performs the necessary queries and writes to the tables with a deletion system in case something goes wrong. 
+// If any of the following operations fails, the error catch block will delete the user from supabase, the one in the auth schema, 
+// and thanks to the cascading delete feature of the database, everything written within this try block will also be deleted.
 try{
 
 
@@ -114,7 +117,7 @@ try{
   }
 
 
-  //FETCH Buscamos el ID del tenant usando el slug (tenant) que viene en los params
+  //FETCH We look up the tenant ID using the slug (tenant) that comes in the params
   const { data: tenantID, error: fetchTenantError } = await supabaseAdmin
   .from("tenants")
   .select("id")
@@ -135,7 +138,7 @@ try{
   }
 
 
-  //INSERT insertamos en la tabla tenant_permissions para crear el link
+  //INSERT we insert into the tenant_permissions table to create the link
   const {error: InsertNewTenantError} = await supabaseAdmin
   .from("tenant_permissions")
   .insert({ tenant_id: tenantID.id, service_user_id: serviceUser.id});
@@ -146,7 +149,7 @@ try{
   }
 
 
-
+  //An email activation link is generated, which is the same as the magic link used to generate a login and validate the email.
   const { data: generateLinkData, error:errorGeneratinLink } = await supabaseAdmin.auth.admin.generateLink({email, type: "recovery"});
 
   if (errorGeneratinLink){
@@ -181,7 +184,7 @@ try{
 
 
   }catch(err: unknown){
-    //5.
+    //If an error is caught, the user is deleted from the supabase auth schema, erasing everything inserted in the try block, thus achieving a basic manual rollback.
     await supabaseAdmin.auth.admin.deleteUser(userData.user.id);
     const errorMessage = err instanceof Error ? err.message : "Ah ocurrido un error inesperado al crear un usuario";
     return NextResponse.json(
