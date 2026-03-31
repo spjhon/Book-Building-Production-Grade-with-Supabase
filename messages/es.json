@@ -1,0 +1,234 @@
+{
+  "LandingPage": {
+    "featureTitle_1": "Autenticación Robusta",
+    "featureDescription_1": "Inicio de sesión seguro con email/contraseña y proveedores como Google.",
+    "featureTitle_2": "Gestión de Archivos",
+    "featureDescription_2": "Almacenamiento integrado con Supabase Storage, descargas seguras y permisos.",
+    "featureTitle_3": "Gestión de Tickets",
+    "featureDescription_3": "Sistema de tickets con comentarios en tiempo real y actualización de estados.",
+    "featureTitle_4": "Arquitectura Multi-Tenant",
+    "featureDescription_4": "Aislamiento total por organización mediante subdominios o rutas dinámicas.",
+    "featureTitle_5": "Layout Responsivo Pro",
+    "featureDescription_5": "Se adapta perfectamente a dispositivos móviles y pantallas de escritorio.",
+    "featureTitle_6": "Menú Móvil Animado",
+    "featureDescription_6": "Drawer de shadcn con trigger de hamburguesa animado mediante CSS.",
+    "featureTitle_7": "Manejo de Errores 404",
+    "featureDescription_7": "Páginas de error personalizadas y estilizadas con el sistema de temas de shadcn.",
+    "featureTitle_8": "Arquitectura RPC-First",
+    "featureDescription_8": "Comunicación eficiente cliente-servidor mediante llamadas a procedimientos remotos.",
+    "featureTitle_9": "Renderizado SSR Optimizado",
+    "featureDescription_9": "Uso avanzado de Server-Side Rendering con Next.js para garantizar velocidad y SEO.",
+    "featureTitle_10": "Esquema SQL Profesional",
+    "featureDescription_10": "Base de datos relacional en PostgreSQL con políticas de seguridad RLS y tipado estricto.",
+    "featureTitle_11": "Despliegue en Netlify",
+    "featureDescription_11": "Infraestructura escalable desplegada globalmente con soporte nativo para Edge functions.",
+    "stats_label_1": "Máxima Velocidad",
+    "stats_value_1": "SSR - SSG",
+    "stats_label_2": "Solo un viaje al servidor",
+    "stats_value_2": "RPC",
+    "stats_label_3": "Login Sin Contraseña",
+    "stats_value_3": "Google Auth",
+    "stats_label_4": "Un dominio, muchas organizaciones",
+    "stats_value_4": "Multi-Tenant",
+    "nav_features": "Especificaciones",
+    "hero_description": "Proyecto multi-tenant por subdominios utilizando las capacidades de Supabase. Database, Auth, Storage, Real Time. Web Apps Robustas y Seguras.",
+    "tenants_title": "Escoge una",
+    "tenants_organization": "ORGANIZACIÓN",
+    "tenants_description": "Accede directamente al portal de la empresa, cada organización tiene un espacio de trabajo propio.",
+    "tenants_go_to_portal": "Ir al portal",
+    "features_title": "Todo lo necesario para robustez en multi organización",
+    "features_description": "Una Web App segura. Desde un sistema de autenticación robusto hasta seguridad a nivel de base de datos RLS.",
+    "cta_title": "¿Listo para escalar tu próximo proyecto SaaS?",
+    "cta_description": "Actualmente estoy abierto a nuevas oportunidades y retos técnicos. Si buscas a alguien que entienda el Full-Stack de verdad, hablemos.",
+    "cta_linkedin": "Ver Perfil de LinkedIn",
+    "cta_github": "Explorar GitHub",
+    "footer_product": "Producto",
+    "footer_features": "Especificaciones",
+    "footer_docs": "Documentación",
+    "footer_copyright": "Código de libre uso.",
+    "tools_title": "Herramientas modernas y",
+    "tools_accent": "CONFIABLES",
+    "tools_suffix": ""
+  },
+  "Not-Found": {
+    "notfound_title": "Página no encontrada",
+    "notfound_description": "Lo sentimos, el subdominio al que intentas acceder no existe o no está registrado en nuestro sistema.",
+    "notfound_button": "Volver al inicio"
+  },
+  "LoginPage": {
+    "testimonial_1_quote": "Este login posee un robusto sistema de autenticación por medio de un proxy que procesa la seguridad de cada solicitud al servidor.",
+    "testimonial_1_author": "Alta Seguridad",
+    "testimonial_1_role": "Middleware - Proxy",
+
+    "testimonial_2_quote": "Si alguien más entra con tu usuario y contraseña, te saldrá un mensaje de error para darte aviso que alguien más tiene tus credenciales.",
+    "testimonial_2_author": "Sellado de sesión",
+    "testimonial_2_role": "Un usuario, una sesión",
+
+    "testimonial_3_quote": "Contraseña cifrada gracias al sistema de auth de Supabase que otorga una capa obligatoria en seguridad de cuentas reales.",
+    "testimonial_3_author": "Seguridad Supabase",
+    "testimonial_3_role": "Cifrado",
+    "back_to_landing": "Regresar a la Landing Page",
+    "login_system_title": "Sistema de Login Completo",
+    "demo_account_notice": "Utiliza la cuenta demo o registra un email en la sección de registro."
+  },
+  "ForgotPasswordForm": {
+    "forgot_password_success_title": "Revisa tu correo electrónico",
+    "forgot_password_success_description": "Se han enviado las instrucciones para restablecer la contraseña",
+    "forgot_password_success_note": "Si eres un usuario registrado, te llegará el enlace al correo proporcionado",
+    "forgot_password_header_title": "Resetea tu contraseña",
+    "forgot_password_header_description": "Ingresa tu correo electronico registrado",
+    "label_email": "Correo electrónico",
+    "already_have_account": "¿Ya tienes una cuenta?",
+    "login_link": "Iniciar sesión",
+    "btn_sending": "Enviando...",
+    "btn_send_reset_email": "Enviar correo de restablecimiento"
+  },
+  "LoginForm": {
+    "label_password": "Contraseña",
+    "forgot_password_link": "¿Olvidaste tu contraseña?",
+    "login_card_title": "Iniciar sesión",
+    "login_card_description": "Ingresa el correo electrónico para iniciar sesión con la organización: {tenant}",
+    "label_email": "Correo electrónico",
+    "btn_login_password": "Inicia sesión con contraseña",
+    "btn_login_magic_link": "Inicia sesión con enlace mágico",
+    "btn_logging_in": "Entrando...",
+    "btn_login_google": "Ingresa con Google",
+    "use_magic_link": "Utilizar Link Mágico para ingresar",
+    "use_password_link": "Utilizar contraseña",
+    "signup_prompt": "¿Todavía no tienes cuenta?",
+    "signup_link": "Registrarse"
+  },
+  "UpdatePasswordForm": {
+    "update_password_title": "Resetea tu contraseña",
+    "update_password_description": "Por favor introduce tu nueva contraseña",
+    "label_new_password": "Nueva contraseña",
+    "btn_save_password": "Guardar la nueva contraseña",
+    "btn_saving_password": "Guardando..."
+  },
+  "MagicLinkSuccessPage": {
+    "magic_link_success_title": "Magia en camino",
+    "magic_link_success_description": "Revisa tu bandeja de entrada. Hemos enviado un enlace mágico para que inicies sesión sin complicaciones.",
+    "btn_back_to_login": "Volver al login",
+    "magic_link_no_email_hint": "¿No recibiste el correo? Revisa tu carpeta de spam."
+  },
+  "RegisterPage": {
+    "register_info_quote_1": "El sistema de registro envía un correo por medio del servicio RESEND, si no se verifica el email no se puede hacer login.",
+    "register_info_author_1": "Requerimiento de validación de correo electrónico.",
+    "register_info_role_1": "Anti Spam",
+
+    "register_info_quote_2": "Gracias al servicio de Supabase cloud, tu correo está seguro contra filtración de información.",
+    "register_info_author_2": "Supabase Cloud",
+    "register_info_role_2": "Tu correo seguro",
+
+    "register_info_quote_3": "El sistema actual como está configurado, solo permite un correo electrónico por organización.",
+    "register_info_author_3": "Independencia por tenant",
+    "register_info_role_3": "Una cuenta por organización",
+    "back_to_landing": "Regresar al Landing Page",
+    "register_org_subtitle": "Crear cuenta para la organización: {orgName}",
+    "register_valid_email_notice": "Registra un email válido si deseas probar el sistema de activación de correo.",
+    "demo_privacy_notice": "El correo NO se utiliza para nada más allá que la demostración que este DEMO ofrece"
+  },
+  "SignUpForm": {
+    "signup_title": "Registro",
+    "signup_description": "Crear una nueva cuenta con: {tenant}",
+    "label_user_name": "Nombre del usuario",
+    "placeholder_user_name": "Nombre Completo",
+    "label_profession": "Profesión",
+    "placeholder_profession": "Profesión",
+    "label_email": "Email",
+    "placeholder_email": "m@ejemplo.com",
+    "label_password": "Contraseña",
+    "label_repeat_password": "Repetir Contraseña",
+    "btn_signup": "Registrarme",
+    "btn_signing_up": "Creando cuenta...",
+    "login_prompt": "¿Ya tienes una cuenta?",
+    "login_link": "Ingresar"
+  },
+  "TicketsPage": {
+    "btn_create_ticket": "+ Crear Ticket",
+    "tickets_table_description": "Tabla de tickets creados, se presenta paginación después del sexto ticket"
+  },
+  "NavBar": {
+    "back_to_landing": "Regresar al Landing Page",
+    "nav_tickets": "Tickets",
+    "nav_new_ticket": "Nuevo Ticket",
+    "nav_users": "Usuarios"
+  },
+  "LogoutButton": {
+    "btn_logout": "Salir"
+  },
+  "MobileMenu": {
+    "sr_toggle_menu": "Alternar menú",
+    "btn_cancel": "Cancelar"
+  },
+  "UsersTable": {
+    "table_header_name": "Nombre",
+    "table_header_job": "Trabajo",
+    "table_header_status": "Estado",
+    "searching_operators": "Buscando operarios...",
+    "no_users_found": "No se encontraron usuarios para este tenant.",
+    "status_available": "Disponible",
+    "status_unavailable": "No disponible"
+  },
+  "CreateTicketPage": {
+    "title_create_ticket": "Crear un nuevo ticket"
+  },
+  "CreateTicketForm": {
+    "alert_ticket_created": "Ticket creado correctamente",
+    "alert_validation_length": "Un título debe tener al menos 5 caracteres y una descripción debe contener al menos 10",
+    "label_title": "Título",
+    "label_description": "Descripción",
+    "label_assign_user": "Asignar Usuario",
+    "creating_ticket": "Creando ticket...",
+    "btn_create_ticket_now": "Crear el ticket ahora",
+    "placeholder_write_title": "Escribe un título"
+  },
+  "AssigneeSelect": {
+    "status_loading": "Cargando...",
+    "status_unassigned": "Sin asignar"
+  },
+  "TicketFilters": {
+    "placeholder_search_tickets": "Buscar tickets...",
+    "btn_search": "Buscar"
+  },
+  "TicketList": {
+    "table_header_id": "ID",
+    "table_header_title": "Título",
+    "table_header_status": "Estado",
+    "loading_tickets": "Cargando tickets...",
+    "no_tickets_found": "No se encontraron tickets.",
+    "by": "por",
+    "pagination_previous": "Anterior",
+    "pagination_next": "Siguiente"
+  },
+  "AvailabilitySelect": {
+    "status_available": "Disponible",
+    "status_unavailable": "No disponible"
+  },
+  "TicketComments": {
+    "alert_comment_added": "Se ha agregado el comentario",
+    "alert_insert_comment": "Por favor insertar un comentario",
+    "alert_error_saving_comment": "Error al guardar el comentario o la subida de archivos. Se han limpiado los archivos temporales.",
+    "title_comments": "Comentarios",
+    "placeholder_write_comment": "Escribe un comentario...",
+    "files_selected": "Archivos seleccionados",
+    "add_more": "Añadir más",
+    "attach": "Adjuntar",
+    "uploading": "Subiendo...",
+    "publish_comment": "Publicar comentario"
+  },
+  "TicketDetailPage": {
+    "error_title": "¡Ups! Algo salió mal",
+    "retry": "Reintentar",
+    "loading_ticket_details": "Cargando detalles del ticket...",
+    "ticket_management_description": "Gestión de detalles y trazabilidad.",
+    "created_by": "Creado por"
+  },
+  "TicketStatusSelect": {
+    "status_open": "Abierto",
+"status_in_progress": "En progreso",
+"status_done": "Finalizado",
+"status_cancelled": "Cancelado",
+"status_information_missing": "Falta información"
+  }
+}

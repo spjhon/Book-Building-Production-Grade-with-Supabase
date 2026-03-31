@@ -1,0 +1,234 @@
+{
+  "LandingPage": {
+    "featureTitle_1": "Robust Auth",
+    "featureDescription_1": "Secure login with email/password and providers like Google.",
+    "featureTitle_2": "File Management",
+    "featureDescription_2": "Integrated storage with Supabase Storage, secure downloads, and permissions.",
+    "featureTitle_3": "Ticket Management",
+    "featureDescription_3": "Ticketing system with real-time comments and status updates.",
+    "featureTitle_4": "Multi-Tenant Architecture",
+    "featureDescription_4": "Total isolation per organization through subdomains or dynamic routes.",
+    "featureTitle_5": "Pro Responsive Layout",
+    "featureDescription_5": "Adapts seamlessly to mobile devices and desktop screens.",
+    "featureTitle_6": "Animated Mobile Menu",
+    "featureDescription_6": "Shadcn drawer with animated hamburger trigger via CSS.",
+    "featureTitle_7": "404 Error Handling",
+    "featureDescription_7": "Customized and styled error pages using the Shadcn theme system.",
+    "featureTitle_8": "RPC-First Architecture",
+    "featureDescription_8": "Efficient client-server communication via remote procedure calls, centralizing business logic.",
+    "featureTitle_9": "Optimized SSR Rendering",
+    "featureDescription_9": "Advanced use of Server-Side Rendering with Next.js to ensure speed and superior SEO.",
+    "featureTitle_10": "Professional SQL Schema",
+    "featureDescription_10": "Relational database architecture in PostgreSQL with RLS security policies and strict typing.",
+    "featureTitle_11": "Netlify Deployment",
+    "featureDescription_11": "Scalable infrastructure globally deployed with native support for Edge functions.",
+    "stats_label_1": "Maximum Speed",
+    "stats_value_1": "SSR - SSG",
+    "stats_label_2": "Single server roundtrip",
+    "stats_value_2": "RPC",
+    "stats_label_3": "Passwordless Login",
+    "stats_value_3": "Google Auth",
+    "stats_label_4": "One domain, many orgs",
+    "stats_value_4": "Multi-Tenant",
+    "nav_features": "Features",
+    "hero_description": "Multi-tenant project via subdomains utilizing Supabase capabilities. Database, Auth, Storage, Real Time. Robust and Secure Web Apps.",
+    "tenants_title": "Choose an",
+    "tenants_organization": "ORGANIZATION",
+    "tenants_description": "Access the company portal directly; each organization has its own workspace.",
+    "tenants_go_to_portal": "Go to portal",
+    "features_title": "Everything you need for multi-org robustness",
+    "features_description": "A secure Web App. From a robust authentication system to database-level RLS security.",
+    "cta_title": "Ready to scale your next SaaS project?",
+    "cta_description": "I am currently open to new opportunities and technical challenges. If you are looking for someone who truly understands the Full-Stack, let's talk.",
+    "cta_linkedin": "View LinkedIn Profile",
+    "cta_github": "Explore GitHub",
+    "footer_product": "Product",
+    "footer_features": "Specifications",
+    "footer_docs": "Documentation",
+    "footer_copyright": "Free to use code.",
+    "tools_title": "Modern and",
+    "tools_accent": "RELIABLE",
+    "tools_suffix": "tools"
+  },
+  "Not-Found": {
+    "notfound_title": "Page not found",
+    "notfound_description": "We're sorry, the subdomain you are trying to access does not exist or is not registered in our system.",
+    "notfound_button": "Back to home"
+  },
+  "LoginPage": {
+    "testimonial_1_quote": "This login features a robust authentication system via a proxy that processes the security of every server request.",
+    "testimonial_1_author": "High Security",
+    "testimonial_1_role": "Middleware - Proxy",
+
+    "testimonial_2_quote": "If someone else logs in with your username and password, you will receive an error message alerting you that someone else has your credentials.",
+    "testimonial_2_author": "Session Sealing",
+    "testimonial_2_role": "One user, one session",
+
+    "testimonial_3_quote": "Encrypted password thanks to Supabase's auth system, providing a mandatory security layer for real accounts.",
+    "testimonial_3_author": "Supabase Security",
+    "testimonial_3_role": "Encryption",
+    "back_to_landing": "Back to Landing Page",
+    "login_system_title": "Complete Login System",
+    "demo_account_notice": "Use the demo account or register an email in the registration section."
+  },
+  "ForgotPasswordForm": {
+    "forgot_password_success_title": "Check your email",
+    "forgot_password_success_description": "Password reset instructions have been sent",
+    "forgot_password_success_note": "If you are a registered user, the link will arrive at your registered email address",
+    "forgot_password_header_title": "Reset your password",
+    "forgot_password_header_description": "Enter your registered email address",
+    "label_email": "Email",
+    "already_have_account": "Already have an account?",
+    "login_link": "Login",
+    "btn_sending": "Sending...",
+    "btn_send_reset_email": "Send reset email"
+  },
+  "LoginForm": {
+    "label_password": "Password",
+    "forgot_password_link": "Forgot your password?",
+    "login_card_title": "Login",
+    "login_card_description": "Enter your email to log in with the organization: {tenant}",
+    "label_email": "Email",
+    "btn_login_password": "Log in with password",
+    "btn_login_magic_link": "Log in with magic link",
+    "btn_logging_in": "Logging in...",
+    "btn_login_google": "Log in with Google",
+    "use_magic_link": "Use Magic Link to log in",
+    "use_password_link": "Use password",
+    "signup_prompt": "Don't have an account yet?",
+    "signup_link": "Sign up"
+  },
+  "UpdatePasswordForm": {
+    "update_password_title": "Reset your password",
+    "update_password_description": "Please enter your new password",
+    "label_new_password": "New password",
+    "btn_save_password": "Save new password",
+    "btn_saving_password": "Saving..."
+  },
+  "MagicLinkSuccessPage": {
+    "magic_link_success_title": "Magic is on its way",
+    "magic_link_success_description": "Check your inbox. We've sent a magic link so you can log in without any hassle.",
+    "btn_back_to_login": "Back to login",
+    "magic_link_no_email_hint": "Didn't receive the email? Check your spam folder."
+  },
+  "RegisterPage": {
+    "register_info_quote_1": "The registration system sends an email via RESEND; if the email is not verified, login is not possible.",
+    "register_info_author_1": "Email verification requirement.",
+    "register_info_role_1": "Anti-Spam",
+
+    "register_info_quote_2": "Thanks to Supabase Cloud, your email is secure against data leaks.",
+    "register_info_author_2": "Supabase Cloud",
+    "register_info_role_2": "Your email is secure",
+
+    "register_info_quote_3": "The current system configuration only allows one email address per organization.",
+    "register_info_author_3": "Tenant independence",
+    "register_info_role_3": "One account per organization",
+    "back_to_landing": "Back to Landing Page",
+    "register_org_subtitle": "Create account for organization: {orgName}",
+    "register_valid_email_notice": "Register a valid email if you wish to test the email activation system.",
+    "demo_privacy_notice": "The email is NOT used for anything beyond the demonstration this DEMO offers"
+  },
+  "SignUpForm": {
+    "signup_title": "Sign Up",
+    "signup_description": "Create a new account with: {tenant}",
+    "label_user_name": "User name",
+    "placeholder_user_name": "Full Name",
+    "label_profession": "Profession",
+    "placeholder_profession": "Profession",
+    "label_email": "Email",
+    "placeholder_email": "m@example.com",
+    "label_password": "Password",
+    "label_repeat_password": "Repeat Password",
+    "btn_signup": "Sign up",
+    "btn_signing_up": "Creating account...",
+    "login_prompt": "Already have an account?",
+    "login_link": "Log in"
+  },
+  "TicketsPage": {
+    "btn_create_ticket": "+ Create Ticket",
+    "tickets_table_description": "Table of created tickets; pagination appears after the sixth ticket"
+  },
+  "NavBar": {
+    "back_to_landing": "Back to Landing Page",
+    "nav_tickets": "Tickets",
+    "nav_new_ticket": "New Ticket",
+    "nav_users": "Users"
+  },
+  "LogoutButton": {
+    "btn_logout": "Log out"
+  },
+  "MobileMenu": {
+    "sr_toggle_menu": "Toggle Menu",
+    "btn_cancel": "Cancel"
+  },
+  "UsersTable": {
+    "table_header_name": "Name",
+    "table_header_job": "Job",
+    "table_header_status": "Status",
+    "searching_operators": "Searching operators...",
+    "no_users_found": "No users found for this tenant.",
+    "status_available": "Available",
+    "status_unavailable": "Unavailable"
+  },
+  "CreateTicketPage": {
+    "title_create_ticket": "Create a new ticket"
+  },
+  "CreateTicketForm": {
+    "alert_ticket_created": "Ticket created successfully",
+    "alert_validation_length": "A title must be at least 5 characters long and a description must contain at least 10",
+    "label_title": "Title",
+    "label_description": "Description",
+    "label_assign_user": "Assign User",
+    "creating_ticket": "Creating ticket...",
+    "btn_create_ticket_now": "Create ticket now",
+    "placeholder_write_title": "Enter a title"
+  },
+  "AssigneeSelect": {
+    "status_loading": "Loading...",
+    "status_unassigned": "Unassigned"
+  },
+  "TicketFilters": {
+    "placeholder_search_tickets": "Search tickets...",
+    "btn_search": "Search"
+  },
+  "TicketList": {
+    "table_header_id": "ID",
+    "table_header_title": "Title",
+    "table_header_status": "Status",
+    "loading_tickets": "Loading tickets...",
+    "no_tickets_found": "No tickets found.",
+    "by": "by",
+    "pagination_previous": "Previous",
+    "pagination_next": "Next"
+  },
+  "AvailabilitySelect": {
+    "status_available": "Available",
+    "status_unavailable": "Unavailable"
+  },
+  "TicketComments": {
+    "alert_comment_added": "Comment has been added",
+    "alert_insert_comment": "Please insert a comment",
+    "alert_error_saving_comment": "Error saving comment or file upload. Temporary files have been cleared.",
+    "title_comments": "Comments",
+    "placeholder_write_comment": "Write a comment...",
+    "files_selected": "Files selected",
+    "add_more": "Add more",
+    "attach": "Attach",
+    "uploading": "Uploading...",
+    "publish_comment": "Publish comment"
+  },
+  "TicketDetailPage": {
+    "error_title": "Oops! Something went wrong",
+    "retry": "Retry",
+    "loading_ticket_details": "Loading ticket details...",
+    "ticket_management_description": "Management of details and traceability.",
+    "created_by": "Created by"
+  },
+  "TicketStatusSelect": {
+    "status_open": "Open",
+"status_in_progress": "In progress",
+"status_done": "Done",
+"status_cancelled": "Cancelled",
+"status_information_missing": "Information missing"
+  }
+}

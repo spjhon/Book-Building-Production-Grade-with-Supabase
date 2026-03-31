@@ -14,16 +14,14 @@ import Link from "next/link";
 import { useState } from "react";
 import { enviarEmailRecuperacionContrasena } from "@/lib/server_actions/emails";
 
-
 interface ForgotPasswordFormProps {
   tenant: string;
 }
 
+import { useTranslations } from "next-intl";
 
-export function ForgotPasswordForm({tenant}: ForgotPasswordFormProps ) {
-
-
-
+export function ForgotPasswordForm({ tenant }: ForgotPasswordFormProps) {
+  const t = useTranslations("ForgotPasswordForm");
 
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -31,66 +29,67 @@ export function ForgotPasswordForm({tenant}: ForgotPasswordFormProps ) {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleForgotPassword = async (e: React.FormEvent) => {
-    
     e.preventDefault();
 
-    
-    
     setIsLoading(true);
     setError(null);
 
     try {
+      const { data, error } = await enviarEmailRecuperacionContrasena(
+        email,
+        tenant,
+      );
 
-
-      const {data, error} = await enviarEmailRecuperacionContrasena(email, tenant)
-            
-      if (!data || error){
-      throw new Error("Error al crear el link y enviarlo: " + error)
+      if (!data || error) {
+        throw new Error("Error al crear el link y enviarlo: " + error);
       }
 
       setSuccess(true);
-      
     } catch (error: unknown) {
-        
-
-      const message = error instanceof Error ? error.message: "Error enviando el link de recuperacin de contraseña";
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Error enviando el link de recuperacin de contraseña";
       setError(message);
-      
     } finally {
       setIsLoading(false);
     }
-    
   };
 
   return (
-
     //6.
     <div className="flex flex-col gap-6 border border-black rounded-xs">
       {success ? (
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">Reviza tu correo electronico</CardTitle>
-            <CardDescription>Instrucciones para el reseteo de la constraseña fueron enviados</CardDescription>
+            <CardTitle className="text-2xl">
+              {t("forgot_password_success_title")}
+            </CardTitle>
+            <CardDescription>
+              {t("forgot_password_success_description")}
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
-              Si eres un usuario registrado, va a llegar el link al correo registrado
+              {t("forgot_password_success_note")}
             </p>
           </CardContent>
         </Card>
       ) : (
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">Resetea tu contraseña</CardTitle>
+            <CardTitle className="text-2xl">
+              {t("forgot_password_header_title")}
+            </CardTitle>
             <CardDescription>
-              Ingresa el correo electronico registrado
+              {t("forgot_password_header_description")}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleForgotPassword}>
               <div className="flex flex-col gap-6">
                 <div className="grid gap-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">{t("label_email")}</Label>
                   <Input
                     id="email"
                     type="email"
@@ -102,17 +101,17 @@ export function ForgotPasswordForm({tenant}: ForgotPasswordFormProps ) {
                 </div>
                 {error && <p className="text-sm text-red-500">{error}</p>}
                 <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? "Enviando..." : "Enviar correo de reseteo"}
+                  {isLoading ? t("btn_sending") : t("btn_send_reset_email")}
                 </Button>
               </div>
               <div className="mt-4 text-center text-sm">
-                Ya tiene una cuenta?{" "}
+                {t("already_have_account")}{" "}
                 <Link
-                 prefetch={false}
+                  prefetch={false}
                   href={`/auth/login`}
                   className="underline underline-offset-4"
                 >
-                  Login
+                  {t("login_link")}
                 </Link>
               </div>
             </form>
@@ -122,7 +121,5 @@ export function ForgotPasswordForm({tenant}: ForgotPasswordFormProps ) {
     </div>
   );
 }
-
-
 
 // `${window.location.origin}/auth/update-password`}

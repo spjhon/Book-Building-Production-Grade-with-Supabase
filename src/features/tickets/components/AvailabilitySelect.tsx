@@ -1,6 +1,6 @@
 "use client";
 
-import {  useState } from "react";
+import { useState } from "react";
 import {
   Select,
   SelectContent,
@@ -13,89 +13,76 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 import { ServiceUser } from "./CreateTicketForm";
 
+import { useTranslations } from "next-intl";
 
-
-
-
-export function AvailabilitySelect({ 
-  user_id, 
+export function AvailabilitySelect({
+  user_id,
   is_available,
-  setUsersData
-}: { 
+  setUsersData,
+}: {
   user_id: string;
   is_available: boolean;
-  setUsersData: React.Dispatch<React.SetStateAction<ServiceUser[]>>
+  setUsersData: React.Dispatch<React.SetStateAction<ServiceUser[]>>;
 }) {
-  
+  const t = useTranslations("AvailabilitySelect");
+
   const supabase = createSupabaseBrowserClient();
-  
 
-
-
-const [isLoading, setIsLoading] = useState(false);
-
-
-
-
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleStatusChange = async (value: string) => {
     setIsLoading(true);
     const newStatus = value === "available";
 
+    try {
+      // Llamada DIRECTA a Supabase (Cuesta $0 en Vercel)
+      const { data: finaleUpdateAvailability, error: errorUpdateAvailability } =
+        await supabase
+          .from("service_users")
+          .update({ is_available: newStatus })
+          .eq("id", user_id)
+          .select() // <--- OBLIGATORIO para recibir la fila actualizada
+          .single();
 
-    try{
+      if (errorUpdateAvailability || !finaleUpdateAvailability) {
+        console.log("Error actualizando el status.");
+        throw new Error("Error actualizando el status.");
+      }
 
- // Llamada DIRECTA a Supabase (Cuesta $0 en Vercel)
-    const {data: finaleUpdateAvailability, error: errorUpdateAvailability } = await supabase
-    .from("service_users")
-    .update({ is_available: newStatus })
-    .eq("id", user_id)
-    .select() // <--- OBLIGATORIO para recibir la fila actualizada
-    .single();
-
-    if(errorUpdateAvailability || !finaleUpdateAvailability){
-      console.log("Error actualizando el status.")
-      throw new Error("Error actualizando el status.")
-    }
-
-
-      setUsersData((prevUsers) => 
-        prevUsers.map((user) => 
-          user.id === user_id 
-            ? { ...user, is_available: newStatus } // Si es el ID, cambiamos el status
-            : user // Si no, lo dejamos igual
-        )
+      setUsersData((prevUsers) =>
+        prevUsers.map(
+          (user) =>
+            user.id === user_id
+              ? { ...user, is_available: newStatus } // Si es el ID, cambiamos el status
+              : user, // Si no, lo dejamos igual
+        ),
       );
-
-
-
-
-
-    }catch(error){
-      const message = error instanceof Error? error.message : "Error actualizando el disponiblidad."
-      console.log(message)
-    }finally{
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Error actualizando el disponiblidad.";
+      console.log(message);
+    } finally {
       setIsLoading(false);
-     
     }
-
-
-
   };
 
   return (
-    <Select 
+    <Select
       onValueChange={handleStatusChange}
       defaultValue={is_available ? "available" : "unavailable"}
       disabled={isLoading}
     >
       <SelectTrigger className="w-35">
-        <SelectValue placeholder={is_available ? "Disponible" : "No disponible"} />
+        <SelectValue
+          placeholder={is_available ? "Disponible" : "No disponible"}
+        />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          <SelectItem value="available">Disponible</SelectItem>
-          <SelectItem value="unavailable">No disponible</SelectItem>
+          <SelectItem value="available">{t("status_available")}</SelectItem>
+          <SelectItem value="unavailable">{t("status_unavailable")}</SelectItem>
         </SelectGroup>
       </SelectContent>
     </Select>

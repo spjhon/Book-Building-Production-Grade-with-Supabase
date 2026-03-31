@@ -4,27 +4,35 @@ import {
   NavigationMenu,
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
-import { ArrowLeft, Megaphone } from "lucide-react";
+import { ArrowLeft, LogOut } from "lucide-react";
 import { MobileMenu } from './MobileMenu';
 import Link from "next/link";
 import { LogoutButton } from "../LogoutButton";
 import TenantName from "../TenantName";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import LocaleSwitcher from "@/features/LocaleSwitcher/LocaleSwitchers";
+import { changeLocaleAction } from "@/lib/server_actions/language";
 
 export interface RouteProps {
   href: "/tickets" | "/tickets/new" | "/tickets/users";
   label: string;
 }
 
+
+import { useTranslations } from "next-intl";
+
 export const Navbar = () => {
+
+const t = useTranslations("NavBar");
+
   const pathname = usePathname();
 
   const routeList: RouteProps[] = [
-    { href: "/tickets", label: "Tickets" },
-    { href: "/tickets/new", label: "Nuevo Ticket" },
-    { href: "/tickets/users", label: "Usuarios" },
-  ];
+  { href: "/tickets", label: t("nav_tickets") },
+  { href: "/tickets/new", label: t("nav_new_ticket") },
+  { href: "/tickets/users", label: t("nav_users") },
+];
 
   const isActiveRoute = (href: string) => {
     if (href === "/tickets") {
@@ -37,14 +45,23 @@ export const Navbar = () => {
     <header className="bg-clip-padding backdrop-filter py-4 backdrop-blur-md bg-opacity-0 sticky border-b top-0 z-10 dark:border-b-slate-700 dark:bg-background">
       <div className="flex flex-row justify-end xl:justify-between items-center mx-auto max-w-2/3">
         
-        <Link
-         prefetch={false}
-          href="https://tiendadelamujer.com/"
-          className="fixed left-8 top-[1.6rem] flex items-center text-sm text-black hover:opacity-70 transition-colors font-medium z-20"
-      >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Regresar al Landign Page
-      </Link>
+        <div className=" self-center my-10 flex items-center gap-3 ">
+          {/* El Switcher de idioma */}
+          <LocaleSwitcher changeLocaleAction={changeLocaleAction} />
+
+          {/* El separador visual (opcional, puedes borrarlo si no te gusta) */}
+          <div className="w-px h-4 bg-slate-200" />
+
+          {/* Enlace de regreso */}
+          <Link
+            prefetch={false}
+            href="https://tiendadelamujer.com/"
+            className="flex items-center text-sm font-medium text-black hover:opacity-70 transition-opacity"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            {t("back_to_landing")}
+          </Link>
+        </div>
 
 
         <Link
@@ -94,7 +111,7 @@ export const Navbar = () => {
         </div>
 
         <div className="hidden xl:flex items-center gap-4">
-          <Megaphone />
+          <LogOut className="w-4 h-4" />
           <LogoutButton />
         </div>
       </div>

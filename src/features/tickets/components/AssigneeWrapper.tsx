@@ -13,7 +13,7 @@ export default function AssigneeWrapper({ ticketId, usersData, defaultValue }: {
 
   const handleUpdate = async (val: string | null) => {
     // Aquí ejecutas la lógica de actualización en Supabase
-    console.log("se puso a trabajar la funcion handleupdate")
+   
     const { error } = await supabase
       .from("tickets")
       .update({ assignee: val })

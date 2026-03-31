@@ -26,7 +26,7 @@ const statusStyles: Record<string, string> = {
 
 // --- INTERFACES ---
 
-
+import { useTranslations } from "next-intl";
 
 
 interface Ticket {
@@ -60,7 +60,7 @@ interface PageData {
  */
 export default function TicketDetailPage() {
 
-
+const t = useTranslations("TicketDetailPage");
 
   const params = useParams();
   const supabase = createSupabaseBrowserClient();
@@ -165,7 +165,7 @@ export default function TicketDetailPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
         <Loader2 className="w-10 h-10 animate-spin text-blue-600" />
-        <p className="text-slate-500 font-medium">Cargando detalles del ticket...</p>
+        <p className="text-slate-500 font-medium">{t("loading_ticket_details")}</p>
       </div>
     );
   }
@@ -175,14 +175,14 @@ export default function TicketDetailPage() {
     return (
       <div className="max-w-xl mx-auto mt-20 p-6 border-2 border-red-100 bg-red-50 rounded-2xl flex flex-col items-center gap-4 text-center">
         <AlertCircle className="w-12 h-12 text-red-500" />
-        <h2 className="text-xl font-bold text-red-900">¡Ups! Algo salió mal</h2>
+        <h2 className="text-xl font-bold text-red-900">{t("error_title")}</h2>
         <p className="text-red-700">{error}</p>
         <button 
-          onClick={() => window.location.reload()} 
-          className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
-        >
-          Reintentar
-        </button>
+  onClick={() => window.location.reload()} 
+  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+>
+  {t("retry")}
+</button>
       </div>
     );
   }
@@ -197,7 +197,7 @@ export default function TicketDetailPage() {
         <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">
           Ticket <span className="text-slate-400 font-light">#{params.slugId}</span>
         </h1>
-        <p className="text-slate-500 text-sm font-medium">Gestión de detalles y trazabilidad.</p>
+        <p className="text-slate-500 text-sm font-medium">{t("ticket_management_description")}</p>
       </div>
 
       <article className="bg-white border border-slate-200 shadow-sm rounded-3xl overflow-hidden">
@@ -237,7 +237,7 @@ export default function TicketDetailPage() {
           <div className="space-y-2">
             <h2 className="text-2xl font-bold text-slate-900 leading-tight">{ticket.title}</h2>
             <div className="flex items-center gap-2 text-sm text-slate-500">
-              <span>Creado por</span>
+              <span>{t("created_by")}</span>
               <span className="flex items-center gap-1.5 font-semibold text-slate-900 bg-slate-100 px-2 py-0.5 rounded-md">
                 <div className="w-4 h-4 rounded-full bg-slate-300" /> 
                 {autorName.full_name}

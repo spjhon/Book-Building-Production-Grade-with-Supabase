@@ -1,43 +1,36 @@
 "use client";
 
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useRef } from "react";
 
-
-
+import { useTranslations } from "next-intl";
 
 export function TicketFilters() {
+  const t = useTranslations("TicketFilters");
 
-const router = useRouter();
-const pathname = usePathname();
-const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-    const searchInputRef = useRef<HTMLInputElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-    const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const search = searchInputRef.current?.value || "";
 
-        e.preventDefault();
+    const updatedParams = new URLSearchParams(searchParams);
 
+    updatedParams.set("search", search);
+    updatedParams.set("page", "1");
 
-        const search = searchInputRef.current?.value || "";
-        
-        const updatedParams = new URLSearchParams(searchParams);
-
-        updatedParams.set("search", search);
-        updatedParams.set("page", "1");
-       
-        router.push(pathname + "?" + updatedParams.toString());
-       
-    };
-
+    router.push(pathname + "?" + updatedParams.toString());
+  };
 
   return (
-
     <form onSubmit={onSubmit} className="w-full max-w-md my-4">
       <div className="relative flex items-center gap-2">
         {/* Contenedor del Input con Icono */}
@@ -48,23 +41,20 @@ const searchParams = useSearchParams();
             ref={searchInputRef}
             id="search"
             name="search"
-            placeholder="Buscar tickets..."
+            placeholder={t("placeholder_search_tickets")}
             className="pl-9 bg-white/50 backdrop-blur-sm border-gray-200 focus-visible:ring-primary/20 transition-all"
           />
         </div>
 
         {/* Botón Estilo Shadcn */}
-        <Button 
-          type="submit" 
+        <Button
+          type="submit"
           variant="default"
           className="shadow-sm hover:shadow-md transition-shadow px-6"
         >
-          Buscar
+          {t("btn_search")}
         </Button>
       </div>
     </form>
-
-
-
   );
 }

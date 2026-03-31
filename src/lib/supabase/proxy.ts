@@ -16,21 +16,49 @@ export async function updateSession(request: NextRequest) {
 
   //RUTAS PUBLICAS PERMITIDAS
 
-  // Al principio del middleware
-  console.log("se ejecuto el proxy principal con el path: " + applicationPath);
-  //si alguno de estos host o alguno de estos path se cumple, entonces retornar supabaseResponse sin hacer mas preguntas
-  if (
+ if (
+  applicationPath.startsWith("/cdn") ||
     applicationPath.startsWith("/_next") ||
     applicationPath.startsWith("/api") ||
     applicationPath.includes(".") ||
+    applicationPath.startsWith("/not-found") 
+    
+  ) {
+   
+    return supabaseResponse;
+  }
+
+
+
+const restrictedDomains = ["127.0.0.1", "tiendadelamujer", "miapp"];
+
+
+
+if (
+  restrictedDomains.includes(hostname) && 
+  applicationPath !== "/" && applicationPath !== "/not-found"
+) {
+  
+  const url = request.nextUrl.clone();
+  url.pathname = "/not-found";
+  return NextResponse.redirect(url);
+}
+
+  // Al principio del middleware
+
+  //si alguno de estos host o alguno de estos path se cumple, entonces retornar supabaseResponse sin hacer mas preguntas
+  if (
     hostname === rootDomain ||
     hostname === "127.0.0.1" ||
     hostname === "miapp" ||
     hostname === "tiendadelamujer"
   ) {
-    console.log("se toco el landign");
+    
     return supabaseResponse;
   }
+
+ 
+
 
   // 2. DETECTOR DE BUCLE (Crucial para multi-tenancy)
   // Si la ruta ya fue reescrita internamente, dejamos pasar.
@@ -41,7 +69,7 @@ export async function updateSession(request: NextRequest) {
     return supabaseResponse;
   }
 
-  console.log("se ejecuto el proxy pasando filtros iniciales");
+  console.log(`[${request.method}] Proxy path: ${applicationPath}`);
 
   // 1. CLIENTE SUPABASE
   const supabase = createServerClient<Database>(

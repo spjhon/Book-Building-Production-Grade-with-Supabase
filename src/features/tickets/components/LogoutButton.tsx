@@ -3,8 +3,12 @@
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 
+import { useTranslations } from "next-intl";
 
 export function LogoutButton() {
+
+const t = useTranslations("LogoutButton");
+
   const router = useRouter();
   const handleLogout = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -24,8 +28,8 @@ export function LogoutButton() {
       onSubmit={handleLogout}
     >
       <button type="submit" className="secondary">
-        Salir
-      </button>
+  {t("btn_logout")}
+</button>
     </form>
   );
 }

@@ -1,9 +1,6 @@
-
-
-
 import CreateTicketForm from "@/features/tickets/components/CreateTicketForm";
 
-
+import { useTranslations } from "next-intl";
 
 /** 
 export const revalidate = 31536000;
@@ -14,9 +11,6 @@ export async function generateStaticParams() {
 }
 */
 
-
-export const dynamic = 'force-static' 
-
 /**
 export async function generateStaticParams() {
   //el cache component sirve solo si se saben todos los params, si no se saben hay que dejar la pagina completamente estatica
@@ -24,14 +18,12 @@ export async function generateStaticParams() {
 }
  */
 
-
-export default function CreateTicketPage(){
-
+export default function CreateTicketPage() {
+  const t = useTranslations("CreateTicketPage");
   /**
 'use cache'
   cacheLife('max')
   */
-
 
   /**
   const { data: serviceUsersFromSpecificTenant, error: errorUsersFromSpecificTenant } = await supabaseServer.rpc("get_service_users_with_tenant", { target_tenant_id: tenantData.id });
@@ -42,25 +34,18 @@ export default function CreateTicketPage(){
     }
  */
 
-
-
-
-
   return (
     // Contenedor principal con diseño de tarjeta
     <div className="max-w-xl mx-auto">
-    <article className="mt-20 mx-5 bg-white shadow-lg border border-black rounded-xs p-8 ">
-      <h3 className="text-2xl font-bold text-gray-900">
-        Crear un nuevo ticket
-      </h3>
+      <article className="mt-20 mx-5 bg-white shadow-lg border border-black rounded-xs p-8 ">
+        <h3 className="text-2xl font-bold text-gray-900">
+          {t("title_create_ticket")}
+        </h3>
 
-      {/* Manejo del formulario */}
-      
-        
-          <CreateTicketForm  />
-      
-    </article>
+        {/* Manejo del formulario */}
+
+        <CreateTicketForm />
+      </article>
     </div>
   );
 }
-

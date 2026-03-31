@@ -13,13 +13,7 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 
 
-const statusLabels: Record<string, string> = {
-  open: "Abierto",
-  in_progress: "En progreso",
-  done: "Finalizado",
-  cancelled: "Cancelado",
-  information_missing: "Falta información",
-};
+
 
 const statusStyles: Record<string, string> = {
   open: "bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-100/80",
@@ -29,7 +23,7 @@ const statusStyles: Record<string, string> = {
   information_missing: "bg-amber-100 text-amber-700 border-amber-200 hover:bg-amber-100/80",
 };
 
-
+import { useTranslations } from "next-intl";
 
 export default function TicketStatusSelect({ 
   user_id, 
@@ -44,6 +38,15 @@ export default function TicketStatusSelect({
 }) {
 
 
+const t = useTranslations("TicketStatusSelect");
+
+const statusLabels: Record<string, string> = {
+  open: t("status_open"),
+  in_progress: t("status_in_progress"),
+  done: t("status_done"),
+  cancelled: t("status_cancelled"),
+  information_missing: t("status_information_missing"),
+};
 
   const [isLoading, setIsLoading] = useState(false);
   

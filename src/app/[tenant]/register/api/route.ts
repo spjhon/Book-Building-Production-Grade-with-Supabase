@@ -76,7 +76,7 @@ const supabaseAdmin = createSupabaseAdminClient();
 // to register it in our schema table which is service_users, it has to be done manually.
 const { data: userData, error: userError } = await supabaseAdmin.auth.admin.createUser({
   email: emailLowered, 
-  email_confirm: false,
+  email_confirm: true,
   password: passwordLowered,
   app_metadata: {tenants: [tenant]},
   user_metadata: { name:`${userNameTrimmed}`}

@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { Button} from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Drawer,
   DrawerClose,
@@ -10,22 +10,28 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from "@/components/ui/drawer"
-import { NavigationMenu, NavigationMenuList } from "@/components/ui/navigation-menu"
-import { RouteProps } from "./Navbar"
-import Link from "next/link"
-import TenantName from "../TenantName"
-import { Megaphone } from "lucide-react"
-import { LogoutButton } from "../LogoutButton"
-import { useState } from "react"
-import { usePathname } from "next/navigation" // 👈 Importar
-import { cn } from "@/lib/utils" // 👈 Importar
+} from "@/components/ui/drawer";
+import {
+  NavigationMenu,
+  NavigationMenuList,
+} from "@/components/ui/navigation-menu";
+import { RouteProps } from "./Navbar";
+import Link from "next/link";
+import TenantName from "../TenantName";
+import { LogOut } from "lucide-react";
+import { LogoutButton } from "../LogoutButton";
+import { useState } from "react";
+import { usePathname } from "next/navigation"; // 👈 Importar
+import { cn } from "@/lib/utils"; // 👈 Importar
 
 interface MobileMenuProps {
   routes: RouteProps[];
 }
 
+import { useTranslations } from "next-intl";
+
 export function MobileMenu({ routes }: MobileMenuProps) {
+  const t = useTranslations("MobileMenu");
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname(); // 👈 Obtener ruta actual
 
@@ -39,7 +45,7 @@ export function MobileMenu({ routes }: MobileMenuProps) {
 
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
-      <DrawerTrigger asChild className="xl:hidden">
+      <DrawerTrigger asChild className="xl:hidden ml-9">
         <Button
           variant="ghost"
           size="icon"
@@ -65,7 +71,7 @@ export function MobileMenu({ routes }: MobileMenuProps) {
               }`}
             ></span>
           </div>
-          <span className="sr-only">Toggle Menu</span>
+          <span className="sr-only">{t("sr_toggle_menu")}</span>
         </Button>
       </DrawerTrigger>
 
@@ -73,11 +79,7 @@ export function MobileMenu({ routes }: MobileMenuProps) {
         <div className="mx-auto w-full max-w-sm">
           <DrawerHeader>
             <DrawerTitle>
-              <Link
-                 prefetch={false}
-                href="/"
-                onClick={() => setIsOpen(false)}
-              >
+              <Link prefetch={false} href="/" onClick={() => setIsOpen(false)}>
                 <TenantName />
               </Link>
             </DrawerTitle>
@@ -90,11 +92,11 @@ export function MobileMenu({ routes }: MobileMenuProps) {
                 <nav className="flex flex-col gap-4 my-6 w-60">
                   {routes.map((route, i) => {
                     const isActive = isActiveRoute(route.href); // 👈 Verificar activo
-                    
+
                     return (
                       <DrawerClose asChild key={i}>
                         <Link
-                         prefetch={false}
+                          prefetch={false}
                           href={route.href}
                           className={cn(
                             // 👇 Dimensiones fijas SIEMPRE
@@ -103,11 +105,11 @@ export function MobileMenu({ routes }: MobileMenuProps) {
                             "rounded-md text-[17px] font-bold",
                             "transition-colors duration-200",
                             "border-2", // 👈 Borde siempre presente
-                            
+
                             // 👇 Solo cambia colores, no layout
                             isActive
                               ? "bg-primary text-primary-foreground border-primary"
-                              : "bg-background hover:bg-accent hover:text-accent-foreground border-input"
+                              : "bg-background hover:bg-accent hover:text-accent-foreground border-input",
                           )}
                           aria-current={isActive ? "page" : undefined}
                         >
@@ -123,15 +125,17 @@ export function MobileMenu({ routes }: MobileMenuProps) {
 
           <DrawerFooter className="gap-4">
             <div className="flex items-center justify-center gap-4 py-2">
-              <Megaphone className="text-black" />
+              <LogOut className="w-4 h-4" />
               <LogoutButton />
             </div>
             <DrawerClose asChild>
-              <Button variant="default" className="w-full">Cancelar</Button>
+              <Button variant="default" className="w-full">
+                {t("btn_cancel")}
+              </Button>
             </DrawerClose>
           </DrawerFooter>
         </div>
       </DrawerContent>
     </Drawer>
-  )
+  );
 }

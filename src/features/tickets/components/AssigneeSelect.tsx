@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   Select,
@@ -9,35 +9,38 @@ import {
   SelectGroup,
 } from "@/components/ui/select"; // Ajusta el path según tu estructura
 
-import { ServiceUser } from './CreateTicketForm';
+import { ServiceUser } from "./CreateTicketForm";
 
+import { useTranslations } from "next-intl";
 
-export function AssigneeSelect({ onValueChanged, users, defaultValue }: { 
+export function AssigneeSelect({
+  onValueChanged,
+  users,
+  defaultValue,
+}: {
   onValueChanged: (val: string | null) => void;
   users: ServiceUser[];
-  defaultValue?: string | null; 
+  defaultValue?: string | null;
 }) {
-
-
-
-
-  
-
+  const t = useTranslations("AssigneeSelect");
 
   return (
-    <Select 
+    <Select
       onValueChange={(val) => onValueChanged(val === "none" ? null : val)}
       disabled={users === null}
-      defaultValue={defaultValue?defaultValue:undefined }
+      defaultValue={defaultValue ? defaultValue : undefined}
     >
-
       <SelectTrigger className="w-full">
-        <SelectValue placeholder={users === null ? "Cargando..." : "Sin asignar"} />
+        <SelectValue
+          placeholder={
+            users === null ? t("status_loading") : t("status_unassigned")
+          }
+        />
       </SelectTrigger>
 
       <SelectContent>
         <SelectGroup>
-          <SelectItem value="none">Sin asignar</SelectItem>
+          <SelectItem value="none">{t("status_unassigned")}</SelectItem>
           {users?.map((user) => (
             <SelectItem key={user.id} value={user.id}>
               {user.full_name}
@@ -45,8 +48,6 @@ export function AssigneeSelect({ onValueChanged, users, defaultValue }: {
           ))}
         </SelectGroup>
       </SelectContent>
-
     </Select>
   );
 }
-
