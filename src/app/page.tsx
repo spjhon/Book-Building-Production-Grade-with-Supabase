@@ -188,7 +188,7 @@ export default function Home() {
             {tenants.map((tenant) => (
               <Suspense key={tenant} fallback={"Cargando..."}>
                 <Link
-                  prefetch={false}
+                  prefetch={true}
                   key={tenant}
                   href={`http://${tenant}.${rootDomain}/tickets`}
                   className="group relative overflow-hidden rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:border-primary/20"

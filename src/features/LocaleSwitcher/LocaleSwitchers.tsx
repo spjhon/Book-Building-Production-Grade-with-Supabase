@@ -1,6 +1,6 @@
 'use client';
 
-import * as React from "react";
+
 import { useLocale } from 'next-intl';
 import { Languages, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { useTransition } from "react";
 
 type Props = {
   // Nota: Al usar cookies, no necesitas que sea obligatoriamente un Promise, 
@@ -25,7 +26,7 @@ const locales = [
 
 export default function LocaleSwitcher({ changeLocaleAction }: Props) {
   const currentLocale = useLocale();
-  const [isPending, startTransition] = React.useTransition();
+  const [isPending, startTransition] = useTransition();
 
   const handleSelect = (newLocale: string) => {
     startTransition(async () => {
@@ -46,7 +47,7 @@ export default function LocaleSwitcher({ changeLocaleAction }: Props) {
           <span className="font-medium">{currentLocale.toUpperCase()}</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[130px]">
+      <DropdownMenuContent align="end" className="w-32.5">
         {locales.map((loc) => (
           <DropdownMenuItem
             key={loc.id}

@@ -80,6 +80,13 @@ const logos = [
     label: "CSS",
     link: "https://developer.mozilla.org/en-US/docs/Web/CSS",
   },
+
+  {
+    id: "11",
+    logo: <SupabaseLogo />,
+    label: "Supabase",
+    link: "https://supabase.com/",
+  },
 ];
 
 const ReviewCard = ({
@@ -109,6 +116,7 @@ const ReviewCard = ({
 };
 
 import { useTranslations } from "next-intl";
+import SupabaseLogo from "./svgStack/SupabaseLogo";
 
 export function LogoMarquee() {
   const t = useTranslations("LandingPage");

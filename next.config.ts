@@ -13,7 +13,7 @@ const nextConfig: NextConfig = {
       permanent: true,
     },
   ],
-  
+   allowedDevOrigins: ['**.miapp', '127.0.0.1', 'tiendadelamujer'],
   images: {
     remotePatterns: [
       {
@@ -43,5 +43,10 @@ const nextConfig: NextConfig = {
   
 };
 
+
 const withNextIntl = createNextIntlPlugin();
+
+
+
 export default withNextIntl(nextConfig);
+

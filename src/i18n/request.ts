@@ -7,7 +7,7 @@ export default getRequestConfig(async () => {
   
   // 1. Prioridad máxima: La cookie que tú seteas en el Server Action
   // 2. Fallback: El idioma por defecto de tu app
-  const locale = cookieStore.get('NEXT_LOCALE')?.value || 'es';
+  const locale = cookieStore.get('NEXT_LOCALE')?.value || 'en';
 
   
   const messages = (await import(`../../messages/${locale}.json`)).default;
