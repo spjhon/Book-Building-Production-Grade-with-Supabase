@@ -31,7 +31,7 @@ export default async function RegisterPage({
         ? errorFetchingTenantData
         : errorFetchingTenantData?.message || "Tenant no encontrado";
 
-    redirect(`/error?type=${encodeURIComponent(errorMessage)}`);
+    redirect(`/error?type=${encodeURIComponent(errorMessage) + ". Error de fetchTenantDataCached"}`);
   }
 
   const tenantDomain = tenantData.domain;
