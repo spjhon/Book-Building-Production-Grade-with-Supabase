@@ -20,6 +20,10 @@ export default async function Login({
   searchParams: Promise<{ magicLink: string }>;
   params: Promise<{ tenant: string }>;
 }) {
+
+
+
+  
   const t = await getTranslations("LoginPage");
 
   //Parameter extraction and search parameters.

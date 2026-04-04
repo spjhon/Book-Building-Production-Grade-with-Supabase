@@ -30,7 +30,7 @@ export async function updateSession(request: NextRequest) {
 
 
 
-const restrictedDomains = ["127.0.0.1", "tiendadelamujer.com", "miapp"];
+const restrictedDomains = ["127.0.0.1", "tiendadelamujer", "miapp"];
 
 
 
@@ -51,7 +51,7 @@ if (
     hostname === rootDomain ||
     hostname === "127.0.0.1" ||
     hostname === "miapp" ||
-    hostname === "tiendadelamujer.com"
+    hostname === "tiendadelamujer"
   ) {
     
     return supabaseResponse;
