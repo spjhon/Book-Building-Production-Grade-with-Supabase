@@ -1,4 +1,6 @@
 
+"use client"
+
 import UsersTable from "@/features/tickets/components/UsersTable";
 
 

@@ -1,3 +1,6 @@
+
+"use client"
+
 import CreateTicketForm from "@/features/tickets/components/CreateTicketForm";
 
 import { useTranslations } from "next-intl";

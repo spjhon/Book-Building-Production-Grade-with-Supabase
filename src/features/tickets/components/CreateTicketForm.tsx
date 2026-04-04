@@ -64,7 +64,7 @@ export default function CreateTicketForm() {
         setTenantData(tenantData);
         setUsersData(usersFetched);
       } catch (err) {
-        console.error("Error inesperado:", err);
+        console.log("Error inesperado:", err);
         router.push(`/error?type=Error inesperado en el cliente`);
       } finally {
         setIsLoading(false);

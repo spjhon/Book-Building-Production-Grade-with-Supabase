@@ -13,7 +13,7 @@ const nextConfig: NextConfig = {
       permanent: true,
     },
   ],
-   allowedDevOrigins: ['**.miapp', '127.0.0.1', 'tiendadelamujer'],
+   allowedDevOrigins: ['**.miapp', '127.0.0.1'],
   images: {
     remotePatterns: [
       {
