@@ -30,7 +30,7 @@ export async function updateSession(request: NextRequest) {
 
 
 
-const restrictedDomains = ["127.0.0.1", "tiendadelamujer", "miapp"];
+const restrictedDomains = ["127.0.0.1", "tiendadelamujer", "miapp", "tiendadelamujer.com"];
 
 
 
