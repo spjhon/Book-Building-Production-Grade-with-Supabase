@@ -1,181 +1,132 @@
 "use client";
 
-import { AssigneeSelect } from "@/features/tickets/components/AssigneeSelect";
+import { useContext, useRef, useState } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-import { useEffect, useRef, useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
+import { Loader2, TicketPlus } from "lucide-react";
+import { toast } from "sonner"; // 1. Importamos toast de Sonner
+
+import { Button } from "@/components/ui/button";
+import { AssigneeSelect } from "@/features/tickets/components/AssigneeSelect";
+import { TicketsContext } from "../DataLoaderContex";
+import { fetchServiceUsersCached } from "@/lib/dbFunctions/get_service_users_with_tenant_cached";
 import { Database } from "../../../../supabase/types/database.types";
 
-
-import { useParams, useRouter } from "next/navigation";
-
-import { fetchServiceUsersCached } from "@/lib/dbFunctions/get_service_users_with_tenant_cached";
-import { fetchTenantDataCached } from "@/lib/dbFunctions/fetch_tenant_domain_cached";
-import { Button } from "@/components/ui/button";
-import { Loader2, TicketPlus } from "lucide-react";
-
 export type ServiceUser = Database["public"]["Tables"]["service_users"]["Row"];
-export type TenantSummary = Pick<
-  Database["public"]["Tables"]["tenants"]["Row"],
-  "id" | "name" | "domain"
->;
-
-import { useTranslations } from "next-intl";
 
 export default function CreateTicketForm() {
   const t = useTranslations("CreateTicketForm");
-
-  const router = useRouter();
-
-  const { tenant } = useParams();
-
-  const [tenantData, setTenantData] = useState<TenantSummary | null>(null);
-  const [usersData, setUsersData] = useState<ServiceUser[]>([]);
-
-  useEffect(() => {
-    async function loadTenantData() {
-      try {
-        console.log("Cargando información del tenant para:", tenant);
-
-        // Llamada a la promesa desde el cliente
-        const { data: tenantData, error: errorTenantData } =
-          await fetchTenantDataCached(tenant as string);
-
-        if (errorTenantData || !tenantData) {
-          console.error(
-            "Error al traer información del tenant:",
-            errorTenantData,
-          );
-          router.push(`/error?type=Error trayendo informacion del tenant`);
-          return;
-        }
-
-        const { data: usersFetched, error: usersError } =
-          await fetchServiceUsersCached(tenantData.id);
-
-        if (usersError || !usersFetched) {
-          console.error(
-            "Error trallendo informacion de los usuarios",
-            usersError?.message,
-          );
-          router.push(`/error?type=Error trayendo informacion del tenant`);
-          return;
-        }
-
-        setTenantData(tenantData);
-        setUsersData(usersFetched);
-      } catch (err) {
-        console.log("Error inesperado:", err);
-        router.push(`/error?type=Error inesperado en el cliente`);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    loadTenantData();
-  }, [tenant, router]); // Solo se ejecuta al montar o si el tenant cambia
-
-  // 1. Inicialización de referencias con tipos de HTML
-  const ticketTitleRef = useRef<HTMLInputElement>(null);
-  const ticketDescriptionRef = useRef<HTMLTextAreaElement>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const queryClient = useQueryClient();
   const supabase = createSupabaseBrowserClient();
 
+  // Obtenemos el tenant del contexto
+  const { TicketContextValue } = useContext(TicketsContext);
+  const tenantId = TicketContextValue.tenantObject?.id;
+
+  // Referencias y estados
+  const ticketTitleRef = useRef<HTMLInputElement>(null);
+  const ticketDescriptionRef = useRef<HTMLTextAreaElement>(null);
   const [assignee, setAssignee] = useState<string | null>(null);
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  // TanStack Query: Usuarios
+  const { data: usersData = [] } = useQuery({
+    queryKey: ["service-users", tenantId],
+    queryFn: () => fetchServiceUsersCached(tenantId!).then(res => res.data || []),
+    enabled: !!tenantId,
+    staleTime: 1000 * 60 * 10,
+  });
+
+  // 2. MUTACIÓN CON SONNER
+  const { mutate: createTicket, isPending: isLoading } = useMutation({
+    mutationFn: async (newTicket: { title: string; description: string; assignee: string | null }) => {
+      const { data, error } = await supabase
+        .from("tickets")
+        .insert({
+          ...newTicket,
+          tenant_id: tenantId,
+        } as any)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      // Refrescar tablas globales
+      queryClient.invalidateQueries({ queryKey: ["tickets"] });
+      
+      // Notificación con Sonner (limpia y rápida)
+      toast.success(t("alert_ticket_created"));
+
+      // Limpiar campos
+      if (ticketTitleRef.current) ticketTitleRef.current.value = "";
+      if (ticketDescriptionRef.current) ticketDescriptionRef.current.value = "";
+      setAssignee(null);
+    },
+    onError: (error: any) => {
+      // Error con Sonner
+      toast.error(`Error: ${error.message || "No se pudo crear el ticket"}`);
+    },
+  });
+
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const title = ticketTitleRef.current?.value || "";
     const description = ticketDescriptionRef.current?.value || "";
 
     if (title.trim().length > 4 && description.trim().length > 9) {
-      // Usamos async/await para manejar la respuesta de forma lineal
-      const { error } = await supabase
-        .from("tickets")
-        //ojo, aqui se presenta el error debito a que created_by se va a insertar por medio de un trigger
-        .insert({
-          title,
-          description,
-          tenant_id: tenantData?.id,
-          assignee,
-        } as never)
-        .select()
-        .single();
-
-      // Manejo de error limpio
-      if (error) {
-        setIsLoading(false);
-        alert(
-          "No se puedo crear el ticket " + error.message + " " + error.code,
-        );
-        console.error("Error detallado:", error.message);
-        return; // Detenemos la ejecución aquí
-      }
-
-      // Éxito (Si llegamos aquí, es porque no hubo error)
-      alert(t("alert_ticket_created"));
-      // Limpiar referencias manualmente
-      if (ticketTitleRef.current) ticketTitleRef.current.value = "";
-      if (ticketDescriptionRef.current) ticketDescriptionRef.current.value = "";
-      
-      setAssignee(null); // Resetear el select
-      setIsLoading(false);
+      createTicket({ title, description, assignee });
     } else {
-      alert(t("alert_validation_length"));
+      toast.warning(t("alert_validation_length")); // Usamos warning para validaciones
     }
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-      {/* Campo de Título */}
       <div className="flex flex-col space-y-2">
-        <label className="">{t("label_title")}</label>
+        <label className="text-sm font-medium">{t("label_title")}</label>
         <input
           ref={ticketTitleRef}
           disabled={isLoading}
           placeholder={t("placeholder_write_title")}
-          className="w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all disabled:bg-gray-50"
         />
       </div>
 
-      {/* Campo de Descripción */}
       <div className="flex flex-col space-y-2">
-        <label className="">{t("label_description")}</label>
+        <label className="text-sm font-medium">{t("label_description")}</label>
         <textarea
           ref={ticketDescriptionRef}
-          placeholder="Adiciona una descripcion"
+          placeholder="Describe el peritaje o problema..."
           disabled={isLoading}
           rows={4}
-          className="w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+          className="w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none transition-all disabled:bg-gray-50"
         />
       </div>
 
-      {/* Botón de Envío */}
       <div className="flex flex-col space-y-2">
-        <label className="">{t("label_assign_user")}</label>
-
+        <label className="text-sm font-medium">{t("label_assign_user")}</label>
         <AssigneeSelect
           users={usersData}
           onValueChanged={(val) => setAssignee(val)}
+          value={assignee} 
         />
       </div>
 
-      {/* Botón de Envío */}
       <Button
         type="submit"
-        disabled={isLoading}
-        // Usamos "default" para que tome el color primario del tema actual
-        variant="default"
-        size="lg"
-        className="w-full mt-4 font-semibold py-6 rounded-xl transition-all duration-200 active:scale-[0.98] shadow-sm hover:shadow-md"
+        disabled={isLoading || !tenantId}
+        className="w-full mt-4 font-semibold py-6 rounded-xl shadow-sm active:scale-[0.98]"
       >
         {isLoading ? (
-          <div className="flex items-center justify-center gap-2">
+          <div className="flex items-center gap-2">
             <Loader2 className="h-5 w-5 animate-spin" />
             <span>{t("creating_ticket")}</span>
           </div>
         ) : (
-          <div className="flex items-center justify-center gap-2">
+          <div className="flex items-center gap-2">
             <TicketPlus className="h-5 w-5" />
             <span>{t("btn_create_ticket_now")}</span>
           </div>

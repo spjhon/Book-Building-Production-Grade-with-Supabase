@@ -185,7 +185,9 @@
   },
   "AssigneeSelect": {
     "status_loading": "Cargando...",
-    "status_unassigned": "Sin asignar"
+    "status_unassigned": "Sin asignar",
+    "assignee_updated_success": "Se hizo el update",
+    "updating":"Updating"
   },
   "TicketFilters": {
     "placeholder_search_tickets": "Buscar tickets...",
@@ -203,7 +205,10 @@
   },
   "AvailabilitySelect": {
     "status_available": "Disponible",
-    "status_unavailable": "No disponible"
+    "status_unavailable": "No disponible",
+    "status_updated_successfully": "Se logro actualizar",
+    "error_updating_status": "No se pudo actualizar"
+    
   },
   "TicketComments": {
     "alert_comment_added": "Se ha agregado el comentario",
@@ -229,6 +234,7 @@
 "status_in_progress": "En progreso",
 "status_done": "Finalizado",
 "status_cancelled": "Cancelado",
-"status_information_missing": "Falta información"
+"status_information_missing": "Falta información",
+"status_updated_success": "Se hizo la actualizacion"
   }
 }

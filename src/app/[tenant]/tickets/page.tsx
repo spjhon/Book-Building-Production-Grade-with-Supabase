@@ -2,10 +2,12 @@ import { TicketList } from "@/features/tickets/components/TicketList";
 import { TicketFilters } from "@/features/tickets/components/TicketsFilter";
 import Link from "next/link";
 
-import { useTranslations } from "next-intl";
+import {getTranslations} from 'next-intl/server';
 
-export default function TicketsPage() {
-  const t = useTranslations("TicketsPage");
+
+export default async function TicketsPage() {
+  
+  const t = await getTranslations('TicketsPage');
 
   return (
     // 2.

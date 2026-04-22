@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import {
   Select,
   SelectContent,
@@ -10,103 +9,84 @@ import {
   SelectGroup,
 } from "@/components/ui/select";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
-
-
-
-
-const statusStyles: Record<string, string> = {
-  open: "bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-100/80",
-  in_progress: "bg-blue-100 text-blue-700 border-blue-200 hover:bg-blue-100/80",
-  done: "bg-emerald-100 text-emerald-700 border-emerald-200 hover:bg-emerald-100/80",
-  cancelled: "bg-red-100 text-red-700 border-red-200 hover:bg-red-100/80",
-  information_missing: "bg-amber-100 text-amber-700 border-amber-200 hover:bg-amber-100/80",
-};
-
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 
-export default function TicketStatusSelect({ 
-  user_id, 
+const statusStyles: Record<string, string> = {
+  open: "bg-slate-500",
+  in_progress: "bg-blue-500",
+  done: "bg-emerald-500",
+  cancelled: "bg-red-500",
+  information_missing: "bg-amber-500",
+};
+
+export default function TicketStatusSelect({
+  user_id,
   currentStatus,
   ticket_id,
-  setCurrentStatus
-}: { 
+}: {
   user_id: string;
   currentStatus: string;
   ticket_id: string;
-  setCurrentStatus: React.Dispatch<React.SetStateAction<string>>
 }) {
+  const t = useTranslations("TicketStatusSelect");
+  const queryClient = useQueryClient();
+  const supabase = createSupabaseBrowserClient();
 
-
-const t = useTranslations("TicketStatusSelect");
-
-const statusLabels: Record<string, string> = {
-  open: t("status_open"),
-  in_progress: t("status_in_progress"),
-  done: t("status_done"),
-  cancelled: t("status_cancelled"),
-  information_missing: t("status_information_missing"),
-};
-
-  const [isLoading, setIsLoading] = useState(false);
-  
-  const supabaseBrowser = createSupabaseBrowserClient();
-  const router = useRouter()
-
-
-
-  const handleStatusChange = async (value: string) => {
-    setIsLoading(true);
-    
-
-
-
-    try{
-
-const {data: finaleUpdateStatus, error: errorUpdatingStatus } = await supabaseBrowser
-      .from("tickets")
-      .update({ status: value })
-      .eq("created_by", user_id)
-      .eq("id", ticket_id)
-      .select() // <--- OBLIGATORIO para recibir la fila actualizada
-      .single();
-
-      if (!finaleUpdateStatus || errorUpdatingStatus){
-        throw new Error ("Error actualizando estatus: " + errorUpdatingStatus.message)
-      }
-
-      setCurrentStatus(finaleUpdateStatus.status)
-    }catch(error){
-    const message = error instanceof Error? error.message : "Error actualizando el status."
-      console.log(message)
-    }finally{
-      setIsLoading(false);
-      router.refresh()
-    }
-   
-  
+  const statusLabels: Record<string, string> = {
+    open: t("status_open"),
+    in_progress: t("status_in_progress"),
+    done: t("status_done"),
+    cancelled: t("status_cancelled"),
+    information_missing: t("status_information_missing"),
   };
 
+  // MUTACIÓN: Actualizar el estado del ticket
+  const { mutate: updateStatus, isPending } = useMutation({
+    mutationFn: async (newValue: string) => {
+      const { data, error } = await supabase
+        .from("tickets")
+        .update({ status: newValue })
+        .eq("id", ticket_id)
+        .eq("created_by", user_id)
+        .select()
+        .single();
 
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      // 1. Invalidamos la query del ticket específico para que la página de detalle se refresque
+      queryClient.invalidateQueries({ queryKey: ["ticket"] });
+      // 2. También invalidamos la lista general de tickets por si el usuario vuelve atrás
+      queryClient.invalidateQueries({ queryKey: ["tickets"] });
 
+      toast.success(t("status_updated_success"));
+    },
+    onError: (error: any) => {
+      toast.error(`${t("error_updating")}: ${error.message}`);
+    },
+  });
 
   return (
-    <Select 
-      onValueChange={handleStatusChange}
-      disabled={isLoading}
+    <Select
+      onValueChange={(val) => updateStatus(val)}
+      disabled={isPending}
       value={currentStatus}
     >
-      <SelectTrigger className="w-35">
-        <SelectValue placeholder={currentStatus} />
+      <SelectTrigger className="w-[180px] h-9 bg-white shadow-sm border-slate-200">
+        <SelectValue placeholder={statusLabels[currentStatus]} />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
           {Object.entries(statusLabels).map(([value, label]) => (
-            <SelectItem key={value} value={value} className="capitalize">
+            <SelectItem key={value} value={value}>
               <div className="flex items-center gap-2">
-                {/* Opcional: Un pequeño punto de color usando tus statusStyles */}
-                <span className={`h-2 w-2 rounded-full ${statusStyles[value]?.split(' ')[0] || "bg-slate-400"}`} />
-                {label}
+                <span
+                  className={`h-2 w-2 rounded-full ${statusStyles[value] || "bg-slate-400"}`}
+                />
+                <span className="text-sm">{label}</span>
               </div>
             </SelectItem>
           ))}

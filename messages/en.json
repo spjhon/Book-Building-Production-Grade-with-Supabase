@@ -185,7 +185,10 @@
   },
   "AssigneeSelect": {
     "status_loading": "Loading...",
-    "status_unassigned": "Unassigned"
+    "status_unassigned": "Unassigned",
+    "assignee_updated_success": "Update Done",
+    "updating":"Actualizando"
+    
   },
   "TicketFilters": {
     "placeholder_search_tickets": "Search tickets...",
@@ -203,7 +206,9 @@
   },
   "AvailabilitySelect": {
     "status_available": "Available",
-    "status_unavailable": "Unavailable"
+    "status_unavailable": "Not Available",
+    "status_updated_successfully": "Success on update",
+    "error_updating_status": "Update could not be done"
   },
   "TicketComments": {
     "alert_comment_added": "Comment has been added",
@@ -229,6 +234,7 @@
 "status_in_progress": "In progress",
 "status_done": "Done",
 "status_cancelled": "Cancelled",
-"status_information_missing": "Information missing"
+"status_information_missing": "Information missing",
+"status_updated_success": "Update Success"
   }
 }

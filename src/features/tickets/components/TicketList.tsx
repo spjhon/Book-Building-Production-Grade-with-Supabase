@@ -1,14 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useContext } from "react";
 import Link from "next/link";
-import { useParams, useSearchParams } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { Loader2, Inbox } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { fetchTenantDataCached } from "@/lib/dbFunctions/fetch_tenant_domain_cached";
 import { getTicketsAction } from "@/lib/dbFunctions/fetch_tickets_with_comments";
-
-import { useTranslations } from "next-intl";
+import { useTranslations } from 'next-intl';
+import { TicketsContext } from "../DataLoaderContex";
+import { useQuery } from "@tanstack/react-query"; // 1. Importamos useQuery
 
 const statusStyles: Record<string, string> = {
   open: "bg-slate-100 text-slate-700 border-slate-200",
@@ -18,72 +18,35 @@ const statusStyles: Record<string, string> = {
   information_missing: "bg-amber-100 text-amber-700 border-amber-200",
 };
 
-// 1. Tipado correcto para el estado
-interface TicketsState {
-  tickets: {
-    assignee: string | null;
-    assignee_name: string | null;
-    created_at: string;
-    created_by: string;
-    description: string | null;
-    id: string;
-    status: string;
-    tenant_id: string;
-    ticket_number: number;
-    title: string;
-    updated_at: string;
-    creator: {
-      full_name: string | null;
-    };
-  }[];
-  count: number;
-  hasMore: boolean;
-}
-
 export function TicketList() {
   const t = useTranslations("TicketList");
+  const { TicketContextValue } = useContext(TicketsContext);
+  const tenantId = TicketContextValue.tenantObject.id;
 
-  const { tenant } = useParams();
   const searchParams = useSearchParams();
-
-  const [isLoading, setIsLoading] = useState(true);
-  // 2. Inicializamos como null para manejar la carga inicial
-  const [fetchedTicketsState, setFetchedTicketsState] =
-    useState<TicketsState | null>(null);
-
   const page = searchParams.get("page") || "1";
   const search = searchParams.get("search") || "";
   const searchValue = search.trim();
   const pageSanitazed = Math.max(1, Number(page) || 1);
 
-  useEffect(() => {
-    async function loadTicketData() {
-      setIsLoading(true);
-      try {
-        const { data: tenantData } = await fetchTenantDataCached(
-          tenant as string,
-        );
-        if (!tenantData) return;
-
-        const response = await getTicketsAction({
-          tenantId: tenantData.id,
-          page: pageSanitazed,
-          search: searchValue,
-        });
-
-        if (response.data) {
-          setFetchedTicketsState(response.data);
-        }
-      } catch (error) {
-        console.error("Error cargando tickets:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    loadTicketData();
-    // 3. AGREGAR DEPENDENCIAS: Para que recargue al cambiar página o búsqueda
-  }, [tenant, pageSanitazed, searchValue]);
+  // 2. CONFIGURACIÓN DE TANSTACK QUERY
+  const { 
+    data: fetchedTicketsState, 
+    isLoading, 
+    isFetching, // Útil para mostrar un mini-spinner de "sincronizando"
+    isError 
+  } = useQuery({
+    // La clave depende de tenantId, página y búsqueda. 
+    // Si algo de esto cambia, TanStack dispara el fetch automáticamente.
+    queryKey: ["tickets", tenantId, pageSanitazed, searchValue],
+    queryFn: () => getTicketsAction({
+      tenantId,
+      page: pageSanitazed,
+      search: searchValue,
+    }),
+    enabled: !!tenantId, // Solo se ejecuta si ya tenemos el tenantId del context
+    staleTime: 1000 * 60 * 5, // 5 minutos de caché "fresco"
+  });
 
   const getHref = (p: number) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -91,19 +54,23 @@ export function TicketList() {
     return `?${params.toString()}`;
   };
 
+  // 3. MANEJO DE ERRORES (Opcional pero recomendado)
+  if (isError) return <div className="p-4 text-red-500 text-center">Error al cargar tickets.</div>;
+
   return (
     <div className="space-y-4">
+      {/* Indicador de "Fetching" en segundo plano (opcional) */}
+      <div className="flex justify-end h-2">
+        {isFetching && !isLoading && <span className="text-[10px] text-blue-400 animate-pulse">Sincronizando...</span>}
+      </div>
+
       <div className="overflow-x-auto border rounded-xl bg-white shadow-sm">
         <table className="w-full border-collapse text-left">
           <thead>
             <tr className="text-sm text-gray-600 bg-gray-50 border-b border-gray-200">
               <th className="py-3 px-4 font-medium">{t("table_header_id")}</th>
-              <th className="py-3 px-4 font-medium">
-                {t("table_header_title")}
-              </th>
-              <th className="py-3 px-4 font-medium">
-                {t("table_header_status")}
-              </th>
+              <th className="py-3 px-4 font-medium">{t("table_header_title")}</th>
+              <th className="py-3 px-4 font-medium">{t("table_header_status")}</th>
             </tr>
           </thead>
           <tbody className="text-gray-800">
@@ -116,21 +83,19 @@ export function TicketList() {
                   </div>
                 </td>
               </tr>
-            ) : fetchedTicketsState?.tickets.length === 0 ? (
+            ) : fetchedTicketsState?.data?.tickets.length === 0 ? (
               <tr>
-                <td colSpan={3} className="py-10 text-center text-gray-500">
-                  {t("no_tickets_found")}
+                <td colSpan={3} className="py-20 text-center">
+                  <div className="flex flex-col items-center text-gray-400 gap-2">
+                    <Inbox className="w-8 h-8" />
+                    <p className="text-sm">{t("no_tickets_found")}</p>
+                  </div>
                 </td>
               </tr>
             ) : (
-              fetchedTicketsState?.tickets.map((ticket) => (
-                <tr
-                  key={ticket.id}
-                  className="border-b border-gray-100 hover:bg-gray-50 transition"
-                >
-                  <td className="py-3 px-4 text-gray-500 font-medium">
-                    #{ticket.ticket_number}
-                  </td>
+              fetchedTicketsState?.data?.tickets.map((ticket) => (
+                <tr key={ticket.id} className="border-b border-gray-100 hover:bg-gray-50 transition group">
+                  <td className="py-3 px-4 text-gray-500 font-medium">#{ticket.ticket_number}</td>
                   <td className="py-3 px-4">
                     <Link
                       prefetch={false}
@@ -158,24 +123,21 @@ export function TicketList() {
         </table>
       </div>
 
-      {/* 4. PAGINACIÓN: Fuera de la tabla */}
       <div className="flex items-center justify-between px-2">
         <div className="text-sm text-gray-500">
-          Total: {fetchedTicketsState?.count || 0}
+          Total: {fetchedTicketsState?.data?.count || 0}
         </div>
         <div className="flex gap-2">
           {pageSanitazed > 1 && !isLoading && (
             <Link
-              prefetch={false}
               href={getHref(pageSanitazed - 1)}
               className="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition text-sm"
             >
               ← {t("pagination_previous")}
             </Link>
           )}
-          {fetchedTicketsState?.hasMore && !isLoading && (
+          {fetchedTicketsState?.data?.hasMore && !isLoading && (
             <Link
-              prefetch={false}
               href={getHref(pageSanitazed + 1)}
               className="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition text-sm"
             >
