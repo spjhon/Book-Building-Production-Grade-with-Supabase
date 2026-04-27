@@ -75,7 +75,7 @@ export default async function Login({
 
           {/* Enlace de regreso */}
           <Link
-            prefetch={false}
+           
             href="https://tiendadelamujer.com/"
             className="flex items-center text-sm font-medium text-black hover:opacity-70 transition-opacity"
           >

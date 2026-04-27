@@ -23,7 +23,7 @@ export default function NotFound() {
 
       {/* Botón original de shadcn */}
       <Button asChild size="lg" className="font-bold">
-        <Link href="http://127.0.0.1:3000" prefetch={false}>
+        <Link href="http://127.0.0.1:3000" >
           {t("notfound_button")}
         </Link>
       </Button>

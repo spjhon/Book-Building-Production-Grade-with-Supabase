@@ -54,7 +54,7 @@ const t = useTranslations("NavBar");
 
           {/* Enlace de regreso */}
           <Link
-            prefetch={false}
+            
             href="https://tiendadelamujer.com/"
             className="flex items-center text-sm font-medium text-black hover:opacity-70 transition-opacity"
           >
@@ -65,7 +65,7 @@ const t = useTranslations("NavBar");
 
 
         <Link
-          prefetch={false}
+          
           rel="noreferrer noopener"
           href="/"
           className="font-bold text-xl hidden xl:flex"
@@ -81,7 +81,7 @@ const t = useTranslations("NavBar");
                 
                 return (
                   <Link
-                     prefetch={false}
+                     prefetch={true}
                     href={route.href}
                     key={i}
                     className={cn(

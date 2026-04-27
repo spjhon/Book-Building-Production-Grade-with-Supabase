@@ -1,3 +1,5 @@
+
+
 import { TicketList } from "@/features/tickets/components/TicketList";
 import { TicketFilters } from "@/features/tickets/components/TicketsFilter";
 import Link from "next/link";
@@ -20,7 +22,7 @@ export default async function TicketsPage() {
           </h1>
 
           <Link
-            prefetch={false}
+            
             href={"/tickets/new"}
             className="px-4 py-2 bg-primary hover:primary text-white text-sm font-medium rounded-lg shadow transition"
           >

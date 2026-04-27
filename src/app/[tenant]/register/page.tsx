@@ -62,7 +62,7 @@ export default async function RegisterPage({
       {/* REGISTRATION SECTION: Top on mobile, Left on desktop */}
       <div className="w-full lg:w-1/2 flex flex-col justify-center py-12 px-4 bg-white relative">
         <Link
-          prefetch={false}
+          
           href="https://tiendadelamujer.com/"
           className="absolute left-8 top-[1.6rem] flex items-center text-sm text-black hover:opacity-70 transition-colors font-medium z-20"
         >

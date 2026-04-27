@@ -79,7 +79,7 @@ export function MobileMenu({ routes }: MobileMenuProps) {
         <div className="mx-auto w-full max-w-sm">
           <DrawerHeader>
             <DrawerTitle>
-              <Link prefetch={false} href="/" onClick={() => setIsOpen(false)}>
+              <Link  href="/" onClick={() => setIsOpen(false)}>
                 <TenantName />
               </Link>
             </DrawerTitle>
@@ -96,7 +96,7 @@ export function MobileMenu({ routes }: MobileMenuProps) {
                     return (
                       <DrawerClose asChild key={i}>
                         <Link
-                          prefetch={false}
+                          
                           href={route.href}
                           className={cn(
                             // 👇 Dimensiones fijas SIEMPRE

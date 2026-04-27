@@ -98,7 +98,7 @@ export function TicketList() {
                   <td className="py-3 px-4 text-gray-500 font-medium">#{ticket.ticket_number}</td>
                   <td className="py-3 px-4">
                     <Link
-                      prefetch={false}
+                      
                       href={`/tickets/details/${ticket.ticket_number}`}
                       className="text-blue-600 hover:underline font-semibold block"
                     >

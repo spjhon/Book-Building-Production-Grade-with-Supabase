@@ -179,7 +179,7 @@ export function SignUpForm({ className, tenant, ...props }: SignUpFormProps) {
             <div className="mt-4 text-center text-sm">
               {t("login_prompt")}{" "}
               <Link
-                prefetch={false}
+              
                 href="/auth/login"
                 className="underline underline-offset-4"
               >

@@ -28,7 +28,7 @@ export default function NotFound() {
       </p>
 
       <Button asChild size="lg" className="font-bold">
-        <Link href="/" prefetch={false}>
+        <Link href="/">
           Volver al inicio / Back to home
         </Link>
       </Button>
